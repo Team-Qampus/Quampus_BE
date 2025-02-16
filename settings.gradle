@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 rootProject.name = 'demo'
+=======
+rootProject.name = 'qampus'
+>>>>>>> 56bd082 (feat: 질문, 답변 CRUD 기능 추가)
