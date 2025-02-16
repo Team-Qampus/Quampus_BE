@@ -3,10 +3,12 @@ package swyp.qampus.answer.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import swyp.qampus.image.domain.Image;
+import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.user.domain.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,6 +45,9 @@ public class Answer {
 
     @Column(nullable = false)
     private int like_count = 0;
+
+    @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
+    private List<Like> likeList=new ArrayList<>();
 
     public void increaseLike() {
         this.like_count++;
