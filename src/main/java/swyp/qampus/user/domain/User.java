@@ -2,9 +2,11 @@ package swyp.qampus.user.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -42,5 +44,8 @@ public class User {
 
     @OneToMany
     private List<Question> questions;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    private List<Like> likeList=new ArrayList<>();
 
 }
