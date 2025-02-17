@@ -13,6 +13,8 @@ import swyp.qampus.like.repository.LikeRepository;
 import swyp.qampus.user.domain.User;
 import swyp.qampus.user.repository.UserRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class LikeServiceImpl implements LikeService{

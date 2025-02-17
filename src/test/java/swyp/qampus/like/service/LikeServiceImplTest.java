@@ -119,10 +119,10 @@ class LikeServiceImplTest {
         String userId="invalid";
         User user=User.builder()
                 .userId(userId)
-                .email("tt")
-                .major("tt")
-                .name("tt")
-                .universityName("tt")
+                .email("tt"+userId)
+                .major("tt"+userId)
+                .name("tt"+userId)
+                .universityName("tt"+userId)
                 .build();
 
         Long answerId=1L;
@@ -223,5 +223,49 @@ class LikeServiceImplTest {
 
         assertThat(findAnswer2.getLikeList()).isEmpty();
         assertThat(findAnswer2.getLikeCnt()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("[성공케이스]-좋아요를 누르면 좋아요가 1씩 감소합니다.")
+    void clickLike_delete(){
+        //given
+        Long answerId1=1L;
+        Long answerId2=2L;
+        String userId1="fake1";
+        String userId2="fake2";
+        User user1=initUser(userId1);
+        User user2=initUser(userId2);
+        //유저1이 쓴 답변
+        Answer answer1=initAnswer(answerId1,user1);
+        //유저2가 쓴 답변->좋아요 0개
+        Answer answer2=initAnswer(answerId2,user2);
+
+        when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
+        when(answerRepository.findById(answerId1)).thenReturn(Optional.of(answer1));
+        when(answerRepository.findById(answerId2)).thenReturn(Optional.of(answer2));
+
+        when(likeRepository.findLikesByAnswerAndUser(answerId1, userId1))
+                .thenReturn(Optional.empty())  // 첫 번째 호출
+                .thenReturn(Optional.of(Like.of(user1, answer1)));  // delete 메소드에서의 호출
+        when(likeRepository.findLikesByAnswerAndUser(answerId1, userId2))
+                .thenReturn(Optional.empty());
+        when(likeRepository.findLikesByAnswerAndUser(answerId2, userId2))
+                .thenReturn(Optional.empty());
+
+
+
+        //when
+        likeService.insert(userId1,answerId1);
+        likeService.insert(userId2,answerId1);
+        likeService.insert(userId2, answerId2);
+
+        assertThat(answer1.getLikeCnt()).isEqualTo(3);
+        assertThat(answer2.getLikeCnt()).isEqualTo(1);
+
+        likeService.delete(userId1,answerId1);
+
+        //then
+        assertThat(answer1.getLikeCnt()).isEqualTo(2);
     }
 }
