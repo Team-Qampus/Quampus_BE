@@ -33,7 +33,6 @@ public class AnswerService {
                 .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
 
         Answer answer = Answer.builder()
-                .user(user)
                 .question(question)
                 .content(requestDto.getContent())
                 .build();

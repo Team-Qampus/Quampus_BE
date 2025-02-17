@@ -2,6 +2,7 @@ package swyp.qampus.user.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.common.BaseEntity;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
@@ -37,16 +38,19 @@ public class User  {
     private String major;
 
     @Column(nullable = false)
-    private LocalDateTime created_date = LocalDateTime.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(nullable = false)
-    private LocalDateTime modified_date = LocalDateTime.now();
+    private LocalDateTime modifiedDate = LocalDateTime.now();
 
-    @OneToMany
-    private List<Question> questions;
+    @OneToMany(mappedBy = "user")
+    private List<Question> questions=new ArrayList<>();
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Like> likeList=new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Answer> answers=new ArrayList<>();
 
     @Builder
     public User(String userId, String name, String email, String password, String universityName, String major){
@@ -56,5 +60,15 @@ public class User  {
         this.password = password;
         this.universityName = universityName;
         this.major = major;
+    }
+    public void addQuestion(Question question){
+        this.questions.add(question);
+    }
+    public void addLike(Like like){
+        this.likeList.add(like);
+    }
+
+    public void addAnswer(Answer answer){
+        this.answers.add(answer);
     }
 }
