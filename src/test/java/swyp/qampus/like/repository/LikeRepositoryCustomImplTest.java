@@ -104,4 +104,46 @@ class LikeRepositoryCustomImplTest {
         assertThat(isLike2).isNotEmpty();
 
     }
+    @Test
+    @DisplayName("답변의 좋아요를 누르면 개수가 1씩 증가합니다.")
+    void clickLike(){
+        //given
+        User user1=User.builder()
+                .userId("test1")
+                .email("test1@naver.com")
+                .name("test11")
+                .password("abcd")
+                .major("컴공과")
+                .universityName("서울대")
+                .build();
+        User user2=User.builder()
+                .userId("test2")
+                .email("test@naver.com")
+                .name("test11")
+                .password("abcd")
+                .major("컴공과")
+                .universityName("서울대")
+                .build();
+        userRepository.saveAll(List.of(user1,user2));
+
+        Answer answer=Answer
+                .builder()
+                .content("abcd")
+                .user(user1)
+                .build();
+        answerRepository.save(answer);
+
+        //when
+        Like like1=Like.of(user1,answer);
+        Like like2=Like.of(user2,answer);
+        likeRepository.saveAll(List.of(like1,like2));
+
+        //then
+        Answer findAnswer=answerRepository.findById(answer.getAnswerId()).orElseThrow();
+        assertThat(findAnswer.getLikeCnt()).isEqualTo(2);
+        assertThat(findAnswer.getLikeList()).hasSize(2)
+                .extracting("user")
+                .containsExactlyInAnyOrder(user1,user2);
+
+    }
 }
