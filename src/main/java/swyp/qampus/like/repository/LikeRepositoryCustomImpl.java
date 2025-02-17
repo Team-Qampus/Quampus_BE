@@ -22,30 +22,30 @@ public class LikeRepositoryCustomImpl implements LikeRepositoryCustom{
 
 
     @Override
-    public Optional<Like> findLikesByAnswerAndUser(Long answer_id, String user_id) {
-        return Optional.ofNullable(
+    public Optional<Like> findLikesByAnswerAndUser(Long answerId, String userId) {
+        return  Optional.ofNullable(
                 queryFactory.select(like)
                         .from(like)
                         .join(like.user,user)
                         .join(like.answer, answer)
-                        .where(userAndAnswerIdEq(user_id,answer_id))
+                        .where(userAndAnswerIdEq(userId,answerId))
                         .fetchOne()
         );
     }
 
-    private BooleanExpression userIdEq(String user_id){
-        return user_id==null ? null : user.user_id.eq(user_id);
+    private BooleanExpression userIdEq(String userId){
+        return userId==null ? null : user.userId.eq(userId);
     }
-    private BooleanExpression answerIdEq(Long answer_id){
-        return answer_id == null ? null : answer.answer_id.eq(answer_id);
+    private BooleanExpression answerIdEq(Long answerId){
+        return answerId == null ? null : answer.answerId.eq(answerId);
     }
-    private BooleanExpression userAndAnswerIdEq(String user_id,Long answer_id){
-        if(userIdEq(user_id)==null){
-            return answerIdEq(answer_id);
+    private BooleanExpression userAndAnswerIdEq(String userId,Long answerId){
+        if(userIdEq(userId)==null){
+            return answerIdEq(answerId);
         }
-        if(answerIdEq(answer_id)==null){
-            return userIdEq(user_id);
+        if(answerIdEq(answerId)==null){
+            return userIdEq(userId);
         }
-        return answerIdEq(answer_id).and(userIdEq(user_id));
+        return answerIdEq(answerId).and(userIdEq(userId));
     }
 }

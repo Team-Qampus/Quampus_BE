@@ -12,9 +12,10 @@ import swyp.qampus.user.domain.User;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "Likes")
 public class Like extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long like_id;
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long likeId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

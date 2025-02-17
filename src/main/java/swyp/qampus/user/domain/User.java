@@ -14,13 +14,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Table(name = "User")
+
+@Table(name = "Users")
 public class User  {
     @Id
-    @Column(nullable = false, length = 255)
-    private String user_id;
+    @Column(nullable = false, name = "user_id")
+    private String userId;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -32,7 +31,7 @@ public class User  {
     private String password;
 
     @Column(length = 100)
-    private String university_name;
+    private String universityName;
 
     @Column(length = 255)
     private String major;
@@ -49,4 +48,13 @@ public class User  {
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Like> likeList=new ArrayList<>();
 
+    @Builder
+    public User(String userId, String name, String email, String password, String universityName, String major){
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.universityName = universityName;
+        this.major = major;
+    }
 }

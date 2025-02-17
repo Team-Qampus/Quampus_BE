@@ -14,11 +14,12 @@ import swyp.qampus.question.domain.Question;
 @Table(name = "Image")
 public class Image {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long iamge_id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "image_id")
+    private long imageId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String picture_url;
+    private String pictureUrl;
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)

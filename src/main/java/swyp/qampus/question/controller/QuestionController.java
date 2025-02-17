@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.question.domain.MessageResponseDto;
-import swyp.qampus.answer.domain.QuestionResponseDto;
+import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.service.QuestionService;
 
 @RestController
