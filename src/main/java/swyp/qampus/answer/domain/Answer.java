@@ -2,6 +2,7 @@ package swyp.qampus.answer.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import swyp.qampus.common.BaseEntity;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
