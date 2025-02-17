@@ -1,6 +1,7 @@
 package swyp.qampus.like.service;
 
 import net.bytebuddy.asm.MemberRemoval;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -16,8 +17,10 @@ import swyp.qampus.like.repository.LikeRepository;
 import swyp.qampus.user.domain.User;
 import swyp.qampus.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -181,5 +184,44 @@ class LikeServiceImplTest {
 
         //then
         assertEquals("중복된 좋아요 리소스 요청입니다.",exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("[성공케이스]-좋아요를 누르면 좋아요가 1씩 증가합니다.")
+    void clickLike_insert(){
+        //given
+        Long answerId1=1L;
+        Long answerId2=2L;
+        String userId1="fake1";
+        String userId2="fake2";
+        User user1=initUser(userId1);
+        User user2=initUser(userId2);
+        //유저1이 쓴 답변
+        Answer answer1=initAnswer(answerId1,user1);
+        //유저2가 쓴 답변->좋아요 0개
+        Answer answer2=initAnswer(answerId2,user2);
+
+        when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
+        when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
+        when(userRepository.saveAll(List.of(user1,user2))).thenReturn(List.of(user1,user2));
+
+        when(answerRepository.findById(answerId1)).thenReturn(Optional.of(answer1));
+        when(answerRepository.findById(answerId2)).thenReturn(Optional.of(answer2));
+
+        //when
+        likeService.insert(userId1,answerId1);
+        likeService.insert(userId2,answerId1);
+
+        //then
+        Answer findAnswer1=answerRepository.findById(answerId1)
+                        .orElseThrow();
+        Answer findAnswer2=answerRepository.findById(answerId2)
+                        .orElseThrow();
+
+        assertThat(findAnswer1.getLikeList()).isNotEmpty();
+        assertThat(findAnswer1.getLikeCnt()).isEqualTo(2);
+
+        assertThat(findAnswer2.getLikeList()).isEmpty();
+        assertThat(findAnswer2.getLikeCnt()).isEqualTo(0);
     }
 }
