@@ -2,6 +2,7 @@ package swyp.qampus.user.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import swyp.qampus.common.BaseEntity;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "User")
-public class User {
+public class User  {
     @Id
     @Column(nullable = false, length = 255)
     private String user_id;
