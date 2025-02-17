@@ -1,4 +1,4 @@
-package swyp.qampus.answer.domain;
+package swyp.qampus.question.domain;
 
 import lombok.Getter;
 import lombok.Setter;

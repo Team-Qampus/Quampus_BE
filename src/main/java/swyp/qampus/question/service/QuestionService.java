@@ -7,12 +7,11 @@ import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.question.domain.MessageResponseDto;
-import swyp.qampus.answer.domain.QuestionResponseDto;
+import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.category.domain.Category;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.user.domain.User;
 import swyp.qampus.exception.CustomException;
-import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.category.repository.CategoryRepository;
 import swyp.qampus.user.repository.UserRepository;
@@ -40,7 +39,7 @@ public class QuestionService {
                 .build();
 
         Question savedQuestion = questionRepository.save(question);
-        return new QuestionResponseDto(savedQuestion.getQuestion_id());
+        return new QuestionResponseDto(savedQuestion.getQuestionId());
     }
 
     @Transactional

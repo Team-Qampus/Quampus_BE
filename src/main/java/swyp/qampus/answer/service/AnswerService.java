@@ -39,7 +39,7 @@ public class AnswerService {
                 .build();
 
         Answer savedAnswer = answerRepository.save(answer);
-        return new AnswerResponseDto(savedAnswer.getAnswer_id(), "답변 생성 성공");
+        return new AnswerResponseDto(savedAnswer.getAnswerId(), "답변 생성 성공");
     }
 
     @Transactional

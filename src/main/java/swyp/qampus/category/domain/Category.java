@@ -12,9 +12,10 @@ import lombok.*;
 @Table(name = "Category")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long category_id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "category_id")
+    private long categoryId;
 
     @Column(nullable = false, length = 255)
-    private String category_name;
+    private String categoryName;
 }

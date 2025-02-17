@@ -16,13 +16,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Table(name = "Answer")
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long answer_id;
+    @Column(name = "answer_id")
+    private Long answerId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -36,33 +35,41 @@ public class Answer {
     private String content;
 
     @Column(nullable = false)
-    private LocalDateTime create_date = LocalDateTime.now();
+    private LocalDateTime createDate = LocalDateTime.now();
 
     @Column(nullable = false)
-    private LocalDateTime modified_date = LocalDateTime.now();
+    private LocalDateTime modifiedDate = LocalDateTime.now();
 
-    @OneToMany
+    @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
     private List<Image> images;
 
     @Column(nullable = false)
-    private int like_count = 0;
+    private int likeCnt = 0;
 
     @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
     private List<Like> likeList=new ArrayList<>();
 
     public void increaseLike() {
-        this.like_count++;
+        this.likeCnt++;
     }
 
     public void update(String content) {
         this.content = content;
-        this.modified_date = LocalDateTime.now();
+        this.modifiedDate = LocalDateTime.now();
     }
 
     public void decreaseLike() {
-        if (this.like_count > 0) {
-            this.like_count--;
+        if (this.likeCnt > 0) {
+            this.likeCnt--;
         }
+    }
+
+    @Builder
+    public Answer(String content,int likeCnt,User user,Question question){
+        this.likeCnt=likeCnt;
+        this.content=content;
+        this.user=user;
+        this.question=question;
     }
 
 }

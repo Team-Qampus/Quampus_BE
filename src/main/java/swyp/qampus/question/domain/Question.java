@@ -13,13 +13,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Table(name = "Question")
 public class Question {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long question_id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "question_id")
+    private Long questionId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -32,19 +31,19 @@ public class Question {
     private String content;
 
     @Column(nullable = false)
-    private boolean is_deleted = false;
+    private boolean isDeleted = false;
 
     @Column(nullable = false)
-    private int view_cnt = 0;
+    private int viewCnt = 0;
 
     @Column(nullable = false)
-    private int curious_count = 0;
+    private int curiousCount = 0;
 
     @Column(nullable = false)
-    private LocalDateTime create_date;
+    private LocalDateTime createDate=LocalDateTime.now();
 
     @Column(nullable = false)
-    private LocalDateTime modified_date;
+    private LocalDateTime modifiedDate=LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
@@ -53,20 +52,30 @@ public class Question {
     @OneToMany
     private List<Image> images;
 
+    @Builder
+    public Question(User user,String title,String content,int viewCnt,int curious_count,Category category){
+        this.user=user;
+        this.title=title;
+        this.content=content;
+        this.viewCnt=viewCnt;
+        this.curiousCount=curious_count;
+        this.category=category;
+    }
+
     // 조회수 증가 메서드
     public void increseViewCount() {
-        this.view_cnt++;
+        this.viewCnt++;
     }
 
     public void update(String title, String content, Category category) {
         this.title = title;
         this.content = content;
         this.category = category;
-        this.modified_date = LocalDateTime.now();
+        this.modifiedDate = LocalDateTime.now();
     }
 
     public void delete() {
-        this.is_deleted = true;
+        this.isDeleted = true;
     }
 
 }
