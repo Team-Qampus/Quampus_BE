@@ -17,11 +17,11 @@ public class Like extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long likeId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
@@ -29,6 +29,8 @@ public class Like extends BaseEntity {
     private Like(User user,Answer answer){
         this.answer=answer;
         this.user=user;
+        user.addLike(this);
+        answer.addLike(this);
     }
     public static Like of(User user,Answer answer){
         Like like=Like.builder()

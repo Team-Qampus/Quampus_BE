@@ -28,7 +28,7 @@ public class Answer {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
+    @JoinColumn(name = "question_id", nullable = true)
     private Question question;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -64,12 +64,17 @@ public class Answer {
         }
     }
 
+    public void addLike(Like like){
+        this.likeList.add(like);
+        this.likeCnt++;
+    }
+
     @Builder
-    public Answer(String content,int likeCnt,User user,Question question){
+    public Answer(String content,int likeCnt,Question question,User user){
         this.likeCnt=likeCnt;
         this.content=content;
-        this.user=user;
         this.question=question;
+        this.user=user;
     }
 
 }
