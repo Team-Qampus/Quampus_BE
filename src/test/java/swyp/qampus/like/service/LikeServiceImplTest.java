@@ -45,10 +45,13 @@ class LikeServiceImplTest {
 
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        //when//then
-        assertThrows(RestApiException.class,()->{
-            likeService.insert(userId,answerId);
+        //when
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            likeService.insert(userId, answerId);
         });
+
+        // then
+        assertEquals("사용자를 찾을 수 없습니다.",exception.getMessage());
     }
     @Test
     @DisplayName("[실패케이스]좋아요 삭제-유저가 존재하지 않는 경우 예외가 발생합니다. ")
@@ -59,9 +62,66 @@ class LikeServiceImplTest {
 
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        //when//then
-        assertThrows(RestApiException.class,()->{
-            likeService.delete(userId,answerId);
+        //when
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            likeService.delete(userId, answerId);
         });
+
+        // then
+        assertEquals("사용자를 찾을 수 없습니다.",exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("[실패케이스]좋아요 클릭-답변이 존재하지 않는 경우 예외가 발생합니다. ")
+    void notExistAnswer_insert() {
+        //given
+        String userId="invalid";
+        User user=User.builder()
+                .userId(userId)
+                .email("tt")
+                .major("tt")
+                .name("tt")
+                .universityName("tt")
+                .build();
+
+        Long answerId=1L;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(answerRepository.findById(any())).thenReturn(Optional.empty());
+
+        //when
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            likeService.insert(userId, answerId);
+        });
+
+        //then
+        assertEquals("답변이 존재하지 않습니다.",exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("[실패케이스]좋아요 삭제-답변이 존재하지 않는 경우 예외가 발생합니다. ")
+    void notExistAnswer_delete() {
+        //given
+        String userId="invalid";
+        User user=User.builder()
+                .userId(userId)
+                .email("tt")
+                .major("tt")
+                .name("tt")
+                .universityName("tt")
+                .build();
+
+        Long answerId=1L;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(answerRepository.findById(any())).thenReturn(Optional.empty());
+
+        //when
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            likeService.delete(userId, answerId);
+        });
+
+        //then
+        assertEquals("답변이 존재하지 않습니다.",exception.getMessage());
     }
 }
