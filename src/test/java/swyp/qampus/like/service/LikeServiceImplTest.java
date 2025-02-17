@@ -36,6 +36,23 @@ class LikeServiceImplTest {
     @MockitoBean
     private AnswerRepository answerRepository;
 
+    private User initUser(String userId){
+        User user=User.builder()
+                .userId(userId)
+                .email("tt")
+                .major("tt")
+                .name("tt")
+                .universityName("tt")
+                .build();
+        return user;
+    }
+    private Answer initAnswer(Long answerId,User user){
+        return Answer.builder()
+                .user(user)
+                .content("as")
+                .build();
+    }
+
     @Test
     @DisplayName("[실패케이스]좋아요 클릭-유저가 존재하지 않는 경우 예외가 발생합니다. ")
     void notExistUser_insert() {
@@ -76,13 +93,7 @@ class LikeServiceImplTest {
     void notExistAnswer_insert() {
         //given
         String userId="invalid";
-        User user=User.builder()
-                .userId(userId)
-                .email("tt")
-                .major("tt")
-                .name("tt")
-                .universityName("tt")
-                .build();
+        User user=initUser(userId);
 
         Long answerId=1L;
 
@@ -123,5 +134,52 @@ class LikeServiceImplTest {
 
         //then
         assertEquals("답변이 존재하지 않습니다.",exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("[실패케이스]-이미 좋아요가 눌러져 있으면 예외가 발생합니다.")
+    void existedLike_insert(){
+        //given
+        Long answerId=1L;
+        String userId="fake";
+        User user=initUser(userId);
+        Answer answer=initAnswer(answerId,user);
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+        when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
+        Like like=Like.of(user,answer);
+        when(likeRepository.findLikesByAnswerAndUser(any(),any())).thenReturn(Optional.of(like));
+
+        //when
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            likeService.insert(userId, answerId);
+        });
+
+        //then
+        assertEquals("중복된 좋아요 리소스 요청입니다.",exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("[실패케이스]-좋아요가 존재하지 않지만 DELETE 요청 시 예외가 발생합니다.")
+    void existedLike_delete(){
+        //given
+        Long answerId=1L;
+        String userId="fake";
+        User user=initUser(userId);
+        Answer answer=initAnswer(answerId,user);
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+        when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
+        when(likeRepository.findLikesByAnswerAndUser(any(),any())).thenReturn(Optional.empty());
+
+        //when
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            likeService.delete(userId, answerId);
+        });
+
+        //then
+        assertEquals("중복된 좋아요 리소스 요청입니다.",exception.getMessage());
     }
 }
