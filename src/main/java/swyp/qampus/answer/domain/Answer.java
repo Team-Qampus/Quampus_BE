@@ -44,7 +44,7 @@ public class Answer {
     private int likeCnt = 0;
 
     //채택
-    @Column(name = "is_chosen")
+    @Column(name = "is_chosen",nullable = false)
     private Boolean isChosen;
 
     @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)

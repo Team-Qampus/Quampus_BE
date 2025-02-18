@@ -3,10 +3,7 @@ package swyp.qampus.answer.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import swyp.qampus.answer.domain.Answer;
-import swyp.qampus.answer.domain.AnswerRequestDto;
-import swyp.qampus.answer.domain.AnswerResponseDto;
-import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
+import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.common.ResponseDto;
@@ -68,37 +65,45 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional
-    public void choice(Long answerId, Long questId, String token) {
+    public void choice(ChoiceRequestDto choiceRequestDto, String token) {
         //TODO:JWT로 교체
         String userId=token;
-        Answer answer=answerRepository.findById(answerId).orElseThrow(
+        Answer answer=answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
                 ()-> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
-        Question question=questionRepository.findById(questId).orElseThrow(
+        Question question=questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
                 ()->new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
         );
-
-        extracted(questId, userId, question, answer);
-
-        answer.setIsChosen(true);
-        answerRepository.save(answer);
-    }
-
-    private void extracted(Long questId, String userId, Question question, Answer answer) {
+        Boolean type=choiceRequestDto.getIs_chosen();
         //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
         if(!userId.equals(question.getUser().getUserId())){
             throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
+        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(),answer,type);
 
-        //해당 질문에서 이미 채택한 답변이 존재하는 경우
-        Integer exitedChosen=answerRepository.countChoiceOfAnswer(questId);
-        if(exitedChosen>=1){
-            throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN_OF_QUESTION);
-        }
+        answerRepository.save(answer);
+    }
 
-        //이미 채택된 답변에 대한 요청 시
-        if(answer.getIsChosen()){
-            throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
+    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
+        //채택하는 경우
+        if(type){
+            //해당 질문에서 이미 채택한 답변이 존재하는 경우
+            Integer exitedChosen=answerRepository.countChoiceOfAnswer(questId);
+            if(exitedChosen>=1){
+                throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN_OF_QUESTION);
+            }
+            //이미 채택된 답변에 대한 요청 시
+            if(answer.getIsChosen()){
+                throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
+            }
         }
+        //채택 취소하는 경우
+        else{
+            //이미 채택 취소된 답변에 대한 요청 시
+            if(!answer.getIsChosen()){
+                throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
+            }
+        }
+        answer.setIsChosen(type);
     }
 
 }
