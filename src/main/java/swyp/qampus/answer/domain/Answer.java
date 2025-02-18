@@ -40,7 +40,7 @@ public class Answer {
     @Column(nullable = false)
     private LocalDateTime modifiedDate = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "answer",cascade = CascadeType.ALL)
     private List<Image> images;
 
     @Column(nullable = false)

@@ -49,7 +49,7 @@ public class Question {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToMany
+    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL)
     private List<Image> images;
 
     @Builder

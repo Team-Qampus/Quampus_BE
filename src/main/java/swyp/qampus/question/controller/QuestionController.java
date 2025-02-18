@@ -3,6 +3,7 @@ package swyp.qampus.question.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.question.domain.MessageResponseDto;
@@ -17,8 +18,9 @@ public class QuestionController {
 
     @PostMapping("/{user_id}")
     public ResponseEntity<QuestionResponseDto> createQuestion(@PathVariable String user_id,
-                                                              @RequestBody QuestionRequestDto requestDto) {
-        return ResponseEntity.ok(questionService.createQuestion(user_id, requestDto));
+                                                              @RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
+                                                              @RequestPart(value = "images",required = false) MultipartFile images) {
+        return ResponseEntity.ok(questionService.createQuestion(user_id, requestDto, images));
     }
 
     @PutMapping("/{question_id}")
