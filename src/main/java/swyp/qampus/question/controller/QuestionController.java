@@ -10,6 +10,8 @@ import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.service.QuestionService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/questions")
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class QuestionController {
     @PostMapping("/{user_id}")
     public ResponseEntity<QuestionResponseDto> createQuestion(@PathVariable String user_id,
                                                               @RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
-                                                              @RequestPart(value = "images",required = false) MultipartFile images) {
+                                                              @RequestPart(value = "images",required = false) List<MultipartFile> images) {
         return ResponseEntity.ok(questionService.createQuestion(user_id, requestDto, images));
     }
 

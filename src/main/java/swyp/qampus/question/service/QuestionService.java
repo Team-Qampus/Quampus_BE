@@ -20,6 +20,8 @@ import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.category.repository.CategoryRepository;
 import swyp.qampus.user.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class QuestionService {
@@ -29,7 +31,7 @@ public class QuestionService {
     private final ImageService imageService;
     private final ImageRepository imageRepository;
     @Transactional
-    public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto, MultipartFile image) {
+    public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
 
@@ -46,13 +48,15 @@ public class QuestionService {
         Question savedQuestion = questionRepository.save(question);
 
         //사진을 올린 경우 -> 사진 업로드
-        if(image!=null){
-            String url=imageService.putFileToBucket(image,"QUESTION");
-            Image newImage=Image.builder()
-                    .pictureUrl(url)
-                    .question(question)
-                    .build();
-            imageRepository.save(newImage);
+        if(images!=null){
+            List<String> urls=imageService.putFileToBucket(images,"QUESTION");
+            for (String url:urls){
+                Image newImage=Image.builder()
+                        .pictureUrl(url)
+                        .question(question)
+                        .build();
+                imageRepository.save(newImage);
+            }
         }
         return new QuestionResponseDto(savedQuestion.getQuestionId());
     }
