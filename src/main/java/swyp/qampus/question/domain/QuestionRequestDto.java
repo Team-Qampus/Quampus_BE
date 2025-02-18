@@ -11,5 +11,4 @@ public class QuestionRequestDto {
     private String title;
     private String content;
     private Long category_id;
-    private List<String> images;
 }
