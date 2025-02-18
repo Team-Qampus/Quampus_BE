@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@Builder
 public class ChoiceRequestDto {
-    Long question_id;
-    Long answer_id;
-    Boolean is_chosen;
+    private Long question_id;
+    private Long answer_id;
+    private Boolean is_chosen;
 
 }

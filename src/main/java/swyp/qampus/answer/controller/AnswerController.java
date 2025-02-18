@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
+import swyp.qampus.answer.domain.ChoiceRequestDto;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.answer.domain.AnswerResponseDto;
@@ -33,10 +34,8 @@ public class AnswerController {
     }
 
     @PostMapping("/choice")
-    public ResponseEntity<?> choice(@RequestHeader("Authorization")String token,
-                                    @RequestParam("question_id")Long question_id,
-                                    @PathVariable Long answer_id){
-        answerService.choice(answer_id,question_id,token);
+    public ResponseEntity<?> choice(@RequestHeader("Authorization")String token, @RequestBody ChoiceRequestDto requestDto){
+        answerService.choice(requestDto,token);
         return ResponseEntity.ok().body(ResponseDto.of(true,200,"채택 성공"));
     }
 }
