@@ -34,24 +34,24 @@ public class Answer {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false)
+    @Column(nullable = false,name = "created_date")
     private LocalDateTime createDate = LocalDateTime.now();
 
-    @Column(nullable = false)
+    @Column(nullable = false,name = "modified_date")
     private LocalDateTime modifiedDate = LocalDateTime.now();
-
-    @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
-    private List<Image> images;
 
     @Column(nullable = false)
     private int likeCnt = 0;
 
+    //채택
+    @Column(name = "is_chosen")
+    private Boolean isChosen;
+
     @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
     private List<Like> likeList=new ArrayList<>();
 
-    public void increaseLike() {
-        this.likeCnt++;
-    }
+    @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
+    private List<Image> images;
 
     public void update(String content) {
         this.content = content;
