@@ -67,7 +67,8 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public ResponseDto choice(Long answerId, Long questId, String token) {
+    @Transactional
+    public void choice(Long answerId, Long questId, String token) {
         //TODO:JWT로 교체
         String userId=token;
         Answer answer=answerRepository.findById(answerId).orElseThrow(
@@ -76,9 +77,16 @@ public class AnswerServiceImpl implements AnswerService {
                 ()->new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
         );
 
+        extracted(questId, userId, question, answer);
+
+        answer.setIsChosen(true);
+        answerRepository.save(answer);
+    }
+
+    private void extracted(Long questId, String userId, Question question, Answer answer) {
         //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
         if(!userId.equals(question.getUser().getUserId())){
-            throw new RestApiException(CommonErrorCode.UNAUTHORIZED);
+            throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
 
         //해당 질문에서 이미 채택한 답변이 존재하는 경우
@@ -91,10 +99,6 @@ public class AnswerServiceImpl implements AnswerService {
         if(answer.getIsChosen()){
             throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
         }
-
-        answer.setIsChosen(true);
-        answerRepository.save(answer);
-        return ResponseDto.of(true,200,"채택 성공");
     }
 
 }

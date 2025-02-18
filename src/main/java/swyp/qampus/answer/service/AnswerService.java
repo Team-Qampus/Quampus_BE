@@ -10,5 +10,5 @@ public interface AnswerService {
     AnswerResponseDto createAnswer(AnswerRequestDto requestDto);
     MessageResponseDto updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto);
     MessageResponseDto deleteAnswer(Long answer_id);
-    ResponseDto choice(Long answerId,Long questId,String token);
+    void choice(Long answerId,Long questId,String token);
 }
