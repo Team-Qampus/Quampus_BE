@@ -32,7 +32,7 @@ public class AnswerController {
         return ResponseEntity.ok(answerService.deleteAnswer(answer_id));
     }
 
-    @PostMapping("/{answer_id}/choice")
+    @PostMapping("/choice")
     public ResponseEntity<?> choice(@RequestHeader("Authorization")String token,
                                     @RequestParam("question_id")Long question_id,
                                     @PathVariable Long answer_id){
