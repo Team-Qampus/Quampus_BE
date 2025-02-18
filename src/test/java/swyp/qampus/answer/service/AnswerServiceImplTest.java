@@ -211,4 +211,66 @@ class AnswerServiceImplTest {
         verify(answer).setIsChosen(true);
         verify(answerRepository).save(answer);
     }
+
+    @Test
+    @DisplayName("[실패케이스]-이미 채택 취소된 답변에 대해 채택 취소 요청 시 예외가 발생합니다.")
+    void choiceDelete_DUPLICATED_CHOSEN(){
+        //given
+        Long answerId = 10L;
+        Long questionId = 20L;
+        String user1Id = "user1";
+        ChoiceRequestDto requestDto = ChoiceRequestDto.builder()
+                .answer_id(answerId)
+                .question_id(questionId)
+                .is_chosen(false)
+                .build();
+        Answer answer = mock(Answer.class);
+        Question question = mock(Question.class);
+        User user = mock(User.class);
+
+        when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
+        when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
+        when(question.getUser()).thenReturn(user);
+        when(question.getUser().getUserId()).thenReturn(user1Id);
+        when(answerRepository.countChoiceOfAnswer(questionId)).thenReturn(0);
+        when(answer.getIsChosen()).thenReturn(false);
+
+        //when
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            answerService.choice(requestDto, user1Id);
+        });
+
+        //then
+        assertThat(exception.getMessage()).isEqualTo("채택이 되지 않은 답변입니다. 취소가 불가능합니다.");
+    }
+    @Test
+    @DisplayName("[성공케이스]-답변을 채택 취소하면 해당 답변의 채택상태가 FALSE로 바뀝니다.")
+    void choiceDelete_SUCCESS() {
+        //given
+        Long answerId = 10L;
+        Long questionId = 20L;
+        String user1Id = "user1";
+        ChoiceRequestDto requestDto = ChoiceRequestDto.builder()
+                .answer_id(answerId)
+                .question_id(questionId)
+                .is_chosen(false)
+                .build();
+        Answer answer = mock(Answer.class);
+        Question question = mock(Question.class);
+        User user = mock(User.class);
+
+        when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
+        when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
+        when(question.getUser()).thenReturn(user);
+        when(question.getUser().getUserId()).thenReturn(user1Id);
+        when(answerRepository.countChoiceOfAnswer(questionId)).thenReturn(0);
+        when(answer.getIsChosen()).thenReturn(true);
+
+        //when
+        answerService.choice(requestDto, user1Id);
+
+        //then
+        verify(answer).setIsChosen(false);
+        verify(answerRepository).save(answer);
+    }
 }
