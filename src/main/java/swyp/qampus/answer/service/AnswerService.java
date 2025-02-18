@@ -3,12 +3,16 @@ package swyp.qampus.answer.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerResponseDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.exception.CommonErrorCode;
+import swyp.qampus.image.domain.Image;
+import swyp.qampus.image.repository.ImageRepository;
+import swyp.qampus.image.service.ImageService;
 import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.user.domain.User;
@@ -17,15 +21,19 @@ import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.user.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
     private final AnswerRepository answerRepository;
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
+    private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
     @Transactional
-    public AnswerResponseDto createAnswer(AnswerRequestDto requestDto) {
+    public AnswerResponseDto createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
         User user = userRepository.findById(requestDto.getUser_id())
                 .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
 
@@ -38,6 +46,18 @@ public class AnswerService {
                 .build();
 
         Answer savedAnswer = answerRepository.save(answer);
+
+        //사진을 올린 경우 -> 사진업로드
+        if(images!=null){
+            List<String>urls=imageService.putFileToBucket(images,"ANSWER");
+            for (String url:urls){
+                Image newImage=Image.builder()
+                        .pictureUrl(url)
+                        .answer(answer)
+                        .build();
+                imageRepository.save(newImage);
+            }
+        }
         return new AnswerResponseDto(savedAnswer.getAnswerId(), "답변 생성 성공");
     }
 
