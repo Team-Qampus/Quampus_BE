@@ -100,7 +100,7 @@ public class AnswerServiceImpl implements AnswerService {
         else{
             //이미 채택 취소된 답변에 대한 요청 시
             if(!answer.getIsChosen()){
-                throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
+                throw new RestApiException(AnswerErrorCode.DUPLICATED_NO_CHOSEN);
             }
         }
         answer.setIsChosen(type);
