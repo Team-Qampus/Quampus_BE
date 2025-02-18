@@ -12,6 +12,8 @@ import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.exception.ImageErrorCode;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,30 +24,34 @@ public class ImageServiceImpl implements ImageService {
     private static final String DIRECTORY_OF_ANSWER="/answer";
     private final AmazonS3Client objectStorageClient;
     @Override
-    public String putFileToBucket(MultipartFile file,String type) {
-
-        ObjectMetadata objectMetadata=new ObjectMetadata();
-        objectMetadata.setContentType(file.getContentType());
-        objectMetadata.setContentLength(file.getSize());
-
-        String FILE_DIRECTORY = "";
-        String fileName= UUID.randomUUID()+"_"+file.getOriginalFilename();
-
+    public List<String> putFileToBucket(List<MultipartFile> files, String type) {
         //질문하기 디렉토리
+        String FILE_DIRECTORY="";
+        List<String> urls=new ArrayList<>();
+
         if(type.equals("QUESTION")){
             FILE_DIRECTORY=BUCKET_NAME+DIRECTORY_OF_QUESTION;
-        //답변하기 디렉토리
+            //답변하기 디렉토리
         } else if (type.equals("ANSWER")) {
             FILE_DIRECTORY=BUCKET_NAME+DIRECTORY_OF_ANSWER;
         }
+        for (MultipartFile file:files){
+            ObjectMetadata objectMetadata=new ObjectMetadata();
+            objectMetadata.setContentType(file.getContentType());
+            objectMetadata.setContentLength(file.getSize());
 
-        //사진 업로드
-        try {
-            PutObjectRequest request=new PutObjectRequest(FILE_DIRECTORY,fileName,file.getInputStream(),objectMetadata);
-            objectStorageClient.putObject(request);
-        } catch (IOException e) {
-            throw new RestApiException(ImageErrorCode.FAILED_UPLOAD);
+            String fileName= UUID.randomUUID()+"_"+file.getOriginalFilename();
+            try {
+                //사진 업로드 및 url저장
+                PutObjectRequest request=new PutObjectRequest(FILE_DIRECTORY,fileName,file.getInputStream(),objectMetadata);
+                objectStorageClient.putObject(request);
+                urls.add(objectStorageClient.getUrl(BUCKET_NAME,fileName).toString());
+
+            }catch (IOException e){
+                throw new RestApiException(ImageErrorCode.FAILED_UPLOAD);
+            }
+
         }
-        return objectStorageClient.getUrl(BUCKET_NAME,fileName).toString();
+        return urls;
     }
 }

@@ -3,7 +3,11 @@ package swyp.qampus.question.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.exception.CommonErrorCode;
+import swyp.qampus.image.domain.Image;
+import swyp.qampus.image.repository.ImageRepository;
+import swyp.qampus.image.service.ImageService;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.question.domain.MessageResponseDto;
@@ -22,9 +26,10 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-
+    private final ImageService imageService;
+    private final ImageRepository imageRepository;
     @Transactional
-    public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto) {
+    public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto, MultipartFile image) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
 
@@ -39,6 +44,16 @@ public class QuestionService {
                 .build();
 
         Question savedQuestion = questionRepository.save(question);
+
+        //사진을 올린 경우 -> 사진 업로드
+        if(image!=null){
+            String url=imageService.putFileToBucket(image,"QUESTION");
+            Image newImage=Image.builder()
+                    .pictureUrl(url)
+                    .question(question)
+                    .build();
+            imageRepository.save(newImage);
+        }
         return new QuestionResponseDto(savedQuestion.getQuestionId());
     }
 

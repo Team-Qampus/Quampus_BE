@@ -3,6 +3,7 @@ package swyp.qampus.image.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import swyp.qampus.answer.domain.Answer;
+import swyp.qampus.common.BaseEntity;
 import swyp.qampus.question.domain.Question;
 
 @Entity
@@ -11,8 +12,8 @@ import swyp.qampus.question.domain.Question;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Image")
-public class Image {
+@Table(name = "Images")
+public class Image extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "image_id")
@@ -22,10 +23,10 @@ public class Image {
     private String pictureUrl;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
+    @JoinColumn(name = "question_id")
     private Question question;
 
     @ManyToOne
-    @JoinColumn(name = "answer_id", nullable = false)
+    @JoinColumn(name = "answer_id")
     private Answer answer;
 }
