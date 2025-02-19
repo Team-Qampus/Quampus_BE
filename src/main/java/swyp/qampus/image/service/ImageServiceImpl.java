@@ -12,6 +12,7 @@ import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.exception.ImageErrorCode;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
