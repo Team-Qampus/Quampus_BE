@@ -23,7 +23,7 @@ public class ImageServiceImpl implements ImageService {
     private static final String BUCKET_NAME="quampus";
     private static final String DIRECTORY_OF_QUESTION="/question";
     private static final String DIRECTORY_OF_ANSWER="/answer";
-    private final AmazonS3Client objectStorageClient;
+    private final AmazonS3Service objectStorageClient;
     @Override
     public List<String> putFileToBucket(List<MultipartFile> files, String type) {
         //질문하기 디렉토리
