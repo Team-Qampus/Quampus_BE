@@ -28,7 +28,7 @@ public class ImageServiceImpl implements ImageService {
         //질문하기 디렉토리
         String FILE_DIRECTORY="";
         List<String> urls=new ArrayList<>();
-
+        //TODO:testCode작성
         if(type.equals("QUESTION")){
             FILE_DIRECTORY=BUCKET_NAME+DIRECTORY_OF_QUESTION;
             //답변하기 디렉토리
