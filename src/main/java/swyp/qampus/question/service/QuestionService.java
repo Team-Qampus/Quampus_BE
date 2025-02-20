@@ -3,7 +3,11 @@ package swyp.qampus.question.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.exception.CommonErrorCode;
+import swyp.qampus.image.domain.Image;
+import swyp.qampus.image.repository.ImageRepository;
+import swyp.qampus.image.service.ImageService;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.question.domain.MessageResponseDto;
@@ -16,15 +20,18 @@ import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.category.repository.CategoryRepository;
 import swyp.qampus.user.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-
+    private final ImageService imageService;
+    private final ImageRepository imageRepository;
     @Transactional
-    public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto) {
+    public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
 
@@ -39,6 +46,18 @@ public class QuestionService {
                 .build();
 
         Question savedQuestion = questionRepository.save(question);
+
+        //사진을 올린 경우 -> 사진 업로드
+        if(images!=null){
+            List<String> urls=imageService.putFileToBucket(images,"QUESTION");
+            for (String url:urls){
+                Image newImage=Image.builder()
+                        .pictureUrl(url)
+                        .question(question)
+                        .build();
+                imageRepository.save(newImage);
+            }
+        }
         return new QuestionResponseDto(savedQuestion.getQuestionId());
     }
 
