@@ -59,9 +59,10 @@ public class Answer {
     }
 
     public void decreaseLike() {
-        if (this.likeCnt > 0) {
-            this.likeCnt--;
+        if (this.likeCnt < 0) {
+            this.likeCnt=0;
         }
+        this.likeCnt--;
     }
 
     public void addLike(Like like){
