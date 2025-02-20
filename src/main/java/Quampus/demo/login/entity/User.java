@@ -5,91 +5,67 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
+
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
-public class User implements UserDetails {
+public class User {
 
+    // 고유 식별자
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 비밀번호
     @Column(name = "password")
     private String password;
 
+    // 이름
     @Column(name = "name")
     private String name;
 
+    // 이메일
     @Column(name = "email")
     private String email;
 
+    // 닉네임
     @Column(name = "nickname")
     private String nickname;
 
+    // 대학교
     @Column(name = "university_name")
     private String university_name;
 
+    // 학과
     @Column(name = "major")
     private String major;
+
+    //
+    private String loginId;
+
+    // 소셜 로그인
+    private String provider;
+
+    // 프로필 이미지
+    private String profileImageUrl;
 
     private LocalDateTime created_date;
 
     private LocalDateTime modified_date;
 
+
     @Builder
-    public User(String email, String password, String nickname) {
+    public User(String name) {
+        this.name = name;
+    }
+
+    @Builder
+    public User(String email, String nickname, String password) {
         this.email = email;
-        this.password = password;
         this.nickname = nickname;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
-    }
-
-    // 사용자의 id를 반환
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    // 사용자의 패스워드를 반환
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    // 계정 만료 여부 반환
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    // 계정 장금 여부 반환
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    // 패스워드 만료여부 반환
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    // 계정 사용 가능 여부 반환
-    @Override
-    public boolean isEnabled() {
-        return true;
+        this.password = password;
     }
 }
