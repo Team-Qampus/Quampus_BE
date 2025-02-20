@@ -4,6 +4,26 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/qucampus
     username: hong
     password: zxcv1234
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: e4a82870f5fd57fa9c0327538daab1f3
+            client-secret: Sd9k2VxmIfnRctS4bc4YswhX4KlsefEr
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/auth/login/kakao
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
   jpa:
     properties:
       hibernate:
@@ -12,26 +32,6 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.MySQLDialect
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            client-id: "fe039fc9dd5a7b49274b950876c9161d"
-            client-authentication-method: post
-            authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
-            scope:
-              - profile_nickname
-              - profile_image
-              - account_email
-            client-name: Kakao
-        provider:
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
 jwt:
-  issuer: "auth@ajufresh.com"
-  secret_key: "fDEysqmgauEyvUkAa55TjDef3HK-NOtuQ1LwOc3eRrs="
+  secret: fDEysqmgauEyvUkAa55TjDef3HK-NOtuQ1LwOc3eRrs=
+  expiration: 3600000
