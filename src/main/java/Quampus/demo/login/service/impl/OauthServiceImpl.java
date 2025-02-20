@@ -9,6 +9,7 @@ import Quampus.demo.login.service.OauthService;
 import Quampus.demo.login.util.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class OauthServiceImpl implements OauthService {
 
     private final KakaoUtil kakaoUtil;
@@ -28,8 +30,11 @@ public class OauthServiceImpl implements OauthService {
     public User oAuthLogin(String code, HttpServletResponse httpServletResponse) {
 
         KakaoDTO.OAuthToken oAuthToken = kakaoUtil.requestToken(code);
+        System.out.println("oAuthToken = " + oAuthToken);
         KakaoDTO.KakaoProfile kakaoProfile = kakaoUtil.requestProfile(oAuthToken);
+        System.out.println("kakaoProfile = " + kakaoProfile);
         Optional<User> queryUser = userRepository.findByEmail(kakaoProfile.getKakao_account().getEmail());
+        System.out.println("queryUser = " + queryUser);
 
         if (queryUser.isPresent()) {
             User user = queryUser.get();

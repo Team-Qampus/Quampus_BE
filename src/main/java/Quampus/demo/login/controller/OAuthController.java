@@ -8,6 +8,7 @@ import Quampus.demo.login.service.OauthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +18,8 @@ public class OAuthController {
     private final OauthService oauthService;
 
     @GetMapping("/auth/login/kakao")
-    public BaseResponse<UserResponseDTO.JoinResultDTO> kakaoLogin(@RequestParam("code") String code, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<UserResponseDTO.JoinResultDTO> kakaoLogin(@RequestParam("code") String code, HttpServletResponse httpServletResponse) {
         User user = oauthService.oAuthLogin(code, httpServletResponse);
-        return BaseResponse.onSuccess(UserConverter.toJoinResultDTO(user));
+        return ResponseEntity.ok(UserConverter.toJoinResultDTO(user));
     }
 }

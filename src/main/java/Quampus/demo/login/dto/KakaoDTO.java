@@ -25,6 +25,8 @@ public class KakaoDTO {
         @Getter
         public class Properties {
             private String nickname;
+            private String profile_image;
+            private String thumbnail_image;
         }
 
         @Getter
@@ -53,7 +55,18 @@ public class KakaoDTO {
             @Getter
             public class Profile {
                 private String nickname;
-                private Boolean is_default_nickname;
+
+                @JsonProperty("is_default_nickname")
+                private Boolean isDefaultNickname;
+
+                @JsonProperty("profile_image_url")
+                private String profileImageUrl;
+
+                @JsonProperty("thumbnail_image_url")
+                private String thumbnailImageUrl;
+
+                @JsonProperty("is_default_image")
+                private Boolean isDefaultImage;
             }
         }
     }

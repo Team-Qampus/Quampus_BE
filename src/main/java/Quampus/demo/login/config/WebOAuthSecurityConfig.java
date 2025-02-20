@@ -1,6 +1,5 @@
 package Quampus.demo.login.config;
 
-import Quampus.demo.login.jwt.TokenProvider;
 import Quampus.demo.login.util.JWTUtil;
 import Quampus.demo.login.util.JwtFilter;
 import lombok.RequiredArgsConstructor;
