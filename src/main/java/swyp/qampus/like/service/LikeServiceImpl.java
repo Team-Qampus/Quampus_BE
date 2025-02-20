@@ -50,6 +50,7 @@ public class LikeServiceImpl implements LikeService{
                 ()->new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST)
         );
         result.answer.decreaseLike(like);
+        result.user.decreaseLike(like);
         likeRepository.delete(like);
     }
 
