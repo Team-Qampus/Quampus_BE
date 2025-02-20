@@ -50,7 +50,7 @@ public class AnswerServiceImpl implements AnswerService {
         Answer savedAnswer = answerRepository.save(answer);
         //사진을 올린 경우 -> 사진 업로드
         if(images!=null){
-            List<String> urls=imageService.putFileToBucket(images,"QUESTION");
+            List<String> urls=imageService.putFileToBucket(images,"ANSWER");
             for (String url:urls){
                 Image newImage=Image.builder()
                         .pictureUrl(url)
