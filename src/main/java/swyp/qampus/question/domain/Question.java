@@ -87,10 +87,10 @@ public class Question {
     }
 
     //나도 궁금해요 개수 감소
-    public void decreaseCurious(){
-        if(this.curiousCount<0){
-            this.curiousCount=0;
+    public void decreaseCurious(Curious curious){
+        if(this.curiousCount>0){
+            this.curiousList.remove(curious);
+            this.curiousCount--;
         }
-        this.curiousCount--;
     }
 }

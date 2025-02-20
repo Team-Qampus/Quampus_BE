@@ -28,7 +28,14 @@ public class Curious extends BaseEntity {
     private Curious(User user,Question question){
         this.user=user;
         this.question=question;
-
+        user.addCurious(this);
+        question.addCurious(this);
+    }
+    public static Curious of(User user,Question question){
+        return Curious.builder()
+                .question(question)
+                .user(user)
+                .build();
     }
 
 
