@@ -28,14 +28,15 @@ public class CuriousServiceImpl implements CuriousService{
          */
         Result result=getResult(token,questionId);
 
-        //자신의 질문 나도 궁금해요 클릭 시 예외처리
-        if(result.user.getUserId().equals(token)){
-            throw new RestApiException(CuriousErrorCode.CAN_NOT_CLICK_MINE);
-        }
 
         //이미 궁금해요 눌러져 있으면 에러 반환
         if(curiousRepository.findCuriousByQuestionAndUser(questionId,token).isPresent()){
             throw new RestApiException(CuriousErrorCode.DUPLICATED_CURIOUS_REQUEST);
+        }
+
+        //자신의 질문 나도 궁금해요 클릭 시 예외처리
+        if(result.question().getUser().getUserId().equals(token)){
+            throw new RestApiException(CuriousErrorCode.CAN_NOT_CLICK_MINE);
         }
 
         Curious curious=Curious.of(result.user(),result.question());
@@ -49,14 +50,15 @@ public class CuriousServiceImpl implements CuriousService{
         TODO:JWT교체
          */
         Result result=getResult(token,questionId);
-        //자신의 질문 나도 궁금해요 클릭 시 예외처리
-        if(result.user.getUserId().equals(token)){
-            throw new RestApiException(CuriousErrorCode.CAN_NOT_CLICK_MINE);
-        }
 
-        Curious curious=curiousRepository.findCuriousByQuestionAndUser(questionId,result.user.getUserId()).orElseThrow(
+        Curious curious=curiousRepository.findCuriousByQuestionAndUser(questionId,result.user().getUserId()).orElseThrow(
                 ()->new RestApiException(CuriousErrorCode.DUPLICATED_CURIOUS_REQUEST)
         );
+
+        //자신의 질문 나도 궁금해요 클릭 시 예외처리
+        if(result.question.getUser().getUserId().equals(token)){
+            throw new RestApiException(CuriousErrorCode.CAN_NOT_CLICK_MINE);
+        }
 
         result.question.decreaseCurious(curious);
         result.user.deleteCurious(curious);
