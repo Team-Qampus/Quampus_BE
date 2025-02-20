@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
+import swyp.qampus.answer.domain.ChoiceRequestDto;
+import swyp.qampus.common.ResponseDto;
 import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.answer.domain.AnswerResponseDto;
 import swyp.qampus.answer.service.AnswerService;
@@ -33,5 +35,11 @@ public class AnswerController {
     @DeleteMapping("/{answer_id}")
     public ResponseEntity<MessageResponseDto> deleteAnswer(@PathVariable Long answer_id) {
         return ResponseEntity.ok(answerService.deleteAnswer(answer_id));
+    }
+
+    @PostMapping("/choice")
+    public ResponseEntity<?> choice(@RequestHeader("Authorization")String token, @RequestBody ChoiceRequestDto requestDto){
+        answerService.choice(requestDto,token);
+        return ResponseEntity.ok().body(ResponseDto.of(true,200,"채택 성공"));
     }
 }
