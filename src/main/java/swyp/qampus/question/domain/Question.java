@@ -3,10 +3,12 @@ package swyp.qampus.question.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import swyp.qampus.category.domain.Category;
+import swyp.qampus.curious.domain.Curious;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.user.domain.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -49,6 +51,9 @@ public class Question {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE)
+    private List<Curious> curiousList=new ArrayList<>();
+
     @Builder
     public Question(User user,String title,String content,int viewCnt,int curious_count,Category category){
         this.user=user;
@@ -75,4 +80,17 @@ public class Question {
         this.isDeleted = true;
     }
 
+    //나도 궁금해요 개수 증가
+    public void addCurious(Curious curious){
+        this.curiousList.add(curious);
+        this.curiousCount++;
+    }
+
+    //나도 궁금해요 개수 감소
+    public void decreaseCurious(){
+        if(this.curiousCount<0){
+            this.curiousCount=0;
+        }
+        this.curiousCount--;
+    }
 }
