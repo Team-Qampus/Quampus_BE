@@ -1,7 +1,6 @@
-package swyp.qampus.interest.domain;
+package swyp.qampus.curious.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +11,10 @@ import swyp.qampus.user.domain.User;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Interest extends BaseEntity {
+public class Curious extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false,name = "interest_id")
-    private Long interestId;
+    @Column(nullable = false,name = "curious_id")
+    private Long curiousId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -26,7 +25,7 @@ public class Interest extends BaseEntity {
     private Question question;
 
     @Builder
-    private Interest(User user,Question question){
+    private Curious(User user,Question question){
         this.user=user;
         this.question=question;
 
