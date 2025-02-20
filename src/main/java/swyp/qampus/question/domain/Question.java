@@ -49,9 +49,6 @@ public class Question {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToMany
-    private List<Image> images;
-
     @Builder
     public Question(User user,String title,String content,int viewCnt,int curious_count,Category category){
         this.user=user;
