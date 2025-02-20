@@ -1,16 +1,16 @@
 package Quampus.demo.login.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Entity
 @Getter
+@Builder
 public class User {
 
     // 고유 식별자
@@ -32,40 +32,24 @@ public class User {
     private String email;
 
     // 닉네임
-    @Column(name = "nickname")
+    @Column(name = "nickname" , nullable = false)
     private String nickname;
 
     // 대학교
-    @Column(name = "university_name")
-    private String university_name;
+    @Column(name = "university_name" , nullable = false)
+    private String universityName;
 
     // 학과
     @Column(name = "major")
     private String major;
 
-    //
-    private String loginId;
-
-    // 소셜 로그인
-    private String provider;
-
     // 프로필 이미지
     private String profileImageUrl;
 
-    private LocalDateTime created_date;
+    @Column(nullable = false)
+    private LocalDateTime createdDate;
 
-    private LocalDateTime modified_date;
+    @Column(nullable = false)
+    private LocalDateTime modifiedDate;
 
-
-    @Builder
-    public User(String name) {
-        this.name = name;
-    }
-
-    @Builder
-    public User(String email, String nickname, String password) {
-        this.email = email;
-        this.nickname = nickname;
-        this.password = password;
-    }
 }
