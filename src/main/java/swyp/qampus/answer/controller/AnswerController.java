@@ -26,14 +26,14 @@ public class AnswerController {
     }
 
     @PutMapping("/{answer_id}")
-    public ResponseEntity<?> updateAnswer(@PathVariable Long answer_id,
+    public ResponseEntity<?> updateAnswer(@PathVariable(name = "answer_id") Long answer_id,
                                                            @RequestBody AnswerUpdateRequestDto requestDto) {
         answerService.updateAnswer(answer_id, requestDto);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 수정 성공"));
     }
 
     @DeleteMapping("/{answer_id}")
-    public ResponseEntity<?> deleteAnswer(@PathVariable Long answer_id) {
+    public ResponseEntity<?> deleteAnswer(@PathVariable(name = "answer_id") Long answer_id) {
         answerService.deleteAnswer(answer_id);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 삭제 성공"));
     }
