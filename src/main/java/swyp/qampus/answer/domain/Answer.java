@@ -73,6 +73,7 @@ public class Answer {
     public void setIsChosen(Boolean chosen){
         this.isChosen=chosen;
     }
+
     @Builder
     public Answer(String content,int likeCnt,Question question,User user){
         this.likeCnt=likeCnt;
