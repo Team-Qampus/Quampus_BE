@@ -10,10 +10,9 @@ import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
-import swyp.qampus.question.domain.MessageResponseDto;
-import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.category.domain.Category;
 import swyp.qampus.question.domain.Question;
+import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.user.domain.User;
 import swyp.qampus.exception.CustomException;
 import swyp.qampus.question.repository.QuestionRepository;
@@ -24,14 +23,16 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionService {
+public class QuestionService implements QuestionServiceImpl{
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ImageService imageService;
     private final ImageRepository imageRepository;
+
     @Transactional
-    public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
+    @Override
+    public void createQuestion(String user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
 
@@ -58,28 +59,27 @@ public class QuestionService {
                 imageRepository.save(newImage);
             }
         }
-        return new QuestionResponseDto(savedQuestion.getQuestionId());
     }
 
     @Transactional
-    public MessageResponseDto updateQuestion(Long question_id, QuestionUpdateRequestDto requestDto) {
+    @Override
+    public void updateQuestion(Long question_id, QuestionUpdateRequestDto requestDto) {
         Question question = questionRepository.findById(question_id)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         Category category = categoryRepository.findById(requestDto.getCategory_id())
                 .orElseThrow(() -> new CustomException(CommonErrorCode.CATEGORY_NOT_FOUND));
 
         question.update(requestDto.getTitle(), requestDto.getContent(), category);
-        return new MessageResponseDto("질문 수정 성공");
     }
 
     @Transactional
-    public MessageResponseDto deleteQuestion(Long question_id) {
+    @Override
+    public void deleteQuestion(Long question_id) {
         Question question = questionRepository.findById(question_id)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         question.delete();
-        return new MessageResponseDto("질문 삭제 성공");
     }
 
 }

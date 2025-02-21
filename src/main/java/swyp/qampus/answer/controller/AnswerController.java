@@ -8,8 +8,6 @@ import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
 import swyp.qampus.answer.domain.ChoiceRequestDto;
 import swyp.qampus.common.ResponseDto;
-import swyp.qampus.question.domain.MessageResponseDto;
-import swyp.qampus.answer.domain.AnswerResponseDto;
 import swyp.qampus.answer.service.AnswerService;
 
 import java.util.List;
@@ -21,20 +19,23 @@ public class AnswerController {
     private final AnswerService answerService;
 
     @PostMapping
-    public ResponseEntity<AnswerResponseDto> createAnswer(@RequestPart(value = "requestDto",required = true) AnswerRequestDto requestDto,
+    public ResponseEntity<?> createAnswer(@RequestPart(value = "requestDto",required = true) AnswerRequestDto requestDto,
                                                           @RequestPart(value = "images",required = false)List<MultipartFile>images) {
-        return ResponseEntity.ok(answerService.createAnswer(requestDto,images));
+        answerService.createAnswer(requestDto, images);
+        return ResponseEntity.ok().body(ResponseDto.of(true, 200, "답변 생성 성공"));
     }
 
     @PutMapping("/{answer_id}")
-    public ResponseEntity<MessageResponseDto> updateAnswer(@PathVariable Long answer_id,
+    public ResponseEntity<?> updateAnswer(@PathVariable Long answer_id,
                                                            @RequestBody AnswerUpdateRequestDto requestDto) {
-        return ResponseEntity.ok(answerService.updateAnswer(answer_id, requestDto));
+        answerService.updateAnswer(answer_id, requestDto);
+        return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 수정 성공"));
     }
 
     @DeleteMapping("/{answer_id}")
-    public ResponseEntity<MessageResponseDto> deleteAnswer(@PathVariable Long answer_id) {
-        return ResponseEntity.ok(answerService.deleteAnswer(answer_id));
+    public ResponseEntity<?> deleteAnswer(@PathVariable Long answer_id) {
+        answerService.deleteAnswer(answer_id);
+        return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 삭제 성공"));
     }
 
     @PostMapping("/choice")
