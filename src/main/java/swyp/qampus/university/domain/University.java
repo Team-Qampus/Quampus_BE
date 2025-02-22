@@ -38,13 +38,13 @@ public class University {
     }
 
     //채택 수 증가
-    void addChoiceCnt(){
+    public void increaseChoiceCnt(){
         this.monthlyChoiceCnt++;
         this.weeklyChoiceCnt++;
     }
 
     //채택 수 감소
-    void decreaseChoiceCnt(){
+    public void decreaseChoiceCnt(){
         if(weeklyChoiceCnt>0){
             weeklyChoiceCnt--;
         }

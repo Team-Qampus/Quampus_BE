@@ -37,7 +37,7 @@ public class AnswerController {
         return ResponseEntity.ok(answerService.deleteAnswer(answer_id));
     }
 
-    @PostMapping("/choice")
+    @PutMapping("/choice")
     public ResponseEntity<?> choice(@RequestHeader("Authorization")String token, @RequestBody ChoiceRequestDto requestDto){
         answerService.choice(requestDto,token);
         return ResponseEntity.ok().body(ResponseDto.of(true,200,"채택 성공"));

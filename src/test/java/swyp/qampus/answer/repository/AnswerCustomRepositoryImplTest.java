@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.category.domain.Category;
 import swyp.qampus.category.repository.CategoryRepository;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class AnswerCustomRepositoryImplTest {
     @Autowired
     private AnswerRepository answerRepository;
@@ -114,27 +116,18 @@ class AnswerCustomRepositoryImplTest {
 
     private exampleUser getExampleUser() {
         User user1 = User.builder()
-                .userId("test123")
                 .email("tkv@naver.com")
                 .major("컴퓨터 공학")
-                .universityName("서울대")
-                .password("Pwed")
                 .name("123")
                 .build();
         User user2 = User.builder()
-                .userId("test1234")
                 .email("1sw@naver.com")
                 .major("컴퓨터 공학")
-                .universityName("서울대")
-                .password("Pwed")
                 .name("11231")
                 .build();
         User user3 = User.builder()
-                .userId("test1235")
                 .email("tk2v@naver.com")
                 .major("컴퓨터 공학")
-                .universityName("서울대")
-                .password("Pwed")
                 .name("23123")
                 .build();
         userRepository.saveAll(List.of(user1,user2,user3));

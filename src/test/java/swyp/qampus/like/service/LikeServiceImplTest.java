@@ -14,6 +14,7 @@ import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.like.repository.LikeRepository;
+import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.user.domain.User;
 import swyp.qampus.user.repository.UserRepository;
 
@@ -25,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
 class LikeServiceImplTest {
     @Autowired
     private LikeService likeService;
@@ -39,17 +39,18 @@ class LikeServiceImplTest {
     @MockitoBean
     private AnswerRepository answerRepository;
 
-    private User initUser(String userId){
+    @MockitoBean
+    private JWTUtil jwtUtil;
+
+    private User initUser(){
         User user=User.builder()
-                .userId(userId)
                 .email("tt")
                 .major("tt")
                 .name("tt")
-                .universityName("tt")
                 .build();
         return user;
     }
-    private Answer initAnswer(Long answerId,User user){
+    private Answer initAnswer(User user){
         return Answer.builder()
                 .user(user)
                 .content("as")
@@ -95,17 +96,18 @@ class LikeServiceImplTest {
     @DisplayName("[실패케이스]좋아요 클릭-답변이 존재하지 않는 경우 예외가 발생합니다. ")
     void notExistAnswer_insert() {
         //given
-        String userId="invalid";
-        User user=initUser(userId);
+        Long userId=2L;
+        String token="token";
+        User user=initUser();
 
         Long answerId=1L;
-
+        when(jwtUtil.getUserIdFromToken(token)).thenReturn(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(answerRepository.findById(any())).thenReturn(Optional.empty());
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
-            likeService.insert(userId, answerId);
+            likeService.insert(token, answerId);
         });
 
         //then
@@ -116,23 +118,22 @@ class LikeServiceImplTest {
     @DisplayName("[실패케이스]좋아요 삭제-답변이 존재하지 않는 경우 예외가 발생합니다. ")
     void notExistAnswer_delete() {
         //given
-        String userId="invalid";
+        Long userId=2L;
+        String token="token";
         User user=User.builder()
-                .userId(userId)
                 .email("tt"+userId)
                 .major("tt"+userId)
                 .name("tt"+userId)
-                .universityName("tt"+userId)
                 .build();
 
         Long answerId=1L;
-
+        when(jwtUtil.getUserIdFromToken(token)).thenReturn(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(answerRepository.findById(any())).thenReturn(Optional.empty());
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
-            likeService.delete(userId, answerId);
+            likeService.delete(token, answerId);
         });
 
         //then
@@ -145,8 +146,8 @@ class LikeServiceImplTest {
         //given
         Long answerId=1L;
         String userId="fake";
-        User user=initUser(userId);
-        Answer answer=initAnswer(answerId,user);
+        User user=initUser();
+        Answer answer=initAnswer(user);
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
@@ -169,8 +170,8 @@ class LikeServiceImplTest {
         //given
         Long answerId=1L;
         String userId="fake";
-        User user=initUser(userId);
-        Answer answer=initAnswer(answerId,user);
+        User user=initUser();
+        Answer answer=initAnswer(user);
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
@@ -192,25 +193,27 @@ class LikeServiceImplTest {
         //given
         Long answerId1=1L;
         Long answerId2=2L;
-        String userId1="fake1";
-        String userId2="fake2";
-        User user1=initUser(userId1);
-        User user2=initUser(userId2);
+        String token1="fake1";
+        String token2="fake2";
+        User user1=initUser();
+        User user2=initUser();
         //유저1이 쓴 답변
-        Answer answer1=initAnswer(answerId1,user1);
+        Answer answer1=initAnswer(user1);
         //유저2가 쓴 답변->좋아요 0개
-        Answer answer2=initAnswer(answerId2,user2);
+        Answer answer2=initAnswer(user2);
 
-        when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
-        when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
-        when(userRepository.saveAll(List.of(user1,user2))).thenReturn(List.of(user1,user2));
+        when(jwtUtil.getUserIdFromToken(token1)).thenReturn(user1.getUserId());
+        when(jwtUtil.getUserIdFromToken(token2)).thenReturn(user2.getUserId());
+
+        when(userRepository.findById(user1.getUserId())).thenReturn(Optional.of(user1));
+        when(userRepository.findById(user2.getUserId())).thenReturn(Optional.of(user2));
 
         when(answerRepository.findById(answerId1)).thenReturn(Optional.of(answer1));
         when(answerRepository.findById(answerId2)).thenReturn(Optional.of(answer2));
 
         //when
-        likeService.insert(userId1,answerId1);
-        likeService.insert(userId2,answerId1);
+        likeService.insert(token1,answerId1);
+        likeService.insert(token2,answerId1);
 
         //then
         Answer findAnswer1=answerRepository.findById(answerId1)
@@ -226,46 +229,44 @@ class LikeServiceImplTest {
     }
 
     @Test
-    @DisplayName("[성공케이스]-좋아요를 누르면 좋아요가 1씩 감소합니다.")
-    void clickLike_delete(){
-        //given
-        Long answerId1=1L;
-        Long answerId2=2L;
-        String userId1="fake1";
-        String userId2="fake2";
-        User user1=initUser(userId1);
-        User user2=initUser(userId2);
-        //유저1이 쓴 답변
-        Answer answer1=initAnswer(answerId1,user1);
-        //유저2가 쓴 답변->좋아요 0개
-        Answer answer2=initAnswer(answerId2,user2);
+    @DisplayName("[성공케이스] - 좋아요를 누르면 좋아요가 1씩 감소합니다.")
+    void clickLike_delete() {
+        // given
+        Long answerId1 = 1L;
+        Long answerId2 = 2L;
+        String token1 = "fake1";
+        String token2 = "fake2";
+        User user1 = initUser();
+        User user2 = initUser();
 
-        when(userRepository.findById(userId1)).thenReturn(Optional.of(user1));
-        when(userRepository.findById(userId2)).thenReturn(Optional.of(user2));
+        Answer answer1 = initAnswer(user1);
+        Answer answer2 = initAnswer(user2);
+
+        Like like1 = Like.of(user1, answer1); // 유저1이 answer1에 좋아요 누름
+        Like like2 = Like.of(user2, answer1); // 유저1이 answer1에 좋아요 누름
+        Like like3 = Like.of(user2, answer2); // 유저1이 answer1에 좋아요 누름
+
+        when(jwtUtil.getUserIdFromToken(token1)).thenReturn(user1.getUserId());
+        when(jwtUtil.getUserIdFromToken(token2)).thenReturn(user2.getUserId());
+
+        when(userRepository.findById(user1.getUserId())).thenReturn(Optional.of(user1));
+        when(userRepository.findById(user2.getUserId())).thenReturn(Optional.of(user2));
         when(answerRepository.findById(answerId1)).thenReturn(Optional.of(answer1));
         when(answerRepository.findById(answerId2)).thenReturn(Optional.of(answer2));
 
-        when(likeRepository.findLikesByAnswerAndUser(answerId1, userId1))
-                .thenReturn(Optional.empty())  // 첫 번째 호출
-                .thenReturn(Optional.of(Like.of(user1, answer1)));  // delete 메소드에서의 호출
-        when(likeRepository.findLikesByAnswerAndUser(answerId1, userId2))
-                .thenReturn(Optional.empty());
-        when(likeRepository.findLikesByAnswerAndUser(answerId2, userId2))
-                .thenReturn(Optional.empty());
-
-
-
-        //when
-        likeService.insert(userId1,answerId1);
-        likeService.insert(userId2,answerId1);
-        likeService.insert(userId2, answerId2);
-
-        assertThat(answer1.getLikeCnt()).isEqualTo(3);
+        // 좋아요 추가
+        assertThat(answer1.getLikeCnt()).isEqualTo(2);
         assertThat(answer2.getLikeCnt()).isEqualTo(1);
 
-        likeService.delete(userId1,answerId1);
+        // when - 좋아요 삭제
+        when(likeRepository.findLikesByAnswerAndUser(answerId1, user1.getUserId()))
+                .thenReturn(Optional.of(like1)); // 유저1이 answer1에 좋아요를 눌렀으므로 Optional.of() 반환
 
-        //then
-        assertThat(answer1.getLikeCnt()).isEqualTo(2);
+        likeService.delete(token1, answerId1);
+
+        // then
+        assertThat(answer1.getLikeCnt()).isEqualTo(1);
+        verify(likeRepository, times(1)).delete(like1); // 좋아요가 삭제되었는지 검증
     }
+
 }

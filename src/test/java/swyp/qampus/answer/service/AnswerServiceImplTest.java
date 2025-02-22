@@ -12,6 +12,7 @@ import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.answer.domain.ChoiceRequestDto;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.exception.RestApiException;
+import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.user.domain.User;
@@ -37,6 +38,8 @@ class AnswerServiceImplTest {
 
     @MockitoBean
     QuestionRepository questionRepository;
+    @MockitoBean
+    JWTUtil jwtUtil;
 
     @Test
     @DisplayName("[실패케이스]-답변이 존재하지 않는 경우 예외가 발생합니다.")
@@ -92,8 +95,9 @@ class AnswerServiceImplTest {
         //given
         Long answerId = 10L;
         Long questionId = 20L;
-        String user1Id = "user1";
-        String user2Id = "user2";
+        Long user1Id = 1L;
+        Long user2Id = 2L;
+        String token="token";
         ChoiceRequestDto requestDto = ChoiceRequestDto.builder()
                 .answer_id(answerId)
                 .question_id(questionId)
@@ -110,7 +114,7 @@ class AnswerServiceImplTest {
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
-            answerService.choice(requestDto, user1Id);
+            answerService.choice(requestDto, token);
         });
 
         //then
@@ -123,8 +127,8 @@ class AnswerServiceImplTest {
         //given
         Long answerId = 10L;
         Long questionId = 20L;
-        String user1Id = "user1";
-
+        Long user1Id =1L;
+        String token="token";
         ChoiceRequestDto requestDto = ChoiceRequestDto.builder()
                 .answer_id(answerId)
                 .question_id(questionId)
@@ -142,7 +146,7 @@ class AnswerServiceImplTest {
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
-            answerService.choice(requestDto, user1Id);
+            answerService.choice(requestDto, token);
         });
 
         //then
@@ -155,7 +159,8 @@ class AnswerServiceImplTest {
         //given
         Long answerId = 10L;
         Long questionId = 20L;
-        String user1Id = "user1";
+        Long user1Id = 1L;
+        String token="token";
         ChoiceRequestDto requestDto = ChoiceRequestDto.builder()
                 .answer_id(answerId)
                 .question_id(questionId)
@@ -174,7 +179,7 @@ class AnswerServiceImplTest {
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
-            answerService.choice(requestDto, user1Id);
+            answerService.choice(requestDto, token);
         });
 
         //then
@@ -187,7 +192,8 @@ class AnswerServiceImplTest {
         //given
         Long answerId = 10L;
         Long questionId = 20L;
-        String user1Id = "user1";
+        Long user1Id = 1L;
+        String token="token";
         ChoiceRequestDto requestDto = ChoiceRequestDto.builder()
                 .answer_id(answerId)
                 .question_id(questionId)
@@ -205,7 +211,7 @@ class AnswerServiceImplTest {
         when(answer.getIsChosen()).thenReturn(false);
 
         //when
-        answerService.choice(requestDto, user1Id);
+        answerService.choice(requestDto, token);
 
         //then
         verify(answer).setIsChosen(true);
@@ -218,7 +224,8 @@ class AnswerServiceImplTest {
         //given
         Long answerId = 10L;
         Long questionId = 20L;
-        String user1Id = "user1";
+        Long user1Id = 1L;
+        String token="token";
         ChoiceRequestDto requestDto = ChoiceRequestDto.builder()
                 .answer_id(answerId)
                 .question_id(questionId)
@@ -237,7 +244,7 @@ class AnswerServiceImplTest {
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
-            answerService.choice(requestDto, user1Id);
+            answerService.choice(requestDto,token );
         });
 
         //then
@@ -249,7 +256,8 @@ class AnswerServiceImplTest {
         //given
         Long answerId = 10L;
         Long questionId = 20L;
-        String user1Id = "user1";
+        Long user1Id = 1L;
+        String token="token";
         ChoiceRequestDto requestDto = ChoiceRequestDto.builder()
                 .answer_id(answerId)
                 .question_id(questionId)
@@ -267,7 +275,7 @@ class AnswerServiceImplTest {
         when(answer.getIsChosen()).thenReturn(true);
 
         //when
-        answerService.choice(requestDto, user1Id);
+        answerService.choice(requestDto, token);
 
         //then
         verify(answer).setIsChosen(false);

@@ -13,9 +13,13 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.exception.UniversityErrorCode;
+import swyp.qampus.university.repository.UniversityRepository;
 import swyp.qampus.user.domain.User;
 import swyp.qampus.exception.CustomException;
 import swyp.qampus.exception.ErrorCode;
@@ -32,6 +36,8 @@ public class AnswerServiceImpl implements AnswerService {
     private final QuestionRepository questionRepository;
     private final ImageService imageService;
     private final ImageRepository imageRepository;
+    private final JWTUtil jwtUtil;
+    private final UniversityRepository universityRepository;
 
     @Transactional
     @Override
@@ -87,7 +93,11 @@ public class AnswerServiceImpl implements AnswerService {
     @Transactional
     public void choice(ChoiceRequestDto choiceRequestDto, String token) {
         //TODO:JWT로 교체
-        String userId=token;
+        Long userId=jwtUtil.getUserIdFromToken(token);
+        //유저 찾기
+        User user=userRepository.findById(userId).orElseThrow(
+                ()->new RestApiException(CommonErrorCode.USER_NOT_FOUND)
+        );
         Answer answer=answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
                 ()-> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
         Question question=questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
@@ -98,13 +108,15 @@ public class AnswerServiceImpl implements AnswerService {
         if(!userId.equals(question.getUser().getUserId())){
             throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
-        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(),answer,type);
+        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(),answer,type,user);
 
         answerRepository.save(answer);
     }
 
-    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
+    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type,User user) {
         //채택하는 경우
+        University university=universityRepository.findById(user.getUniversity().getUniversityId()).orElseThrow(()->
+                new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
         if(type){
             //해당 질문에서 이미 채택한 답변이 존재하는 경우
             Integer exitedChosen=answerRepository.countChoiceOfAnswer(questId);
@@ -115,6 +127,8 @@ public class AnswerServiceImpl implements AnswerService {
             if(answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
             }
+            university.increaseChoiceCnt();
+            universityRepository.save(university);
         }
         //채택 취소하는 경우
         else{
@@ -122,6 +136,8 @@ public class AnswerServiceImpl implements AnswerService {
             if(!answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_NO_CHOSEN);
             }
+            university.decreaseChoiceCnt();
+            universityRepository.save(university);
         }
         answer.setIsChosen(type);
     }
