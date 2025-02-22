@@ -29,10 +29,11 @@ public class LikeServiceImpl implements LikeService{
         /*
         TODO: jwt로 교체 해야함
         */
-        Result result = getResult(token, answerId);
+        Long userId=jwtUtil.getUserIdFromToken(token);
+        Result result = getResult(userId, answerId);
         //임
         //이미 좋아요가 눌러져있으면 에러 반환
-        if(likeRepository.findLikesByAnswerAndUser(answerId, jwtUtil.getUserIdFromToken(token)).isPresent()){
+        if(likeRepository.findLikesByAnswerAndUser(answerId,userId ).isPresent()){
             throw new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST);
         }
 
@@ -46,18 +47,19 @@ public class LikeServiceImpl implements LikeService{
         /*
         TODO: jwt로 교체 해야함
         */
-        Result result=getResult(token,answerId);
+        Long userId= jwtUtil.getUserIdFromToken(token);
+        Result result=getResult(userId,answerId);
 
-        Like like=likeRepository.findLikesByAnswerAndUser(answerId,result.user.getUserId()).orElseThrow(
+        Like like=likeRepository.findLikesByAnswerAndUser(answerId,result.user().getUserId()).orElseThrow(
                 ()->new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST)
         );
         result.answer.decreaseLike();
         likeRepository.delete(like);
     }
 
-    private Result getResult(String token, Long answerId) {
+    private Result getResult(Long userId, Long answerId) {
         //유저 예외처리
-        User user=userRepository.findById(jwtUtil.getUserIdFromToken(token))
+        User user=userRepository.findById(userId)
                 .orElseThrow(()->new RestApiException(CommonErrorCode.USER_NOT_FOUND));
         //답변 예외처리
         Answer answer=answerRepository.findById(answerId)

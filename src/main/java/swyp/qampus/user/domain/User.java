@@ -21,6 +21,7 @@ import java.util.List;
 public class User  {
     @Id
     @Column(nullable = false, name = "user_id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
 
     @Column(nullable = false, length = 100)
@@ -28,11 +29,6 @@ public class User  {
 
     @Column(nullable = false, unique = true, length = 255)
     private String email;
-
-    @Column(nullable = false, length = 255)
-    private String password;
-
-
 
     @Column(length = 255)
     private String major;
@@ -57,11 +53,10 @@ public class User  {
     private University university;
 
     @Builder
-    public User(Long userId, String name, String email, String password, String major){
+    public User(Long userId, String name, String email, String major){
         this.userId = userId;
         this.name = name;
         this.email = email;
-        this.password = password;
         this.major = major;
     }
     public void addQuestion(Question question){

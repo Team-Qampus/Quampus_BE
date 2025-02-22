@@ -20,7 +20,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
-@ActiveProfiles("test")
 @Transactional
 class LikeRepositoryCustomImplTest {
     @Autowired
@@ -35,12 +34,9 @@ class LikeRepositoryCustomImplTest {
     void notClickLikesReturnToEmpty(){
         //given
         User user=User.builder()
-                .userId("test1")
                 .email("test@naver.com")
                 .name("test11")
-                .password("abcd")
                 .major("컴공과")
-                .universityName("서울대")
                 .build();
         userRepository.save(user);
 
@@ -65,20 +61,14 @@ class LikeRepositoryCustomImplTest {
     void clickLikesReturnToEmpty(){
         //given
         User user1=User.builder()
-                .userId("test1")
                 .email("test@naver.com")
                 .name("test11")
-                .password("abcd")
                 .major("컴공과")
-                .universityName("서울대")
                 .build();
         User user2=User.builder()
-                .userId("test2")
                 .email("test2@naver.com")
                 .name("test22")
-                .password("abcd2")
                 .major("컴공과")
-                .universityName("서울대")
                 .build();
         userRepository.saveAll(List.of(user1,user2));
 
@@ -109,20 +99,14 @@ class LikeRepositoryCustomImplTest {
     void clickLike(){
         //given
         User user1=User.builder()
-                .userId("test1")
                 .email("test1@naver.com")
                 .name("test11")
-                .password("abcd")
                 .major("컴공과")
-                .universityName("서울대")
                 .build();
         User user2=User.builder()
-                .userId("test2")
                 .email("test@naver.com")
                 .name("test11")
-                .password("abcd")
                 .major("컴공과")
-                .universityName("서울대")
                 .build();
         userRepository.saveAll(List.of(user1,user2));
 

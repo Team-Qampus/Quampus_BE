@@ -45,7 +45,7 @@ public class Answer {
 
     //채택
     @Column(name = "is_chosen",nullable = false)
-    private Boolean isChosen;
+    private Boolean isChosen=false;
 
     @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
     private List<Like> likeList=new ArrayList<>();
