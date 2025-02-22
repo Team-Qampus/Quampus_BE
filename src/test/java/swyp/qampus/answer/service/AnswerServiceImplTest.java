@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
 class AnswerServiceImplTest {
     @Autowired
     AnswerService answerService;
