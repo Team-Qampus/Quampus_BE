@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.category.domain.Category;
 import swyp.qampus.category.repository.CategoryRepository;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@Transactional
 class AnswerCustomRepositoryImplTest {
     @Autowired
     private AnswerRepository answerRepository;
@@ -116,17 +117,17 @@ class AnswerCustomRepositoryImplTest {
 
     private exampleUser getExampleUser() {
         User user1 = User.builder()
-                .email("tkv@naver.com")
+                .email("tkvqweqw@naver.com")
                 .major("컴퓨터 공학")
                 .name("123")
                 .build();
         User user2 = User.builder()
-                .email("1sw@naver.com")
+                .email("1swqweqweqeq@naver.com")
                 .major("컴퓨터 공학")
                 .name("11231")
                 .build();
         User user3 = User.builder()
-                .email("tk2v@naver.com")
+                .email("tk2vqq@naver.com")
                 .major("컴퓨터 공학")
                 .name("23123")
                 .build();
