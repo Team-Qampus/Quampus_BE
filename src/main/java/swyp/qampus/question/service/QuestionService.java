@@ -31,7 +31,7 @@ public class QuestionService {
     private final ImageService imageService;
     private final ImageRepository imageRepository;
     @Transactional
-    public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
+    public QuestionResponseDto createQuestion(Long user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
         User user = userRepository.findById(user_id)
                 .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
 

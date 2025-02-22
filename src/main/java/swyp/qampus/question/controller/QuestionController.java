@@ -19,7 +19,7 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/{user_id}")
-    public ResponseEntity<QuestionResponseDto> createQuestion(@PathVariable String user_id,
+    public ResponseEntity<QuestionResponseDto> createQuestion(@PathVariable Long user_id,
                                                               @RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
                                                               @RequestPart(value = "images",required = false) List<MultipartFile> images) {
         return ResponseEntity.ok(questionService.createQuestion(user_id, requestDto, images));
