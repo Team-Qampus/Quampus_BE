@@ -6,6 +6,7 @@ import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.common.BaseEntity;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
+import swyp.qampus.university.domain.University;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,8 +32,7 @@ public class User  {
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(length = 100)
-    private String universityName;
+
 
     @Column(length = 255)
     private String major;
@@ -52,13 +52,16 @@ public class User  {
     @OneToMany(mappedBy = "user")
     private List<Answer> answers=new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "university_id")
+    private University university;
+
     @Builder
-    public User(String userId, String name, String email, String password, String universityName, String major){
+    public User(String userId, String name, String email, String password, String major){
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.universityName = universityName;
         this.major = major;
     }
     public void addQuestion(Question question){
