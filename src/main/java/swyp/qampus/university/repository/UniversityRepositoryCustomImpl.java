@@ -56,10 +56,10 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
                             " univ.universityId," +
                             " univ.universityName," +
-                            " rank() over (order by univ.weeklyChoiceCnt desc)," +
-                            " size(univ.users)," +
-                            " case when :choiceCntAll = 0 then 0 else (univ.weeklyChoiceCnt/:choiceCntAll)*100 end ," +
-                            " :choiceCntAll" +
+                            " cast(rank() over (order by univ.weeklyChoiceCnt desc) as integer) ," +
+                            " cast(size(univ.users) as long) ," +
+                            " cast(case when :choiceCntAll = 0 then 0 else (univ.weeklyChoiceCnt/:choiceCntAll)*100 end as integer) ," +
+                            " univ.weeklyChoiceCnt " +
                             ") " +
                             "from University as univ " +
                             "order by univ.weeklyChoiceCnt desc ";
@@ -71,10 +71,10 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
                             " univ.universityId," +
                             " univ.universityName," +
-                            " rank() over (order by univ.monthlyChoiceCnt desc)," +
-                            " size(univ.users)," +
-                            " case when :choiceCntAll = 0 then 0 else (univ.monthlyChoiceCnt/:choiceCntAll)*100 end," +
-                            " :choiceCntAll " +
+                            " cast(rank() over (order by univ.monthlyChoiceCnt desc) as integer) ," +
+                            " cast( size(univ.users) as long) ," +
+                            " cast(case when :choiceCntAll = 0 then 0 else (univ.monthlyChoiceCnt/:choiceCntAll)*100 end as integer)," +
+                            " univ.monthlyChoiceCnt  " +
                             ") " +
                             "from University as univ " +
                             "order by univ.monthlyChoiceCnt desc ";
@@ -120,7 +120,6 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                         ))
                         .from(university)
                         .leftJoin(university.users, user)
-                        .fetchJoin()
                         .leftJoin(user.questions, question)
                         .leftJoin(user.answers, answer)
                         .where(university.universityName.eq(universityName))

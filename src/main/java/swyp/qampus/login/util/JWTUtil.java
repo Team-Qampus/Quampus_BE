@@ -72,6 +72,6 @@ public class JWTUtil {
     임시 유저아이디 추출 메서드
     * */
     public Long getUserIdFromToken(String token){
-        return 1L;
+        return Long.parseLong(token);
     }
 }

@@ -23,7 +23,7 @@ public class UniversityController {
     @GetMapping("/university/rank")
     public ResponseEntity<?>getRanking(@RequestHeader("Authorization")String token,
                                        @RequestParam(value = "limit",required = false)Integer limit,
-                                       @RequestParam("period")String period){
+                                       @RequestParam(value = "period")String period){
         Optional<List<UniversityRankResponseDto>>results=universityService
                 .getUniversityRanking(token,limit,period);
 
@@ -31,5 +31,12 @@ public class UniversityController {
         response.put("ranking",results.orElse(null));
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/university/detail")
+    public ResponseEntity<?>getUniversityName(@RequestHeader("Authorization")String token,
+                                              @RequestParam("name")String universityName){
+
+        return ResponseEntity.ok(universityService.getUniversityDetail(token,universityName));
     }
 }
