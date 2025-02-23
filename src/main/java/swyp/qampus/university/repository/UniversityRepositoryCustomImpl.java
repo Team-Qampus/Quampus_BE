@@ -27,8 +27,10 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                 Integer.class
         ).getSingleResult();
 
+        String query="";
+
         if (period.equals("weekly")) {
-            String query =
+             query =
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
                             " univ.universityId," +
                             " univ.universityName," +
@@ -39,16 +41,10 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                             "from University as univ " +
                             "order by univ.weeklyChoiceCnt desc ";
 
-            return Optional.of(
-                    em.createQuery(query, UniversityRankResponseDto.class)
-                            .setParameter("choiceCntAll", choiceCntAll)
-                            .setMaxResults(limit)
-                            .getResultList()
-            );
         }
 
         if (period.equals("monthly")) {
-            String query =
+             query =
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
                             " univ.universityId," +
                             " univ.universityName," +
@@ -59,6 +55,15 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                             "from University as univ " +
                             "order by univ.monthlyChoiceCnt desc ";
 
+        }
+
+        if(limit == null){
+            return Optional.of(
+                    em.createQuery(query, UniversityRankResponseDto.class)
+                            .setParameter("choiceCntAll", choiceCntAll)
+                            .getResultList()
+            );
+        }else{
             return Optional.of(
                     em.createQuery(query, UniversityRankResponseDto.class)
                             .setParameter("choiceCntAll", choiceCntAll)
@@ -66,7 +71,5 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                             .getResultList()
             );
         }
-
-        return Optional.empty();
     }
 }
