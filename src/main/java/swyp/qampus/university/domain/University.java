@@ -37,6 +37,10 @@ public class University {
         this.universityName=universityName;
     }
 
+    //유저 추가
+    public void addUser(User user){
+        this.users.add(user);
+    }
     //채택 수 증가
     public void increaseChoiceCnt(){
         this.monthlyChoiceCnt++;

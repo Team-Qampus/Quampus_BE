@@ -53,11 +53,12 @@ public class User  {
     private University university;
 
     @Builder
-    public User(Long userId, String name, String email, String major){
+    public User(Long userId, String name, String email, String major,University university){
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.major = major;
+        this.university=university;
     }
     public void addQuestion(Question question){
         this.questions.add(question);
