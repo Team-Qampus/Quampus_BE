@@ -49,7 +49,8 @@ public class LikeServiceImpl implements LikeService{
         Like like=likeRepository.findLikesByAnswerAndUser(answerId,result.user.getUserId()).orElseThrow(
                 ()->new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST)
         );
-        result.answer.decreaseLike();
+        result.answer.decreaseLike(like);
+        result.user.decreaseLike(like);
         likeRepository.delete(like);
     }
 

@@ -58,11 +58,11 @@ public class Answer {
         this.modifiedDate = LocalDateTime.now();
     }
 
-    public void decreaseLike() {
-        if (this.likeCnt < 0) {
-            this.likeCnt=0;
+    public void decreaseLike(Like like) {
+        if (this.likeCnt > 0) {
+            this.likeList.remove(like);
+            this.likeCnt--;
         }
-        this.likeCnt--;
     }
 
     public void addLike(Like like){

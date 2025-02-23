@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.common.BaseEntity;
+import swyp.qampus.curious.domain.Curious;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
 
@@ -52,6 +53,9 @@ public class User  {
     @OneToMany(mappedBy = "user")
     private List<Answer> answers=new ArrayList<>();
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    private List<Curious> curiousList=new ArrayList<>();
+
     @Builder
     public User(String userId, String name, String email, String password, String universityName, String major){
         this.userId = userId;
@@ -66,6 +70,17 @@ public class User  {
     }
     public void addLike(Like like){
         this.likeList.add(like);
+    }
+    public void decreaseLike(Like like){
+        likeList.remove(like);
+    }
+    //나도 궁금해요 추가
+    public void addCurious(Curious curious){
+        this.curiousList.add(curious);
+    }
+    //나도 궁금해요 삭제
+    public void deleteCurious(Curious curious){
+        curiousList.remove(curious);
     }
 
     public void addAnswer(Answer answer){
