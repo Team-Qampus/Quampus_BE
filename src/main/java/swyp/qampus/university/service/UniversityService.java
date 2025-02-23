@@ -10,4 +10,8 @@ public interface UniversityService {
     Optional<List<UniversityRankResponseDto>>getUniversityRanking(String token,Integer limit,String period);
     //대학교 상세보기
     Optional<UniversityDetailResponseDto> getUniversityDetail(String token, String universityName);
+    //매달 채택 수 초기화 스케쥴링
+    void resetMonthly();
+    //매주 채택 수 초기화 스케쥴링
+    void resetWeekly();
 }

@@ -12,4 +12,8 @@ public interface UniversityRepositoryCustom {
 
     //학교 이름으로 학교 조회 및 상세보기
     Optional<UniversityDetailResponseDto> getUniversityDetail(String universityName);
+    //매달 1일 월별 채택 수 초기화
+    void resetMonthlyChoiceCnt();
+    //매주 일요일 23시 59분 59초 채택 수 초기화
+    void resetWeeklyChoiceCnt();
 }
