@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import swyp.qampus.common.BaseEntity;
 import swyp.qampus.user.domain.User;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
-public class University {
+public class University extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "university_id",nullable = false)
     private Long universityId;
