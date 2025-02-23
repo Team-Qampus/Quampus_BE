@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import swyp.qampus.user.domain.User;
 
 import java.util.ArrayList;

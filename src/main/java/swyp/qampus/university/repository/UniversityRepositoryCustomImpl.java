@@ -7,8 +7,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.answer.domain.QAnswer;
 import swyp.qampus.question.domain.QQuestion;
 import swyp.qampus.university.domain.QUniversity;
@@ -126,5 +128,26 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                         .fetchOne();
 
         return Optional.ofNullable(result);
+    }
+
+    /*
+    *   벌크 연산 쿼리
+    * */
+    @Override
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    public void resetMonthlyChoiceCnt() {
+        queryFactory.update(university)
+                .set(university.monthlyChoiceCnt,0L)
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    public void resetWeeklyChoiceCnt() {
+        queryFactory.update(university)
+                .set(university.weeklyChoiceCnt,0L)
+                .execute();
     }
 }
