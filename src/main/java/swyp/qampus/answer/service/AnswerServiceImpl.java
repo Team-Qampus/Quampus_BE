@@ -49,6 +49,9 @@ public class AnswerServiceImpl implements AnswerService {
 
         answerRepository.save(answer);
 
+        question.incrementUnreadAnswerCount();
+        question.incrementAnswerCount();
+
         //사진을 올린 경우 -> 사진업로드
         if (images != null) {
             List<String> urls = imageService.putFileToBucket(images, "ANSWER");
@@ -78,6 +81,11 @@ public class AnswerServiceImpl implements AnswerService {
                 .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
         answerRepository.delete(answer);
+
+        Question question = answer.getQuestion();
+        if (question != null) {
+            question.decrementAnswerCount();
+        }
     }
 
     @Override
@@ -149,13 +157,13 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public QuestionDetailResponseDto getQuestionDetail(Long questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
-        question.increseViewCount();
-        questionRepository.save(question);
+        question.increseViewCount();    //조회수 증가
+        question.updateLastViewedDate();    //마지막 조회 시간 업데이트
 
         List<AnswerResponseDto> answers = answerRepository.findByQuestionId(questionId)
                 .stream()

@@ -49,6 +49,15 @@ public class Question {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Column(nullable = false)
+    private LocalDateTime lastViewedDate = LocalDateTime.now(); //질문 작성한 유저가 마지막으로 질문을 조회한 시간
+
+    @Column(nullable = false)
+    private int unreadAnswerCnt = 0;
+
+    @Column(nullable = false)
+    private int answerCount = 0;
+
     @Builder
     public Question(User user,String title,String content,int viewCnt,int curious_count,Category category){
         this.user=user;
@@ -73,6 +82,26 @@ public class Question {
 
     public void delete() {
         this.isDeleted = true;
+    }
+
+    //질문을 조회할 때 lastViewedDate를 업데이트 후 미확인 답변 초기화
+    public void updateLastViewedDate() {
+        this.lastViewedDate = LocalDateTime.now();
+        this.unreadAnswerCnt = 0;
+    }
+
+    public void incrementUnreadAnswerCount() {
+        this.unreadAnswerCnt++;
+    }
+
+    public void incrementAnswerCount() {
+        this.answerCount++;
+    }
+
+    public void decrementAnswerCount() {
+        if (this.answerCount > 0) {
+            this.answerCount--;
+        }
     }
 
 }
