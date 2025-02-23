@@ -158,12 +158,20 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional
-    public QuestionDetailResponseDto getQuestionDetail(Long questionId) {
+    public QuestionDetailResponseDto getQuestionDetail(Long questionId, String token) {
+        //TODO:JWT로 교체
+        String userId = token;
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         question.increseViewCount();    //조회수 증가
-        question.updateLastViewedDate();    //마지막 조회 시간 업데이트
+
+        //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
+        if (question.getUser().getUserId().equals(userId)) {
+            question.updateLastViewedDate();
+        } else {
+            throw new RestApiException(CommonErrorCode.FORBIDDEN);
+        }
 
         List<AnswerResponseDto> answers = answerRepository.findByQuestionId(questionId)
                 .stream()

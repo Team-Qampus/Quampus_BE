@@ -14,7 +14,7 @@ public class QuestionResponseDto {
     private String content;
     private String universityName;
     private LocalDateTime createdDate;
-    private int viewCnt;
+    private int answerCount;
 
     public QuestionResponseDto(Question question) {
         this.questionId = question.getQuestionId();
@@ -23,6 +23,6 @@ public class QuestionResponseDto {
         this.content = question.getContent();
         this.universityName = question.getUser().getUniversityName();
         this.createdDate = question.getCreateDate();
-        this.viewCnt = question.getViewCnt();
+        this.answerCount = question.getAnswerCount();
     }
 }

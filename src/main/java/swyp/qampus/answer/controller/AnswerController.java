@@ -58,8 +58,9 @@ public class AnswerController {
     }
 
     @GetMapping("/{question_id}")
-    public ResponseEntity<QuestionDetailResponseDto> getQuestionDetail(@PathVariable Long question_id) {
-        return ResponseEntity.ok(answerService.getQuestionDetail(question_id));
+    public ResponseEntity<QuestionDetailResponseDto> getQuestionDetail(@PathVariable Long question_id,
+                                                                       @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(answerService.getQuestionDetail(question_id, token));
     }
 
     @GetMapping("/search")
