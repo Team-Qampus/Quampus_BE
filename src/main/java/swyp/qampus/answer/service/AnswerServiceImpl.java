@@ -154,6 +154,9 @@ public class AnswerServiceImpl implements AnswerService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
+        question.increseViewCount();
+        questionRepository.save(question);
+
         List<AnswerResponseDto> answers = answerRepository.findByQuestionId(questionId)
                 .stream()
                 .map(AnswerResponseDto::new)
