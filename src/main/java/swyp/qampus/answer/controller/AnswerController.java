@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import swyp.qampus.answer.domain.AnswerListResponseDto;
+import swyp.qampus.question.domain.QuestionListResponseDto;
 import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
 import swyp.qampus.answer.domain.ChoiceRequestDto;
@@ -46,7 +46,7 @@ public class AnswerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AnswerListResponseDto>> getQuestions(
+    public ResponseEntity<List<QuestionListResponseDto>> getQuestions(
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
             @RequestParam(value = "category_id", required = false) Long categoryId,
             @RequestParam(value = "page", defaultValue = "1") int page,

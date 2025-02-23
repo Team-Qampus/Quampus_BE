@@ -1,14 +1,13 @@
-package swyp.qampus.answer.domain;
+package swyp.qampus.question.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import swyp.qampus.question.domain.Question;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class AnswerListResponseDto {
+public class QuestionListResponseDto {
     private Long question_id;
     private String title;
     private String category;
@@ -17,7 +16,7 @@ public class AnswerListResponseDto {
     private LocalDateTime createdDate;
     private int viewCnt;
 
-    public AnswerListResponseDto(Question question) {
+    public QuestionListResponseDto(Question question) {
         this.question_id = question.getQuestionId();
         this.title = question.getTitle();
         this.category = question.getCategory().getCategoryName();
