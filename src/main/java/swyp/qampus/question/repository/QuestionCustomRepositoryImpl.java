@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
+import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.question.domain.Question;
 
 import java.util.List;
@@ -49,6 +50,15 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
                 .orderBy(getSortOrder(sort))
                 .offset((long) (page - 1) * size)
                 .limit(size)
+                .fetch();
+    }
+
+    @Override
+    public List<Question> findWeeklyPopularQuestions() {
+        return queryFactory
+                .selectFrom(question)
+                .orderBy(question.curiousCount.add(question.viewCnt).desc()) //(curiousCount + viewCnt) 기준 정렬
+                .limit(3) //상위 3개만 조회
                 .fetch();
     }
 

@@ -4,9 +4,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
+import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.answer.domain.QAnswer;
 import swyp.qampus.question.domain.QQuestion;
 import swyp.qampus.question.domain.Question;
+
+import java.util.List;
 
 import static swyp.qampus.answer.domain.QAnswer.*;
 import static swyp.qampus.question.domain.QQuestion.*;
@@ -29,6 +32,15 @@ public class AnswerCustomRepositoryImpl implements AnswerCustomRepository {
                 .where(answer.isChosen.isTrue())
                 .fetchOne();
         return count !=null ? count.intValue() : 0 ;
+    }
+
+    @Override
+    public List<Answer> findWeeklyPopularAnswers() {
+        return queryFactory
+                .selectFrom(answer)
+                .orderBy(answer.likeCnt.desc())
+                .limit(3) //상위 3개만 조회
+                .fetch();
     }
 
     BooleanExpression answerIdEq(Long answerId){
