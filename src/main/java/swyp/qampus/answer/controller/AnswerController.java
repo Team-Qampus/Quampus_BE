@@ -11,6 +11,7 @@ import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
 import swyp.qampus.answer.domain.ChoiceRequestDto;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.answer.service.AnswerService;
+import swyp.qampus.question.domain.QuestionResponseDto;
 
 import java.util.List;
 
@@ -59,5 +60,16 @@ public class AnswerController {
     @GetMapping("/{question_id}")
     public ResponseEntity<QuestionDetailResponseDto> getQuestionDetail(@PathVariable Long question_id) {
         return ResponseEntity.ok(answerService.getQuestionDetail(question_id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<QuestionResponseDto>> searchQuestions(
+            @RequestParam String value,
+            @RequestParam(defaultValue = "latest") String sort,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        List<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, page, size);
+        return ResponseEntity.ok(questions);
     }
 }
