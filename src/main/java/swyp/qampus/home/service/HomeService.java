@@ -1,5 +1,8 @@
 package swyp.qampus.home.service;
 
+import swyp.qampus.home.dto.HomeResponseDto;
+
 public interface HomeService {
-    void updateWeeklyPopularContent();
+    void updateWeeklyPopularQna();
+    HomeResponseDto getWeeklyPopularQna();
 }
