@@ -109,15 +109,13 @@ public class AnswerServiceImpl implements AnswerService {
         if(!userId.equals(question.getUser().getUserId())){
             throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
-        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(),answer,type,user);
+        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(),answer,type);
 
         answerRepository.save(answer);
     }
 
-    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type,User user) {
-        //채택하는 경우
-        University university=universityRepository.findById(user.getUniversity().getUniversityId()).orElseThrow(()->
-                new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
+    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
+
         if(type){
             //해당 질문에서 이미 채택한 답변이 존재하는 경우
             Integer exitedChosen=answerRepository.countChoiceOfAnswer(questId);
@@ -128,6 +126,9 @@ public class AnswerServiceImpl implements AnswerService {
             if(answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
             }
+            //채택하는 경우
+            University university=universityRepository.findById(answer.getUser().getUniversity().getUniversityId()).orElseThrow(()->
+                    new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
             university.increaseChoiceCnt();
             universityRepository.save(university);
         }
@@ -137,6 +138,9 @@ public class AnswerServiceImpl implements AnswerService {
             if(!answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_NO_CHOSEN);
             }
+            //채택하는 경우
+            University university=universityRepository.findById(answer.getUser().getUniversity().getUniversityId()).orElseThrow(()->
+                    new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
             university.decreaseChoiceCnt();
             universityRepository.save(university);
         }
