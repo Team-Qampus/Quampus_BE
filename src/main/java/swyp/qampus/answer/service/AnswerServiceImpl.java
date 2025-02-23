@@ -34,17 +34,17 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
         User user = userRepository.findById(requestDto.getUser_id())
-                .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Question question = questionRepository.findById(requestDto.getQuestion_id())
-                .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
+                .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         Answer answer = Answer.builder()
                 .question(question)
                 .content(requestDto.getContent())
                 .build();
 
-        Answer savedAnswer = answerRepository.save(answer);
+        answerRepository.save(answer);
 
         //사진을 올린 경우 -> 사진업로드
         if(images!=null){
@@ -63,7 +63,7 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto) {
         Answer answer = answerRepository.findById(answer_id)
-                .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
+                .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
         answer.update(requestDto.getContent());
     }
@@ -72,7 +72,7 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public void deleteAnswer(Long answer_id) {
         Answer answer = answerRepository.findById(answer_id)
-                .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
+                .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
         answerRepository.delete(answer);
     }
