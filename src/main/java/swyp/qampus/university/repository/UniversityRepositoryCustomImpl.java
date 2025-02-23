@@ -1,18 +1,40 @@
 package swyp.qampus.university.repository;
 
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Repository;
+import swyp.qampus.answer.domain.QAnswer;
+import swyp.qampus.question.domain.QQuestion;
+import swyp.qampus.university.domain.QUniversity;
+import swyp.qampus.university.domain.response.QUniversityDetailResponseDto;
+import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
+import swyp.qampus.user.domain.QUser;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import static swyp.qampus.answer.domain.QAnswer.*;
+import static swyp.qampus.question.domain.QQuestion.*;
+import static swyp.qampus.university.domain.QUniversity.*;
+import static swyp.qampus.user.domain.QUser.*;
 
 
 @Repository
-@RequiredArgsConstructor
 public class UniversityRepositoryCustomImpl implements UniversityRepositoryCustom {
+    private final JPAQueryFactory queryFactory;
+
+    public UniversityRepositoryCustomImpl(EntityManager em) {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
+
     @PersistenceContext
     private EntityManager em;
 
@@ -22,21 +44,22 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
         String choiceColumn = period.equals("weekly") ? "weeklyChoiceCnt" : "monthlyChoiceCnt";
 
         //전체 선택 횟수
-        Integer choiceCntAll = em.createQuery(
+        Long choiceCntAll = em.createQuery(
                 "select coalesce(sum(univ." + choiceColumn + "), 0) from University as univ",
-                Integer.class
+                Long.class
         ).getSingleResult();
 
-        String query="";
+        String query = "";
 
         if (period.equals("weekly")) {
-             query =
+            query =
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
                             " univ.universityId," +
                             " univ.universityName," +
                             " rank() over (order by univ.weeklyChoiceCnt desc)," +
                             " size(univ.users)," +
-                            " case when :choiceCntAll = 0 then 0 else (univ.weeklyChoiceCnt/:choiceCntAll)*100 end " +
+                            " case when :choiceCntAll = 0 then 0 else (univ.weeklyChoiceCnt/:choiceCntAll)*100 end ," +
+                            " :choiceCntAll" +
                             ") " +
                             "from University as univ " +
                             "order by univ.weeklyChoiceCnt desc ";
@@ -44,26 +67,27 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
         }
 
         if (period.equals("monthly")) {
-             query =
+            query =
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
                             " univ.universityId," +
                             " univ.universityName," +
                             " rank() over (order by univ.monthlyChoiceCnt desc)," +
                             " size(univ.users)," +
-                            " case when :choiceCntAll = 0 then 0 else (univ.monthlyChoiceCnt/:choiceCntAll)*100 end " +
+                            " case when :choiceCntAll = 0 then 0 else (univ.monthlyChoiceCnt/:choiceCntAll)*100 end," +
+                            " :choiceCntAll " +
                             ") " +
                             "from University as univ " +
                             "order by univ.monthlyChoiceCnt desc ";
 
         }
 
-        if(limit == null){
+        if (limit == null) {
             return Optional.of(
                     em.createQuery(query, UniversityRankResponseDto.class)
                             .setParameter("choiceCntAll", choiceCntAll)
                             .getResultList()
             );
-        }else{
+        } else {
             return Optional.of(
                     em.createQuery(query, UniversityRankResponseDto.class)
                             .setParameter("choiceCntAll", choiceCntAll)
@@ -71,5 +95,37 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                             .getResultList()
             );
         }
+    }
+
+    @Override
+    public Optional<UniversityDetailResponseDto> getUniversityDetail(String universityName) {
+        //전체 채택 수
+        Long totalWeeklyChoiceCnt = queryFactory
+                .select(university.weeklyChoiceCnt.sum())
+                .from(university)
+                .fetchOne();
+
+        UniversityDetailResponseDto result =
+                queryFactory.select(new QUniversityDetailResponseDto(
+                                university.universityId,
+                                university.universityName,
+                                new CaseBuilder()
+                                        .when(university.monthlyChoiceCnt.eq(0L))
+                                        .then(0)
+                                        .otherwise(university.weeklyChoiceCnt.multiply(100).divide(totalWeeklyChoiceCnt).intValue()),
+                                user.countDistinct(),
+                                question.countDistinct(),
+                                answer.countDistinct(),
+                                university.weeklyChoiceCnt
+                        ))
+                        .from(university)
+                        .leftJoin(university.users, user)
+                        .fetchJoin()
+                        .leftJoin(user.questions, question)
+                        .leftJoin(user.answers, answer)
+                        .where(university.universityName.eq(universityName))
+                        .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }

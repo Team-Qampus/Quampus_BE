@@ -21,10 +21,10 @@ public class University {
     private String universityName;
 
     @Column(name = "weekly_choice_cnt")
-    private Integer weeklyChoiceCnt;
+    private Long weeklyChoiceCnt;
 
     @Column(name = "monthly_choice_cnt")
-    private Integer monthlyChoiceCnt;
+    private Long monthlyChoiceCnt;
 
     //유저랑 양방향관계
     @OneToMany(mappedBy = "university")
@@ -32,8 +32,8 @@ public class University {
 
     @Builder
     public University(String universityName){
-        this.monthlyChoiceCnt=0;
-        this.weeklyChoiceCnt=0;
+        this.weeklyChoiceCnt=0L;
+        this.monthlyChoiceCnt=0L;
         this.universityName=universityName;
     }
 
