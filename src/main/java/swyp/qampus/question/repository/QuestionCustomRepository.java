@@ -10,4 +10,5 @@ public interface QuestionCustomRepository {
     List<Question> findAllPaged(int page, int size, String sort);
     List<Question> searchByKeyword(String value, String sort, int page, int size);
     List<Question> findWeeklyPopularQuestions();
+    List<Question> findMyQuestions(Long userId, Long categoryId, String sort, int page, int size);
 }

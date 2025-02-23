@@ -25,7 +25,7 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     public List<Question> findByCategoryId(Long categoryId, int page, int size, String sort) {
         return queryFactory
                 .selectFrom(question)
-                .where(question.category.categoryId.eq(categoryId))
+                .where(categoryIdEq(categoryId))
                 .orderBy(getSortOrder(sort))
                 .offset((long) (page - 1) * size)
                 .limit(size)
@@ -62,6 +62,17 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
                 .fetch();
     }
 
+    @Override
+    public List<Question> findMyQuestions(Long userId, Long categoryId, String sort, int page, int size) {
+        return queryFactory
+                .selectFrom(question)
+                .where(userIdEq(userId), categoryIdEq(categoryId))
+                .orderBy(getSortOrder(sort))
+                .offset((long) (page - 1) * size)
+                .limit(size)
+                .fetch();
+    }
+
     private OrderSpecifier<?> getSortOrder(String sort) {
         if ("popular".equals(sort)) {
             return question.viewCnt.desc(); // 인기순 (조회수 내림차순)
@@ -78,5 +89,13 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
         }
         return question.title.containsIgnoreCase(value)
                 .or(question.content.containsIgnoreCase(value));
+    }
+
+    private BooleanExpression userIdEq(Long userId) {
+        return userId != null ? question.user.userId.eq(userId) : null;
+    }
+
+    private BooleanExpression categoryIdEq(Long categoryId) {
+        return categoryId != null ? question.category.categoryId.eq(categoryId) : null;
     }
 }

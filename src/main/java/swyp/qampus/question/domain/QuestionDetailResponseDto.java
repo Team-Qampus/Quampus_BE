@@ -15,6 +15,7 @@ public class QuestionDetailResponseDto {
     private final LocalDateTime createdDate;
     private final int viewCnt;
     private final int curiousCount;
+    private final int answerCount;
     private final List<AnswerResponseDto> answers;
 
     public QuestionDetailResponseDto(Question question, List<AnswerResponseDto> answers) {
@@ -25,6 +26,7 @@ public class QuestionDetailResponseDto {
         this.createdDate = question.getCreateDate();
         this.viewCnt = question.getViewCnt();
         this.curiousCount = question.getCuriousCount();
+        this.answerCount = question.getAnswerCount();
         this.answers = answers;
     }
 }

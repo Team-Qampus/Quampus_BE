@@ -50,9 +50,6 @@ public class Question {
     private Category category;
 
     @Column(nullable = false)
-    private LocalDateTime lastViewedDate = LocalDateTime.now(); //질문 작성한 유저가 마지막으로 질문을 조회한 시간
-
-    @Column(nullable = false)
     private int unreadAnswerCnt = 0;
 
     @Column(nullable = false)
@@ -86,7 +83,6 @@ public class Question {
 
     //질문을 조회할 때 lastViewedDate를 업데이트 후 미확인 답변 초기화
     public void updateLastViewedDate() {
-        this.lastViewedDate = LocalDateTime.now();
         this.unreadAnswerCnt = 0;
     }
 
