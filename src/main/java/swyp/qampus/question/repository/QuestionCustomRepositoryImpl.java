@@ -54,7 +54,7 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
 
     private OrderSpecifier<?> getSortOrder(String sort) {
         if ("popular".equals(sort)) {
-            return question.viewCnt.desc(); // 인기순 (조회수 내림차순)
+            return question.curiousCount.add(question.viewCnt).desc(); // 인기순 (조회수 내림차순)
         } else if ("latest".equals(sort)) {
             return question.createDate.desc(); // 최신순 (생성일 내림차순)
         } else {
