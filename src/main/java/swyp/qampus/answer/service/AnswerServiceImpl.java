@@ -20,6 +20,7 @@ import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,10 +48,10 @@ public class AnswerServiceImpl implements AnswerService {
         answerRepository.save(answer);
 
         //사진을 올린 경우 -> 사진업로드
-        if(images!=null){
-            List<String>urls=imageService.putFileToBucket(images,"ANSWER");
-            for (String url:urls){
-                Image newImage=Image.builder()
+        if (images != null) {
+            List<String> urls = imageService.putFileToBucket(images, "ANSWER");
+            for (String url : urls) {
+                Image newImage = Image.builder()
                         .pictureUrl(url)
                         .answer(answer)
                         .build();
@@ -81,43 +82,58 @@ public class AnswerServiceImpl implements AnswerService {
     @Transactional
     public void choice(ChoiceRequestDto choiceRequestDto, String token) {
         //TODO:JWT로 교체
-        String userId=token;
-        Answer answer=answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
-                ()-> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
-        Question question=questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
-                ()->new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
+        String userId = token;
+        Answer answer = answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
+                () -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
+        Question question = questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
+                () -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
         );
-        Boolean type=choiceRequestDto.getIs_chosen();
+        Boolean type = choiceRequestDto.getIs_chosen();
         //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
-        if(!userId.equals(question.getUser().getUserId())){
+        if (!userId.equals(question.getUser().getUserId())) {
             throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
-        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(),answer,type);
+        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(), answer, type);
 
         answerRepository.save(answer);
     }
 
-    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
+    private void validateAndSetChoiceSet(Long questId, Answer answer, Boolean type) {
         //채택하는 경우
-        if(type){
+        if (type) {
             //해당 질문에서 이미 채택한 답변이 존재하는 경우
-            Integer exitedChosen=answerRepository.countChoiceOfAnswer(questId);
-            if(exitedChosen>=1){
+            Integer exitedChosen = answerRepository.countChoiceOfAnswer(questId);
+            if (exitedChosen >= 1) {
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN_OF_QUESTION);
             }
             //이미 채택된 답변에 대한 요청 시
-            if(answer.getIsChosen()){
+            if (answer.getIsChosen()) {
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
             }
         }
         //채택 취소하는 경우
-        else{
+        else {
             //이미 채택 취소된 답변에 대한 요청 시
-            if(!answer.getIsChosen()){
+            if (!answer.getIsChosen()) {
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_NO_CHOSEN);
             }
         }
         answer.setIsChosen(type);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<AnswerListResponseDto> getQuestions(String sort, Long categoryId, int page, int size) {
+        List<Question> questions;
+
+        if (categoryId != null) {
+            questions = questionRepository.findByCategoryId(categoryId, page, size, sort);
+        } else {
+            questions = questionRepository.findAllPaged(page, size, sort);
+        }
+
+        return questions.stream()
+                .map(AnswerListResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }
