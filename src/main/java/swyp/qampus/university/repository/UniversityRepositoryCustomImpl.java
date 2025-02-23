@@ -45,9 +45,10 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
 
         //전체 선택 횟수
         Long choiceCntAll = em.createQuery(
-                "select coalesce(sum(univ." + choiceColumn + "), 0) from University as univ",
+                "select sum(univ." + choiceColumn + ") from University as univ",
                 Long.class
         ).getSingleResult();
+
 
         String query = "";
 
@@ -58,9 +59,8 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                             " univ.universityName," +
                             " cast(rank() over (order by univ.weeklyChoiceCnt desc) as integer) ," +
                             " cast(size(univ.users) as long) ," +
-                            " cast(case when :choiceCntAll = 0 then 0 else (univ.weeklyChoiceCnt/:choiceCntAll)*100 end as integer) ," +
-                            " univ.weeklyChoiceCnt " +
-                            ") " +
+                            "case when :choiceCntAll = 0 then 0 else cast((univ.weeklyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
+                            "cast(univ.weeklyChoiceCnt as long)) " +
                             "from University as univ " +
                             "order by univ.weeklyChoiceCnt desc ";
 
@@ -73,7 +73,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                             " univ.universityName," +
                             " cast(rank() over (order by univ.monthlyChoiceCnt desc) as integer) ," +
                             " cast( size(univ.users) as long) ," +
-                            " cast(case when :choiceCntAll = 0 then 0 else (univ.monthlyChoiceCnt/:choiceCntAll)*100 end as integer)," +
+                            " case when :choiceCntAll = 0 then 0 else cast((univ.monthlyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
                             " univ.monthlyChoiceCnt  " +
                             ") " +
                             "from University as univ " +
