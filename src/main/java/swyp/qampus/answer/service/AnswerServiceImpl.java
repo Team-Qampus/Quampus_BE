@@ -12,10 +12,11 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+import swyp.qampus.question.domain.QuestionDetailResponseDto;
+import swyp.qampus.question.domain.QuestionListResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.user.domain.User;
-import swyp.qampus.exception.CustomException;
 import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.user.repository.UserRepository;
 
@@ -123,7 +124,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnswerListResponseDto> getQuestions(String sort, Long categoryId, int page, int size) {
+    public List<QuestionListResponseDto> getQuestions(String sort, Long categoryId, int page, int size) {
         List<Question> questions;
 
         //특정 카테고리의 질문 조회
@@ -142,7 +143,21 @@ public class AnswerServiceImpl implements AnswerService {
         }
 
         return questions.stream()
-                .map(AnswerListResponseDto::new)
+                .map(QuestionListResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public QuestionDetailResponseDto getQuestionDetail(Long questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
+
+        List<AnswerResponseDto> answers = answerRepository.findByQuestionId(questionId)
+                .stream()
+                .map(AnswerResponseDto::new)
+                .collect(Collectors.toList());
+
+        return new QuestionDetailResponseDto(question, answers);
     }
 }
