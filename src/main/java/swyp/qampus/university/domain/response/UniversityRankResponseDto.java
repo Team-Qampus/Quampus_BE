@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
 @Getter
-
+@NoArgsConstructor
 public class UniversityRankResponseDto {
     private Long university_id;
     private String university_name;
@@ -17,14 +17,13 @@ public class UniversityRankResponseDto {
     //채택 수
     private Long choice_cnt;
 
-    @QueryProjection
-    @Builder
-    public UniversityRankResponseDto(Long university_id,String university_name,Integer ranking,Long participant_count,Integer rate,Long choice_cnt){
-        this.university_name=university_name;
-        this.ranking=ranking;
-        this.university_id=university_id;
-        this.rate=rate;
-        this.participant_count=participant_count;
-        this.choice_cnt=choice_cnt;
+
+    public UniversityRankResponseDto(Long university_id, String university_name, Integer ranking, Long participant_count, Integer rate, Long choice_cnt) {
+        this.university_id = university_id;
+        this.university_name = university_name;
+        this.ranking = ranking;
+        this.participant_count = participant_count;
+        this.rate = rate;
+        this.choice_cnt = choice_cnt;
     }
 }

@@ -40,6 +40,6 @@ public class AnswerController {
     @PutMapping("/choice")
     public ResponseEntity<?> choice(@RequestHeader("Authorization")String token, @RequestBody ChoiceRequestDto requestDto){
         answerService.choice(requestDto,token);
-        return ResponseEntity.ok().body(ResponseDto.of(true,200,"채택 성공"));
+        return ResponseEntity.ok().body(ResponseDto.of(true,200,"채택 또는 취소 성공"));
     }
 }
