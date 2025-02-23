@@ -14,12 +14,13 @@ public class OAuthConverter {
      * @param passwordEncoder 비밀번호를 해싱하는 PasswordEncoder
      * @return User 엔티티 객체
      */
-    public static User toUser(String email, String name, String nickname, String password, PasswordEncoder passwordEncoder) {
+    public static User toUser(String email, String name, String nickname, String password, PasswordEncoder passwordEncoder, String profileImageUrl) {
         return User.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .name(name)
-                .name(nickname)
+                .nickname(nickname)
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
 }

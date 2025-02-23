@@ -16,8 +16,8 @@ public class UserRequestDTO {
         private Long id;
     }
 
+    @Getter
     public static class UserUniversityAndMajorDTO {
-        private Long userId; // 사용자 ID
         private String universityName; // 학교 이름
         private String major; // 학과 이름
     }

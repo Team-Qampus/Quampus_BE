@@ -34,4 +34,11 @@ public class UserConverter {
                 .createAt(user.getCreatedDate()) // 계정 생성 날짜 설정
                 .build();
     }
+
+    public static User updateAdditionalInfo(User user, UserRequestDTO.UserUniversityAndMajorDTO dto) {
+        return user.toBuilder()
+                .universityName(dto.getUniversityName())
+                .major(dto.getMajor())
+                .build();
+    }
 }
