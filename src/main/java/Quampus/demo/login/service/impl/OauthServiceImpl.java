@@ -1,5 +1,6 @@
 package Quampus.demo.login.service.impl;
 
+import Quampus.demo.login.config.data.RedisCustomServiceImpl;
 import Quampus.demo.login.converter.OAuthConverter;
 import Quampus.demo.login.dto.KakaoDTO;
 import Quampus.demo.login.dto.KakaoUtil;
@@ -34,6 +35,7 @@ public class OauthServiceImpl implements OauthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RestTemplate restTemplate;
+    private final RedisCustomServiceImpl redisCustomService;
 
     /**
      * 카카오 OAuth 로그인을 수행하는 메서드
@@ -65,7 +67,7 @@ public class OauthServiceImpl implements OauthService {
             return user; // 기존 사용자 반환
         } else {
             // 기존 회원이 존재하지 않는 경우, 새 사용자 생성
-            User user = OAuthConverter.toUser(
+            User tempUser = OAuthConverter.toUser(
                     // 이메일
                     kakaoProfile.getKakao_account().getEmail(),
                     // 이름
@@ -75,17 +77,31 @@ public class OauthServiceImpl implements OauthService {
                     // 임시 비밀번호
                     "1234",
                     // 비밀번호 인코더 적용
-                    passwordEncoder);
-
-            // 새 사용자 정보를 저장
-            userRepository.save(user);
-
-            // JWT 액세스 토큰을 생성하여 응답 헤더에 추가
-            httpServletResponse.setHeader("Authorization", jwtUtil.createAccessToken(user.getEmail()));
+                    passwordEncoder,
+                    // 이미지 URL
+                    kakaoProfile.getKakao_account().getProfile().getProfileImageUrl()
+                    );
 
 
-            // 새로 생성된 사용자 반환
-            return user;
+            // 임시 사용자 정보를 Redisdp JSON 형태로 저장
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                String userJson = objectMapper.writeValueAsString(tempUser);
+                String key = "tempUser:" + tempUser.getEmail();
+
+                // RedisCustomServiceImpl의 saveRedisData(key, value, limitTime)을 사용
+                redisCustomService.saveRedisData(key, userJson, 1800L);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+
+            // 임시 로드인 상태용 JWT 발급(추가 정보 입력 전까지 사용)
+            String tempJwt = jwtUtil.createAccessToken(tempUser.getEmail());
+            httpServletResponse.setHeader("Authorization",tempJwt);
+
+
+            // DB에는 저장하지 않고 임시 사용자 정보를 반환
+            return tempUser;
         }
     }
 

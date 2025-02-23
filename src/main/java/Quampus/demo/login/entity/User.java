@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Entity
 @Getter
-@Builder
+@Setter
+@Builder(toBuilder = true)
 public class User {
 
     // 고유 식별자
