@@ -1,6 +1,7 @@
 package swyp.qampus.question.repository;
 
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
@@ -40,6 +41,17 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
                 .fetch();
     }
 
+    @Override
+    public List<Question> searchByKeyword(String value, String sort, int page, int size) {
+        return queryFactory
+                .selectFrom(question)
+                .where(titleOrContentContains(value))
+                .orderBy(getSortOrder(sort))
+                .offset((long) (page - 1) * size)
+                .limit(size)
+                .fetch();
+    }
+
     private OrderSpecifier<?> getSortOrder(String sort) {
         if ("popular".equals(sort)) {
             return question.viewCnt.desc(); // 인기순 (조회수 내림차순)
@@ -48,5 +60,13 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
         } else {
             return question.createDate.desc(); // 기본값을 최신순으로 설정
         }
+    }
+
+    private BooleanExpression titleOrContentContains(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return question.title.containsIgnoreCase(value)
+                .or(question.content.containsIgnoreCase(value));
     }
 }
