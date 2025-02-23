@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import swyp.qampus.answer.domain.AnswerListResponseDto;
 import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
 import swyp.qampus.answer.domain.ChoiceRequestDto;
@@ -42,5 +43,15 @@ public class AnswerController {
     public ResponseEntity<?> choice(@RequestHeader("Authorization")String token, @RequestBody ChoiceRequestDto requestDto){
         answerService.choice(requestDto,token);
         return ResponseEntity.ok().body(ResponseDto.of(true,200,"채택 성공"));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AnswerListResponseDto>> getQuestions(
+            @RequestParam(value = "sort", defaultValue = "latest") String sort,
+            @RequestParam(value = "category_id", required = false) Long categoryId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(answerService.getQuestions(sort, categoryId, page, size));
     }
 }
