@@ -15,6 +15,7 @@ import swyp.qampus.image.service.ImageService;
 import swyp.qampus.question.domain.QuestionDetailResponseDto;
 import swyp.qampus.question.domain.QuestionListResponseDto;
 import swyp.qampus.question.domain.Question;
+import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.user.domain.User;
 import swyp.qampus.question.repository.QuestionRepository;
@@ -159,5 +160,15 @@ public class AnswerServiceImpl implements AnswerService {
                 .collect(Collectors.toList());
 
         return new QuestionDetailResponseDto(question, answers);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuestionResponseDto> searchQuestions(String value, String sort, int page, int size) {
+        List<Question> questions = questionRepository.searchByKeyword(value, sort, page, size);
+
+        return questions.stream()
+                .map(QuestionResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

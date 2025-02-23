@@ -7,6 +7,7 @@ import swyp.qampus.question.domain.QuestionListResponseDto;
 import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
 import swyp.qampus.answer.domain.ChoiceRequestDto;
+import swyp.qampus.question.domain.QuestionResponseDto;
 
 import java.util.List;
 
@@ -17,4 +18,5 @@ public interface AnswerService {
     void choice(ChoiceRequestDto choiceRequestDto, String token);
     List<QuestionListResponseDto> getQuestions(String sort, Long categoryId, int page, int size);
     QuestionDetailResponseDto getQuestionDetail(Long questionId);
+    List<QuestionResponseDto> searchQuestions(String value, String sort, int page, int size);
 }
