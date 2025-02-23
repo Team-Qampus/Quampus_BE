@@ -66,9 +66,9 @@ public class AnswerController {
     @GetMapping("/search")
     public ResponseEntity<List<QuestionResponseDto>> searchQuestions(
             @RequestParam String value,
-            @RequestParam(defaultValue = "latest") String sort,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(value = "sort", defaultValue = "latest") String sort,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
         List<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, page, size);
         return ResponseEntity.ok(questions);
