@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
-import swyp.qampus.question.service.QuestionService;
+import swyp.qampus.question.service.QuestionServiceImpl;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ import java.util.List;
 @RequestMapping("/questions")
 @RequiredArgsConstructor
 public class QuestionController {
-    private final QuestionService questionService;
+    private final QuestionServiceImpl questionService;
 
     @PostMapping("/{user_id}")
-    public ResponseEntity<?> createQuestion(@PathVariable String user_id,
+    public ResponseEntity<?> createQuestion(@PathVariable Long user_id,
                                                               @RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
                                                               @RequestPart(value = "images",required = false) List<MultipartFile> images) {
         questionService.createQuestion(user_id, requestDto, images);
