@@ -15,13 +15,13 @@ public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
+        // 메시지 컨버터 리스트 생성
         List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        // x-www-form-urlencoded 방식의 요청을 지원하는 FormHttpMessageConverter 추가
         messageConverters.add(new FormHttpMessageConverter());
+        // RestTemplate에 메시지 컨버터 설정 적용
         restTemplate.setMessageConverters(messageConverters);
 
         return restTemplate;
     }
-
-
-
 }
