@@ -126,10 +126,19 @@ public class AnswerServiceImpl implements AnswerService {
     public List<AnswerListResponseDto> getQuestions(String sort, Long categoryId, int page, int size) {
         List<Question> questions;
 
+        //특정 카테고리의 질문 조회
         if (categoryId != null) {
             questions = questionRepository.findByCategoryId(categoryId, page, size, sort);
-        } else {
+            if (questions.isEmpty()) {
+                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
+            }
+        }
+        //전체 질문 조회
+        else {
             questions = questionRepository.findAllPaged(page, size, sort);
+            if (questions.isEmpty()) {
+                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
+            }
         }
 
         return questions.stream()
