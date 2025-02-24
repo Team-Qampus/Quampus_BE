@@ -1,10 +1,12 @@
 package swyp.qampus.university.domain.response;
 
 import com.querydsl.core.annotations.QueryProjection;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
 @NoArgsConstructor
+@Schema(name = "학교랭킹 조회 Dto")
 public class UniversityRankResponseDto {
     private Long university_id;
     private String university_name;

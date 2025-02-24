@@ -60,6 +60,7 @@ public class WebOAuthSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 요청별 접근 설정
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/**","/auth/**", "/oauth2/**","**").permitAll() // 해당 URL은 인증 없이 접근 가능
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
                 )

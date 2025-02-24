@@ -6,15 +6,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import swyp.qampus.ai.domain.Ai;
-import swyp.qampus.ai.domain.QAi;
-import swyp.qampus.answer.domain.QAnswer;
 import swyp.qampus.question.domain.Question;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
-import static swyp.qampus.ai.domain.QAi.*;
 import static swyp.qampus.question.domain.QQuestion.*;
 
 @Repository
@@ -30,17 +26,7 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     public List<Question> findByCategoryId(Long categoryId, Pageable pageable, String sort) {
         return queryFactory
                 .selectFrom(question)
-                .where(categoryIdEq(categoryId))
-                .orderBy(getSortOrder(sort))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-    }
-
-    @Override
-    public List<Question> findAllPaged(Pageable pageable, String sort) {
-        return queryFactory
-                .selectFrom(question)
+                .where(categoryFilter(categoryId))
                 .orderBy(getSortOrder(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -71,7 +57,7 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     public List<Question> findMyQuestions(Long userId, Long categoryId, String sort, Pageable pageable) {
         return queryFactory
                 .selectFrom(question)
-                .where(userIdEq(userId), categoryIdEq(categoryId))
+                .where(userIdEq(userId), categoryFilter(categoryId))
                 .orderBy(getSortOrder(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -100,7 +86,7 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
         return userId != null ? question.user.userId.eq(userId) : null;
     }
 
-    private BooleanExpression categoryIdEq(Long categoryId) {
-        return categoryId != null ? question.category.categoryId.eq(categoryId) : null;
+    private BooleanExpression categoryFilter(Long categoryId) {
+        return Objects.equals(categoryId, 0L) ? null : question.category.categoryId.eq(categoryId);
     }
 }

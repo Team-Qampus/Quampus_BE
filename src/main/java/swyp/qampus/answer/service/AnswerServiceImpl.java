@@ -165,21 +165,10 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     @Transactional(readOnly = true)
     public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable) {
-        List<Question> questions;
+        List<Question> questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
 
-        //특정 카테고리의 질문 조회
-        if (categoryId != null) {
-            questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
-            if (questions.isEmpty()) {
-                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
-            }
-        }
-        //전체 질문 조회
-        else {
-            questions = questionRepository.findAllPaged(pageable, sort);
-            if (questions.isEmpty()) {
-                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
-            }
+        if (questions.isEmpty()) {
+            throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
         }
 
         return questions.stream()
@@ -191,18 +180,13 @@ public class AnswerServiceImpl implements AnswerService {
     @Transactional
     public QuestionDetailResponseDto getQuestionDetail(Long questionId, String token) {
         //TODO:JWT로 교체
-        String userId = token;
+        Long userId = jwtUtil.getUserIdFromToken(token);
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         question.increseViewCount();    //조회수 증가
 
-        //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
-        if (question.getUser().getUserId().equals(userId)) {
-            question.updateLastViewedDate();
-        } else {
-            throw new RestApiException(CommonErrorCode.FORBIDDEN);
-        }
+
 
         List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
                 .stream()
