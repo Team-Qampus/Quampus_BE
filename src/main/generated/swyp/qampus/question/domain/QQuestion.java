@@ -22,6 +22,8 @@ public class QQuestion extends EntityPathBase<Question> {
 
     public static final QQuestion question = new QQuestion("question");
 
+    public final NumberPath<Integer> answerCount = createNumber("answerCount", Integer.class);
+
     public final swyp.qampus.category.domain.QCategory category;
 
     public final StringPath content = createString("content");
@@ -29,6 +31,8 @@ public class QQuestion extends EntityPathBase<Question> {
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
     public final NumberPath<Integer> curiousCount = createNumber("curiousCount", Integer.class);
+
+    public final ListPath<swyp.qampus.curious.domain.Curious, swyp.qampus.curious.domain.QCurious> curiousList = this.<swyp.qampus.curious.domain.Curious, swyp.qampus.curious.domain.QCurious>createList("curiousList", swyp.qampus.curious.domain.Curious.class, swyp.qampus.curious.domain.QCurious.class, PathInits.DIRECT2);
 
     public final BooleanPath isDeleted = createBoolean("isDeleted");
 
@@ -38,7 +42,9 @@ public class QQuestion extends EntityPathBase<Question> {
 
     public final StringPath title = createString("title");
 
-    public final swyp.qampus.user.domain.QUser user;
+    public final NumberPath<Integer> unreadAnswerCnt = createNumber("unreadAnswerCnt", Integer.class);
+
+    public final swyp.qampus.login.entity.QUser user;
 
     public final NumberPath<Integer> viewCnt = createNumber("viewCnt", Integer.class);
 
@@ -61,7 +67,7 @@ public class QQuestion extends EntityPathBase<Question> {
     public QQuestion(Class<? extends Question> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.category = inits.isInitialized("category") ? new swyp.qampus.category.domain.QCategory(forProperty("category")) : null;
-        this.user = inits.isInitialized("user") ? new swyp.qampus.user.domain.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new swyp.qampus.login.entity.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }
