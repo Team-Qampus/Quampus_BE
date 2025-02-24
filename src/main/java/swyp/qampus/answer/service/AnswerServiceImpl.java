@@ -195,12 +195,7 @@ public class AnswerServiceImpl implements AnswerService {
 
         question.increseViewCount();    //조회수 증가
 
-        //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
-        if (question.getUser().getUserId().equals(userId)) {
-            question.updateLastViewedDate();
-        } else {
-            throw new RestApiException(CommonErrorCode.FORBIDDEN);
-        }
+
 
         List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
                 .stream()
