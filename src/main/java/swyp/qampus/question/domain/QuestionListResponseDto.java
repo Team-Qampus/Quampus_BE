@@ -1,5 +1,6 @@
 package swyp.qampus.question.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@Schema(description = "질문 목록 Dto")
 public class QuestionListResponseDto {
     private Long question_id;
     private String title;
