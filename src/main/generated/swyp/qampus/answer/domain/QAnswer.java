@@ -40,7 +40,7 @@ public class QAnswer extends EntityPathBase<Answer> {
 
     public final swyp.qampus.question.domain.QQuestion question;
 
-    public final swyp.qampus.user.domain.QUser user;
+    public final swyp.qampus.login.entity.QUser user;
 
     public QAnswer(String variable) {
         this(Answer.class, forVariable(variable), INITS);
@@ -61,7 +61,7 @@ public class QAnswer extends EntityPathBase<Answer> {
     public QAnswer(Class<? extends Answer> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.question = inits.isInitialized("question") ? new swyp.qampus.question.domain.QQuestion(forProperty("question"), inits.get("question")) : null;
-        this.user = inits.isInitialized("user") ? new swyp.qampus.user.domain.QUser(forProperty("user")) : null;
+        this.user = inits.isInitialized("user") ? new swyp.qampus.login.entity.QUser(forProperty("user"), inits.get("user")) : null;
     }
 
 }
