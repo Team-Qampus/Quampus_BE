@@ -42,7 +42,7 @@ public class User  {
     // 닉네임
     @Column(name = "nickname" , nullable = true)
     private String nickname;
-    
+
     @Column(nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
 
