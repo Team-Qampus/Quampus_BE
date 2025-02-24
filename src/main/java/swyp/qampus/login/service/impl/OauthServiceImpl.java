@@ -63,7 +63,7 @@ public class OauthServiceImpl implements OauthService {
             User user = queryUser.get();
 
             // JWT 액세스 토큰을 생성하여 응답 헤더에 추가
-            httpServletResponse.setHeader("Authorization", jwtUtil.createAccessToken(user.getEmail()));
+            httpServletResponse.setHeader("Authorization", jwtUtil.createAccessToken(user.getEmail(), user.getUserId()));
             return user; // 기존 사용자 반환
         } else {
             // 기존 회원이 존재하지 않는 경우, 새 사용자 생성
@@ -96,7 +96,7 @@ public class OauthServiceImpl implements OauthService {
             }
 
             // 임시 로드인 상태용 JWT 발급(추가 정보 입력 전까지 사용)
-            String tempJwt = jwtUtil.createAccessToken(tempUser.getEmail());
+            String tempJwt = jwtUtil.createAccessToken(tempUser.getEmail(), tempUser.getUserId());
             httpServletResponse.setHeader("Authorization",tempJwt);
 
 

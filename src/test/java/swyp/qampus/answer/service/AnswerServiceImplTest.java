@@ -19,11 +19,11 @@ import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 
-import swyp.qampus.user.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
