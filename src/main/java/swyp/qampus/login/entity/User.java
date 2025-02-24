@@ -34,8 +34,6 @@ public class User  {
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(length = 100)
-    private String universityName;
 
     @Column(length = 255)
     private String major;
@@ -67,12 +65,11 @@ public class User  {
     private University university;
 
     @Builder(toBuilder = true)
-    public User(Long userId, String name, String email, String password, String universityName, String major,String nickname){
+    public User(Long userId, String name, String email, String password, String major,String nickname){
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.universityName = universityName;
         this.major = major;
         this.nickname=nickname;
     }

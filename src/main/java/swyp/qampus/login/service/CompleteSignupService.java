@@ -39,7 +39,6 @@ public class CompleteSignupService {
 
         // 추가 정보 병합 (DTO의 필드를 User의 필드에 매핑)
         User updateUser = tempUser.toBuilder()
-                .universityName(request.getUniversityName())
                 .major(request.getMajor())
                 .build();
 
