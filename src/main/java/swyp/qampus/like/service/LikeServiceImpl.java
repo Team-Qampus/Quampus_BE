@@ -50,7 +50,7 @@ public class LikeServiceImpl implements LikeService{
         */
         Result result=getResult(token,answerId);
 
-        Like like=likeRepository.findLikesByAnswerAndUser(answerId, Long.valueOf(result.user.getUserId())).orElseThrow(
+        Like like=likeRepository.findLikesByAnswerAndUser(answerId, jwtUtil.getUserIdFromToken(token)).orElseThrow(
                 ()->new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST)
         );
         result.answer.decreaseLike(like);
@@ -60,14 +60,14 @@ public class LikeServiceImpl implements LikeService{
 
     private Result getResult(String token, Long answerId) {
         //유저 예외처리
-        Long userId=Long.valueOf(token);
+        Long userId= jwtUtil.getUserIdFromToken(token);
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new RestApiException(CommonErrorCode.USER_NOT_FOUND));
         //답변 예외처리
         Answer answer=answerRepository.findById(answerId)
                 .orElseThrow(()->new RestApiException(LikeErrorCode.NOT_EXISTED_ANSWERED));
-        Result result = new Result(user, answer);
-        return result;
+        return new Result(user, answer);
+
     }
 
     private record Result(User user, Answer answer) {

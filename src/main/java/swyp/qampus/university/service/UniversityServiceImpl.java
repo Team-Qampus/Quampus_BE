@@ -23,6 +23,7 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     public Optional<List<UniversityRankResponseDto>> getUniversityRanking(String token, Integer limit, String period) {
+        /**/
         return universityRepository.getUniversityRanking(limit, period);
     }
 
