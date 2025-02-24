@@ -52,6 +52,10 @@ public class Answer {
     @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
     private List<Image> images;
 
+    //이미지 리스트
+    @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
+    private List<Image> imageList=new ArrayList<>();
+
     public void update(String content) {
         this.content = content;
         this.modifiedDate = LocalDateTime.now();
@@ -80,5 +84,8 @@ public class Answer {
         this.question=question;
         this.user=user;
     }
-
+    //이미지 추가
+    public void addImage(Image image){
+        this.imageList.add(image);
+    }
 }

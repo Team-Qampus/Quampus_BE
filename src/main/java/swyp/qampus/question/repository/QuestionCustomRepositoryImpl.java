@@ -6,10 +6,15 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import swyp.qampus.ai.domain.Ai;
+import swyp.qampus.ai.domain.QAi;
+import swyp.qampus.answer.domain.QAnswer;
 import swyp.qampus.question.domain.Question;
 
 import java.util.List;
+import java.util.Optional;
 
+import static swyp.qampus.ai.domain.QAi.*;
 import static swyp.qampus.question.domain.QQuestion.*;
 
 @Repository

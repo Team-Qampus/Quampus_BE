@@ -74,6 +74,8 @@ public class AnswerServiceImpl implements AnswerService {
                         .pictureUrl(url)
                         .answer(answer)
                         .build();
+                answer.addImage(newImage);
+                answerRepository.save(answer);
                 imageRepository.save(newImage);
             }
         }
