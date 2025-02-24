@@ -3,10 +3,12 @@ package swyp.qampus.question.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import swyp.qampus.category.domain.Category;
+import swyp.qampus.curious.domain.Curious;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.user.domain.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity

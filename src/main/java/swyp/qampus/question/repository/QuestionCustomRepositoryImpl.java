@@ -6,7 +6,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.question.domain.Question;
 
 import java.util.List;
@@ -64,13 +63,13 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     }
 
     @Override
-    public List<Question> findMyQuestions(Long userId, Long categoryId, String sort, int page, int size) {
+    public List<Question> findMyQuestions(Long userId, Long categoryId, String sort, Pageable pageable) {
         return queryFactory
                 .selectFrom(question)
                 .where(userIdEq(userId), categoryIdEq(categoryId))
                 .orderBy(getSortOrder(sort))
-                .offset((long) (page - 1) * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 

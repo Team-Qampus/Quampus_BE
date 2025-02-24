@@ -1,6 +1,7 @@
 package swyp.qampus.answer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -130,6 +131,7 @@ public class AnswerServiceImpl implements AnswerService {
         }
         answer.setIsChosen(type);
     }
+
 
     @Override
     @Transactional(readOnly = true)

@@ -1,5 +1,6 @@
 package swyp.qampus.question.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -37,4 +38,5 @@ public class QuestionResponseDto {
                 question.getViewCnt()
         );
     }
+
 }

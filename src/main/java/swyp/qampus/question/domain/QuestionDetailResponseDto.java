@@ -1,5 +1,6 @@
 package swyp.qampus.question.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import swyp.qampus.answer.domain.AnswerResponseDto;
 
