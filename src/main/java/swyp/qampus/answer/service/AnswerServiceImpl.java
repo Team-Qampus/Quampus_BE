@@ -13,8 +13,10 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+
 import swyp.qampus.question.domain.QuestionDetailResponseDto;
 import swyp.qampus.question.domain.QuestionListResponseDto;
+
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.exception.QuestionErrorCode;
@@ -24,6 +26,7 @@ import swyp.qampus.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +51,7 @@ public class AnswerServiceImpl implements AnswerService {
                 .content(requestDto.getContent())
                 .build();
 
+
         answerRepository.save(answer);
 
         //사진을 올린 경우 -> 사진업로드
@@ -57,10 +61,12 @@ public class AnswerServiceImpl implements AnswerService {
                 Image newImage = Image.builder()
                         .pictureUrl(url)
                         .answer(answer)
+
                         .build();
                 imageRepository.save(newImage);
             }
         }
+
     }
 
     @Transactional
