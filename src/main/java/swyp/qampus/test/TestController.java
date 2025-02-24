@@ -1,5 +1,6 @@
 package swyp.qampus.test;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import swyp.qampus.university.repository.UniversityRepository;
 
 @RestController
 @RequiredArgsConstructor
+@Schema(name = "회원가입 서버test용입니다. 사용X")
 public class TestController {
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
