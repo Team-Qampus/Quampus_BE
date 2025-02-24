@@ -39,11 +39,11 @@ public class QuestionController {
                                     schema = @Schema(implementation = ErrorCode.class))),
             }
     )
-    @PostMapping("/{user_id}")
-    public ResponseEntity<?> createQuestion(@PathVariable Long user_id,
-                                            @RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
-                                            @RequestPart(value = "images",required = false) List<MultipartFile> images) {
-        questionService.createQuestion(user_id, requestDto, images);
+    @PostMapping
+    public ResponseEntity<?> createQuestion(@RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
+                                            @RequestPart(value = "images",required = false) List<MultipartFile> images,
+                                            @RequestHeader("Authorization")String token) {
+        questionService.createQuestion(requestDto, images,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 생성 성공"));
     }
 
@@ -66,8 +66,9 @@ public class QuestionController {
     )
     @PutMapping("/{question_id}")
     public ResponseEntity<?> updateQuestion(@PathVariable Long question_id,
-                                            @RequestBody QuestionUpdateRequestDto requestDto) {
-        questionService.updateQuestion(question_id, requestDto);
+                                            @RequestBody QuestionUpdateRequestDto requestDto,
+                                            @RequestHeader("Authorization")String token) {
+        questionService.updateQuestion(question_id, requestDto,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 수정 성공"));
     }
 
@@ -86,8 +87,9 @@ public class QuestionController {
             }
     )
     @DeleteMapping("/{question_id}")
-    public ResponseEntity<?> deleteQuestion(@PathVariable Long question_id) {
-        questionService.deleteQuestion(question_id);
+    public ResponseEntity<?> deleteQuestion(@PathVariable Long question_id,
+                                            @RequestHeader("Authorization")String token) {
+        questionService.deleteQuestion(question_id,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 삭제 성공"));
     }
 }
