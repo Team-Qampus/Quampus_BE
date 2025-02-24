@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.category.domain.Category;
 import swyp.qampus.category.repository.CategoryRepository;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.login.entity.User;
-import swyp.qampus.user.repository.UserRepository;
 
 import java.util.List;
 

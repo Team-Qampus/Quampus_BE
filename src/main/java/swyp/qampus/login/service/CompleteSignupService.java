@@ -49,6 +49,6 @@ public class CompleteSignupService {
         redisCustomService.deleteRedisData(key);
 
         // 최종 JWT 토큰 생성 후 반환
-        return jwtUtil.createAccessToken(updateUser.getEmail());
+        return jwtUtil.createAccessToken(updateUser.getEmail(), updateUser.getUserId());
     }
 }
