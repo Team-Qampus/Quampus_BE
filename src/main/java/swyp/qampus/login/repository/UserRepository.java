@@ -1,7 +1,7 @@
 package swyp.qampus.login.repository;
 
-import swyp.qampus.login.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import swyp.qampus.login.entity.User;
 
 import java.util.Optional;
 

@@ -7,7 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.common.BaseEntity;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
+
 
 @Entity
 @Getter

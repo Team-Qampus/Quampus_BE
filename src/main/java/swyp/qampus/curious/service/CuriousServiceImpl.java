@@ -8,11 +8,11 @@ import swyp.qampus.curious.exception.CuriousErrorCode;
 import swyp.qampus.curious.repository.CuriousRepository;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.domain.User;
-import swyp.qampus.user.repository.UserRepository;
+import swyp.qampus.login.entity.User;
 
 @Service
 @RequiredArgsConstructor
@@ -65,8 +65,9 @@ public class CuriousServiceImpl implements CuriousService{
         curiousRepository.delete(curious);
     }
     private Result getResult(String token,Long questionId){
+
         //유저 예외처리
-        User user=userRepository.findById(token)
+        User user=userRepository.findById(Long.valueOf(token))
                 .orElseThrow(()->new RestApiException(CommonErrorCode.USER_NOT_FOUND));
         //질문 찾기 예외
         Question question=questionRepository.findById(questionId)

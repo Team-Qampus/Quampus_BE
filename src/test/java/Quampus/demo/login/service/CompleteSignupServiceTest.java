@@ -2,7 +2,6 @@ package Quampus.demo.login.service;
 
 import swyp.qampus.login.config.data.RedisCustomServiceImpl;
 import swyp.qampus.login.dto.UserRequestDTO;
-import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.service.CompleteSignupService;
 import swyp.qampus.login.util.JWTUtil;

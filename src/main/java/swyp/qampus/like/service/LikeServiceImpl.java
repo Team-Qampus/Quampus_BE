@@ -10,10 +10,9 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.like.exception.LikeErrorCode;
 import swyp.qampus.like.repository.LikeRepository;
-import swyp.qampus.user.domain.User;
-import swyp.qampus.user.repository.UserRepository;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +55,8 @@ public class LikeServiceImpl implements LikeService{
 
     private Result getResult(String token, Long answerId) {
         //유저 예외처리
-        User user=userRepository.findById(token)
+        Long userId=Long.valueOf(token);
+        User user=userRepository.findById(userId)
                 .orElseThrow(()->new RestApiException(CommonErrorCode.USER_NOT_FOUND));
         //답변 예외처리
         Answer answer=answerRepository.findById(answerId)
