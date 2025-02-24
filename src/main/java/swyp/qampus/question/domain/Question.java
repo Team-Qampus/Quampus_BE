@@ -52,8 +52,10 @@ public class Question {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+
     @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE)
     private List<Curious> curiousList=new ArrayList<>();
+
 
     @Column(nullable = false)
     private int unreadAnswerCnt = 0;
