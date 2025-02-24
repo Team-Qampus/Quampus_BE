@@ -178,7 +178,7 @@ public class AnswerServiceImpl implements AnswerService {
     @Transactional
     public QuestionDetailResponseDto getQuestionDetail(Long questionId, String token) {
         //TODO:JWT로 교체
-        String userId = token;
+        Long userId = jwtUtil.getUserIdFromToken(token);
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
