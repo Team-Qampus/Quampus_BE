@@ -14,8 +14,10 @@ import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
-import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.question.domain.Question;
+import swyp.qampus.question.domain.QuestionDetailResponseDto;
+import swyp.qampus.question.domain.QuestionListResponseDto;
+import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.exception.CustomException;
@@ -23,6 +25,7 @@ import swyp.qampus.question.repository.QuestionRepository;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,70 +39,71 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Transactional
     @Override
-    public AnswerResponseDto createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
+    public void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
 
         User user = userRepository.findById(Long.valueOf(requestDto.getUser_id()))
-                .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Question question = questionRepository.findById(requestDto.getQuestion_id())
-                .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         Answer answer = Answer.builder()
                 .question(question)
                 .content(requestDto.getContent())
                 .build();
 
-        Answer savedAnswer = answerRepository.save(answer);
-        //사진을 올린 경우 -> 사진 업로드
-        if(images!=null){
-            List<String> urls=imageService.putFileToBucket(images,"ANSWER");
-            for (String url:urls){
-                Image newImage=Image.builder()
+
+        answerRepository.save(answer);
+
+        //사진을 올린 경우 -> 사진업로드
+        if (images != null) {
+            List<String> urls = imageService.putFileToBucket(images, "ANSWER");
+            for (String url : urls) {
+                Image newImage = Image.builder()
                         .pictureUrl(url)
-                        .question(question)
+                        .answer(answer)
+
                         .build();
                 imageRepository.save(newImage);
             }
         }
-        return new AnswerResponseDto(savedAnswer.getAnswerId(), "답변 생성 성공");
+
     }
 
     @Transactional
     @Override
-    public MessageResponseDto updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto) {
+    public void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto) {
         Answer answer = answerRepository.findById(answer_id)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
         answer.update(requestDto.getContent());
-        return new MessageResponseDto("답변 수정 성공");
     }
 
     @Transactional
     @Override
-    public MessageResponseDto deleteAnswer(Long answer_id) {
+    public void deleteAnswer(Long answer_id) {
         Answer answer = answerRepository.findById(answer_id)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
         answerRepository.delete(answer);
-        return new MessageResponseDto("답변 삭제 성공");
     }
 
     @Override
     @Transactional
     public void choice(ChoiceRequestDto choiceRequestDto, String token) {
         //TODO:JWT로 교체
-        String userId=token;
-        Answer answer=answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
-                ()-> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
-        Question question=questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
-                ()->new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
+        String userId = token;
+        Answer answer = answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
+                () -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
+        Question question = questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
+                () -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
         );
-        Boolean type=choiceRequestDto.getIs_chosen();
+        Boolean type = choiceRequestDto.getIs_chosen();
         //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
-        if(!userId.equals(question.getUser().getUserId())){
+        if (!userId.equals(question.getUser().getUserId())) {
             throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
-        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(),answer,type);
+        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(), answer, type);
 
         answerRepository.save(answer);
     }
@@ -127,4 +131,55 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setIsChosen(type);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuestionListResponseDto> getQuestions(String sort, Long categoryId, int page, int size) {
+        List<Question> questions;
+
+        //특정 카테고리의 질문 조회
+        if (categoryId != null) {
+            questions = questionRepository.findByCategoryId(categoryId, page, size, sort);
+            if (questions.isEmpty()) {
+                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
+            }
+        }
+        //전체 질문 조회
+        else {
+            questions = questionRepository.findAllPaged(page, size, sort);
+            if (questions.isEmpty()) {
+                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
+            }
+        }
+
+        return questions.stream()
+                .map(QuestionListResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public QuestionDetailResponseDto getQuestionDetail(Long questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
+
+        question.increseViewCount();
+        questionRepository.save(question);
+
+        List<AnswerResponseDto> answers = answerRepository.findByQuestionId(questionId)
+                .stream()
+                .map(AnswerResponseDto::new)
+                .collect(Collectors.toList());
+
+        return new QuestionDetailResponseDto(question, answers);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuestionResponseDto> searchQuestions(String value, String sort, int page, int size) {
+        List<Question> questions = questionRepository.searchByKeyword(value, sort, page, size);
+
+        return questions.stream()
+                .map(QuestionResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }
