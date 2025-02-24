@@ -47,9 +47,9 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Transactional
     @Override
-    public void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
+    public void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images,String token) {
 
-        User user = userRepository.findById(Long.valueOf(requestDto.getUser_id()))
+        User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Question question = questionRepository.findById(requestDto.getQuestion_id())
@@ -83,19 +83,27 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Transactional
     @Override
-    public void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto) {
+    public void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto,String token) {
+
         Answer answer = answerRepository.findById(answer_id)
                 .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
-
+        if(!answer.getUser().getUserId()
+                .equals(jwtUtil.getUserIdFromToken(token))){
+            throw new RestApiException(CommonErrorCode.UNAUTHORIZED);
+        }
         answer.update(requestDto.getContent());
     }
 
     @Transactional
     @Override
-    public void deleteAnswer(Long answer_id) {
+    public void deleteAnswer(Long answer_id,String token) {
         Answer answer = answerRepository.findById(answer_id)
                 .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
+        if(!answer.getUser().getUserId()
+                .equals(jwtUtil.getUserIdFromToken(token))){
+            throw new RestApiException(CommonErrorCode.UNAUTHORIZED);
+        }
         answerRepository.delete(answer);
 
         Question question = answer.getQuestion();
@@ -110,9 +118,7 @@ public class AnswerServiceImpl implements AnswerService {
         //TODO:JWT로 교체
         Long userId=jwtUtil.getUserIdFromToken(token);
         //유저 찾기
-        User user=userRepository.findById(userId).orElseThrow(
-                ()->new RestApiException(CommonErrorCode.USER_NOT_FOUND)
-        );
+
         Answer answer=answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
                 ()-> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
         Question question=questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
@@ -164,7 +170,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable) {
+    public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable,String token) {
         List<Question> questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
 
         if (questions.isEmpty()) {
@@ -198,7 +204,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable) {
+    public List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable,String token) {
         List<Question> questions = questionRepository.searchByKeyword(value, sort, pageable);
 
         return questions.stream()

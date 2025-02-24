@@ -7,7 +7,7 @@ import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import java.util.List;
 
 public interface QuestionService {
-    void createQuestion(Long user_id, QuestionRequestDto requestDto, List<MultipartFile> images);
-    void updateQuestion(Long question_id, QuestionUpdateRequestDto requestDto);
-    void deleteQuestion(Long question_id);
+    void createQuestion( QuestionRequestDto requestDto, List<MultipartFile> images,String token);
+    void updateQuestion(Long question_id, QuestionUpdateRequestDto requestDto,String token);
+    void deleteQuestion(Long question_id,String token);
 }
