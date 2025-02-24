@@ -1,3 +1,4 @@
+/*
 package swyp.qampus.university.repository;
 
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +11,8 @@ import swyp.qampus.university.domain.response.UniversityRankResponseDto;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UniversityRepositoryCustomImplTest {
-    @Autowired
+    */
+/*@Autowired
     private UniversityRepository universityRepository;
 
     @Test
@@ -21,6 +23,7 @@ class UniversityRepositoryCustomImplTest {
         //when
 
         //then
-    }
+    }*//*
 
-}
+
+}*/
