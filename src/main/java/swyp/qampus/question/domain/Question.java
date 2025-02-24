@@ -3,10 +3,13 @@ package swyp.qampus.question.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import swyp.qampus.category.domain.Category;
+import swyp.qampus.curious.domain.Curious;
 import swyp.qampus.image.domain.Image;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
+
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -49,6 +52,9 @@ public class Question {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE)
+    private List<Curious> curiousList=new ArrayList<>();
+
     @Column(nullable = false)
     private int unreadAnswerCnt = 0;
 
@@ -81,6 +87,19 @@ public class Question {
         this.isDeleted = true;
     }
 
+    //나도 궁금해요 개수 증가
+    public void addCurious(Curious curious){
+        this.curiousList.add(curious);
+        this.curiousCount++;
+    }
+
+    //나도 궁금해요 개수 감소
+    public void decreaseCurious(Curious curious){
+        if(this.curiousCount>0){
+            this.curiousList.remove(curious);
+            this.curiousCount--;
+        }
+    }
     //질문을 조회할 때 lastViewedDate를 업데이트 후 미확인 답변 초기화
     public void updateLastViewedDate() {
         this.unreadAnswerCnt = 0;
