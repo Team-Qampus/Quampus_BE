@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         }
 
         return questions.stream()
-                .map(MyQuestionResponseDto::new)
+                .map(MyQuestionResponseDto::of)
                 .collect(Collectors.toList());
     }
 }
