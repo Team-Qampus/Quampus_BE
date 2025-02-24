@@ -17,7 +17,7 @@ public class AnswerWeeklyResponseDto {
         this.question_id = answer.getQuestion().getQuestionId();
         this.answer_id = answer.getAnswerId();
         this.title = answer.getQuestion().getTitle();
-        this.university_name = answer.getQuestion().getUser().getUniversityName();
+        this.university_name = answer.getQuestion().getUser().getUniversity().getUniversityName();
         this.content = answer.getContent();
         this.like_count = answer.getLikeCnt();
     }

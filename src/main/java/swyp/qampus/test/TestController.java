@@ -23,6 +23,8 @@ public class TestController {
                 .name(testDto.getName())
                 .email(testDto.getEmail())
                 .major(testDto.getMajor())
+                .nickname(testDto.getName())
+                .password(testDto.getName())
                 .build();
 
         University university = universityRepository.findByUniversityName(testDto.getUniversityName())

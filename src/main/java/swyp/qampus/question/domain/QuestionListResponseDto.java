@@ -35,7 +35,7 @@ public class QuestionListResponseDto {
                 question.getTitle(),
                 question.getCategory().getCategoryName(),
                 question.getContent(),
-                question.getUser().getUniversityName(),
+                question.getUser().getUniversity().getUniversityName(),
                 question.getCreateDate(),
                 question.getViewCnt()
         );
