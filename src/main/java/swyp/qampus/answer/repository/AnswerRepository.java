@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long>,AnswerCustomRepository {
     //특정 질문에 대한 모든 답변 조회
-    List<Answer> findByQuestionId(Long questionId);
+    List<Answer> findByQuestionQuestionId(Long questionId);
 }

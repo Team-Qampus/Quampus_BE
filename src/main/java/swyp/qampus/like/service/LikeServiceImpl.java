@@ -12,6 +12,9 @@ import swyp.qampus.like.exception.LikeErrorCode;
 import swyp.qampus.like.repository.LikeRepository;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.login.util.JWTUtil;
+
+
 
 
 @Service
@@ -20,16 +23,18 @@ public class LikeServiceImpl implements LikeService{
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final AnswerRepository answerRepository;
+    private final JWTUtil jwtUtil;
     @Override
     @Transactional
     public void insert(String token, Long answerId) {
         /*
         TODO: jwt로 교체 해야함
         */
+        Long userId=jwtUtil.getUserIdFromToken(token);
         Result result = getResult(token, answerId);
-
+        //임
         //이미 좋아요가 눌러져있으면 에러 반환
-        if(likeRepository.findLikesByAnswerAndUser(answerId,token).isPresent()){
+        if(likeRepository.findLikesByAnswerAndUser(answerId,userId ).isPresent()){
             throw new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST);
         }
 
@@ -45,7 +50,7 @@ public class LikeServiceImpl implements LikeService{
         */
         Result result=getResult(token,answerId);
 
-        Like like=likeRepository.findLikesByAnswerAndUser(answerId,result.user.getUserId()).orElseThrow(
+        Like like=likeRepository.findLikesByAnswerAndUser(answerId, Long.valueOf(result.user.getUserId())).orElseThrow(
                 ()->new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST)
         );
         result.answer.decreaseLike(like);

@@ -48,6 +48,6 @@ public class AnswerCustomRepositoryImpl implements AnswerCustomRepository {
     }
 
     BooleanExpression questionIdEq(Long questionId){
-        return question.questionId.eq(questionId);
+        return answer.question.questionId.eq(questionId);
     }
 }

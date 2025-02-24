@@ -7,6 +7,7 @@ import swyp.qampus.common.BaseEntity;
 import swyp.qampus.curious.domain.Curious;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
+import swyp.qampus.university.domain.University;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ public class User  {
 
     @Column(nullable = false, length = 255)
     private String password;
-
 
     @Column(length = 100)
     private String universityName;
@@ -61,6 +61,10 @@ public class User  {
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Curious> curiousList=new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "university_id")
+    private University university;
 
     @Builder(toBuilder = true)
     public User(Long userId, String name, String email, String password, String universityName, String major,String nickname){

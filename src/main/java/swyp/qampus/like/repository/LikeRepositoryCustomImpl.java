@@ -23,7 +23,7 @@ public class LikeRepositoryCustomImpl implements LikeRepositoryCustom{
 
 
     @Override
-    public Optional<Like> findLikesByAnswerAndUser(Long answerId, String userId) {
+    public Optional<Like> findLikesByAnswerAndUser(Long answerId, Long userId) {
         return  Optional.ofNullable(
                 queryFactory.select(like)
                         .from(like)
@@ -34,13 +34,13 @@ public class LikeRepositoryCustomImpl implements LikeRepositoryCustom{
         );
     }
 
-    private BooleanExpression userIdEq(String userId){
+    private BooleanExpression userIdEq(Long userId){
         return userId==null ? null : user.userId.eq(userId);
     }
     private BooleanExpression answerIdEq(Long answerId){
         return answerId == null ? null : answer.answerId.eq(answerId);
     }
-    private BooleanExpression userAndAnswerIdEq(String userId,Long answerId){
+    private BooleanExpression userAndAnswerIdEq(Long userId,Long answerId){
         if(userIdEq(userId)==null){
             return answerIdEq(answerId);
         }

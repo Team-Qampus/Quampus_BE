@@ -18,10 +18,11 @@ import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.login.entity.User;
+
 import swyp.qampus.user.repository.UserRepository;
 
 import java.util.Collections;
@@ -177,7 +178,7 @@ class AnswerServiceImplTest {
         when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
         when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
         when(question.getUser()).thenReturn(user);
-        when(question.getUser().getUserId()).thenReturn(user1Id);
+        when(question.getUser().getUserId()).thenReturn(Long.valueOf(user1Id));
         when(answerRepository.countChoiceOfAnswer(questionId)).thenReturn(0);
         when(answer.getIsChosen()).thenReturn(true);
 
@@ -294,7 +295,7 @@ class AnswerServiceImplTest {
         AnswerRequestDto requestDto = new AnswerRequestDto(userId, questionId, "테스트 답변");
         List<MultipartFile> images = Collections.emptyList(); // 이미지 없음
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userRepository.findById(Long.valueOf(userId))).willReturn(Optional.of(user));
         given(questionRepository.findById(questionId)).willReturn(Optional.of(question));
         given(answerRepository.save(any(Answer.class))).willAnswer(invocation -> invocation.getArgument(0));
 
@@ -318,7 +319,7 @@ class AnswerServiceImplTest {
         Long questionId = 10L;
         AnswerRequestDto requestDto = new AnswerRequestDto(userId, questionId, "테스트 답변");
 
-        given(userRepository.findById(userId)).willReturn(Optional.empty());
+        given(userRepository.findById(Long.valueOf(userId))).willReturn(Optional.empty());
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
