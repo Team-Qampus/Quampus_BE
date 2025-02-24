@@ -20,15 +20,15 @@ public class QuestionController {
 
     @PostMapping("/{user_id}")
     public ResponseEntity<?> createQuestion(@PathVariable Long user_id,
-                                                              @RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
-                                                              @RequestPart(value = "images",required = false) List<MultipartFile> images) {
+                                            @RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
+                                            @RequestPart(value = "images",required = false) List<MultipartFile> images) {
         questionService.createQuestion(user_id, requestDto, images);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 생성 성공"));
     }
 
     @PutMapping("/{question_id}")
     public ResponseEntity<?> updateQuestion(@PathVariable Long question_id,
-                                                             @RequestBody QuestionUpdateRequestDto requestDto) {
+                                            @RequestBody QuestionUpdateRequestDto requestDto) {
         questionService.updateQuestion(question_id, requestDto);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 수정 성공"));
     }
