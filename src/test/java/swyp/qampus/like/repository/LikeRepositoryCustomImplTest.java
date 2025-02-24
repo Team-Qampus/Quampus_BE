@@ -10,7 +10,7 @@ import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.login.entity.User;
-import swyp.qampus.user.repository.UserRepository;
+import swyp.qampus.login.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;

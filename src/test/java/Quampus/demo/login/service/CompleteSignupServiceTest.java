@@ -2,6 +2,7 @@ package Quampus.demo.login.service;
 
 import swyp.qampus.login.config.data.RedisCustomServiceImpl;
 import swyp.qampus.login.dto.UserRequestDTO;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.service.CompleteSignupService;
 import swyp.qampus.login.util.JWTUtil;
@@ -42,6 +43,7 @@ class CompleteSignupServiceTest {
     private String tempUserJson;
     private final String email = "test@example.com";
     private final String redisKey = "tempUser:" + email;
+    private final Long userId = 1L;
 
     @BeforeEach
     public void setup() throws JsonProcessingException {
@@ -66,7 +68,7 @@ class CompleteSignupServiceTest {
         when(redisCustomService.getRedisData(redisKey)).thenReturn(tempUserJson);
         // given: jwtUtil이 최종 JWT 토큰을 생성
         String expectedToken = "final.jwt.token";
-        when(jwtUtil.createAccessToken(email)).thenReturn(expectedToken);
+        when(jwtUtil.createAccessToken(email, userId)).thenReturn(expectedToken);
 
         // given: 테스트용 DTO (익명 클래스로 구현)
         UserRequestDTO.UserUniversityAndMajorDTO dto = new UserRequestDTO.UserUniversityAndMajorDTO() {
