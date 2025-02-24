@@ -126,7 +126,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                         .leftJoin(university.users, user)
                         .leftJoin(user.questions, question)
                         .leftJoin(user.answers, answer)
-                        .where(university.universityName.eq(universityName))
+                        .where(university.universityName.contains(universityName))
                         .fetchOne();
 
         return Optional.ofNullable(result);
