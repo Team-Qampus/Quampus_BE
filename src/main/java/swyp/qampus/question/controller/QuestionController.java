@@ -1,5 +1,6 @@
 package swyp.qampus.question.controller;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/questions")
 @RequiredArgsConstructor
+@Schema(name = "질문",description = "질문하기 API입니다.")
 public class QuestionController {
     private final QuestionServiceImpl questionService;
 
