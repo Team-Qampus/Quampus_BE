@@ -28,7 +28,7 @@ public class HomeServiceImpl implements HomeService {
     @Transactional
     public void updateWeeklyPopularQna() {
         List<QuestionWeeklyResponseDto> popularQuestions = questionRepository.findWeeklyPopularQuestions()
-                .stream().map(QuestionWeeklyResponseDto::new).collect(Collectors.toList());
+                .stream().map(QuestionWeeklyResponseDto::of).collect(Collectors.toList());
 
         List<AnswerWeeklyResponseDto> popularAnswers = answerRepository.findWeeklyPopularAnswers()
                 .stream().map(AnswerWeeklyResponseDto::new).collect(Collectors.toList());
