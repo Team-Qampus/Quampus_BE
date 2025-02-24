@@ -90,4 +90,8 @@ public class JWTUtil {
             return false;
         }
     }
+
+    public Long getUserIdFromToken(String token) {
+        return 1L;
+    }
 }

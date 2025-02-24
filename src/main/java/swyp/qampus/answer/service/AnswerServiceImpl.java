@@ -8,21 +8,26 @@ import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
+import swyp.qampus.common.ResponseDto;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.domain.QuestionDetailResponseDto;
 import swyp.qampus.question.domain.QuestionListResponseDto;
-
 import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.exception.QuestionErrorCode;
-import swyp.qampus.login.entity.User;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.exception.UniversityErrorCode;
+import swyp.qampus.university.repository.UniversityRepository;
+
 import swyp.qampus.exception.CustomException;
+import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 
 
@@ -38,6 +43,7 @@ public class AnswerServiceImpl implements AnswerService {
     private final ImageService imageService;
     private final ImageRepository imageRepository;
     private final JWTUtil jwtUtil;
+    private final UniversityRepository universityRepository;
 
     @Transactional
     @Override
@@ -47,9 +53,10 @@ public class AnswerServiceImpl implements AnswerService {
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Question question = questionRepository.findById(requestDto.getQuestion_id())
-                .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
+                .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         Answer answer = Answer.builder()
+                .user(user)
                 .question(question)
                 .content(requestDto.getContent())
                 .build();
@@ -99,11 +106,15 @@ public class AnswerServiceImpl implements AnswerService {
     @Transactional
     public void choice(ChoiceRequestDto choiceRequestDto, String token) {
         //TODO:JWT로 교체
-        String userId = token;
-        Answer answer = answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
-                () -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
-        Question question = questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
-                () -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
+        Long userId=jwtUtil.getUserIdFromToken(token);
+        //유저 찾기
+        User user=userRepository.findById(userId).orElseThrow(
+                ()->new RestApiException(CommonErrorCode.USER_NOT_FOUND)
+        );
+        Answer answer=answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
+                ()-> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
+        Question question=questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
+                ()->new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
         );
         Boolean type = choiceRequestDto.getIs_chosen();
         //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
@@ -127,6 +138,11 @@ public class AnswerServiceImpl implements AnswerService {
             if(answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
             }
+            //채택하는 경우
+            University university=universityRepository.findById(answer.getUser().getUniversity().getUniversityId()).orElseThrow(()->
+                    new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
+            university.increaseChoiceCnt();
+            universityRepository.save(university);
         }
         //채택 취소하는 경우
         else{
@@ -134,6 +150,11 @@ public class AnswerServiceImpl implements AnswerService {
             if(!answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_NO_CHOSEN);
             }
+            //채택하는 경우
+            University university=universityRepository.findById(answer.getUser().getUniversity().getUniversityId()).orElseThrow(()->
+                    new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
+            university.decreaseChoiceCnt();
+            universityRepository.save(university);
         }
         answer.setIsChosen(type);
     }
@@ -181,7 +202,7 @@ public class AnswerServiceImpl implements AnswerService {
             throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
 
-        List<AnswerResponseDto> answers = answerRepository.findByQuestionId(questionId)
+        List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
                 .stream()
                 .map(AnswerResponseDto::of)
                 .collect(Collectors.toList());

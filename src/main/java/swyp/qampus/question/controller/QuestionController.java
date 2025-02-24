@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.common.ResponseDto;
+import swyp.qampus.common.ResponseDto;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.question.service.QuestionServiceImpl;

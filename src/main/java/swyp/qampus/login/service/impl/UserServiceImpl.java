@@ -1,16 +1,17 @@
-package swyp.qampus.user.service;
+package swyp.qampus.login.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.login.service.UserService;
 import swyp.qampus.question.domain.MyQuestionResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.domain.User;
-import swyp.qampus.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -18,7 +18,7 @@ public class CuriousCustomRepositoryImpl implements CuriousCustomRepository {
     }
 
     @Override
-    public Optional<Curious> findCuriousByQuestionAndUser(Long questionId, String userId) {
+    public Optional<Curious> findCuriousByQuestionAndUser(Long questionId, Long userId) {
         return Optional.ofNullable(
                 queryFactory.select(curious)
                         .from(curious)
@@ -28,7 +28,7 @@ public class CuriousCustomRepositoryImpl implements CuriousCustomRepository {
         );
     }
 
-    private BooleanExpression userAndQuestionIdEq(String userId, Long questionId) {
+    private BooleanExpression userAndQuestionIdEq(Long userId, Long questionId) {
         if (userIdEq(userId) == null) {
             return questionIdEq(questionId);
         }
@@ -42,7 +42,7 @@ public class CuriousCustomRepositoryImpl implements CuriousCustomRepository {
         return (questionId == null) ? null : question.questionId.eq(questionId);
     }
 
-    private BooleanExpression userIdEq(String userId) {
+    private BooleanExpression userIdEq(Long userId) {
         return userId == null ? null : user.userId.eq(userId);
     }
 }

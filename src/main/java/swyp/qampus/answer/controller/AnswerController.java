@@ -5,13 +5,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import swyp.qampus.question.domain.QuestionDetailResponseDto;
-import swyp.qampus.question.domain.QuestionListResponseDto;
 import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
 import swyp.qampus.answer.domain.ChoiceRequestDto;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.answer.service.AnswerService;
+import swyp.qampus.question.domain.QuestionDetailResponseDto;
+import swyp.qampus.question.domain.QuestionListResponseDto;
 import swyp.qampus.question.domain.QuestionResponseDto;
 
 import java.util.List;
@@ -42,10 +42,10 @@ public class AnswerController {
         return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 삭제 성공"));
     }
 
-    @PostMapping("/choice")
-    public ResponseEntity<?> choice(@RequestHeader("Authorization") String token, @RequestBody ChoiceRequestDto requestDto) {
-        answerService.choice(requestDto, token);
-        return ResponseEntity.ok().body(ResponseDto.of(true, 200, "채택 성공"));
+    @PutMapping("/choice")
+    public ResponseEntity<?> choice(@RequestHeader("Authorization")String token, @RequestBody ChoiceRequestDto requestDto){
+        answerService.choice(requestDto,token);
+        return ResponseEntity.ok().body(ResponseDto.of(true,200,"채택 또는 취소 성공"));
     }
 
     @GetMapping

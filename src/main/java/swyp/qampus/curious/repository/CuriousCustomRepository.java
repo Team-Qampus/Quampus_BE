@@ -5,5 +5,5 @@ import swyp.qampus.curious.domain.Curious;
 import java.util.Optional;
 
 public interface CuriousCustomRepository {
-    Optional<Curious>findCuriousByQuestionAndUser(Long questionId,String userId);
+    Optional<Curious>findCuriousByQuestionAndUser(Long questionId,Long userId);
 }

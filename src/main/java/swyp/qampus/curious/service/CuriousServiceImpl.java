@@ -9,6 +9,7 @@ import swyp.qampus.curious.repository.CuriousRepository;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
@@ -20,6 +21,7 @@ public class CuriousServiceImpl implements CuriousService{
     private final CuriousRepository curiousRepository;
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
+    private final JWTUtil jwtUtil;
     @Override
     @Transactional
     public void insert(String token, Long questionId) {
@@ -27,10 +29,10 @@ public class CuriousServiceImpl implements CuriousService{
         TODO:JWT로 교체
          */
         Result result=getResult(token,questionId);
-
+        Long userId= jwtUtil.getUserIdFromToken(token);
 
         //이미 궁금해요 눌러져 있으면 에러 반환
-        if(curiousRepository.findCuriousByQuestionAndUser(questionId,token).isPresent()){
+        if(curiousRepository.findCuriousByQuestionAndUser(questionId,userId).isPresent()){
             throw new RestApiException(CuriousErrorCode.DUPLICATED_CURIOUS_REQUEST);
         }
 
