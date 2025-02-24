@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ import swyp.qampus.home.service.HomeService;
 @RestController
 @RequestMapping("/home")
 @RequiredArgsConstructor
-@Schema(name = "홈화면", description = "홈화면 API")
+@Tag(name = "홈화면", description = "홈화면 API")
 public class HomeController {
     private final HomeService homeService;
     @Operation(
