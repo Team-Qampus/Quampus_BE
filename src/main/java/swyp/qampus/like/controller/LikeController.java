@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import swyp.qampus.like.service.LikeService;
 
 @RestController
 @RequestMapping("/like")
-@Schema(name = "좋아요",description = "좋아요 API입니다.")
+@Tag(name = "좋아요",description = "좋아요 API입니다.")
 @RequiredArgsConstructor
 public class LikeController {
     private final LikeService likeService;

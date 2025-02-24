@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@Schema(name = "커뮤니티",description = "학교 조회 API입니다.")
+@Tag(name = "커뮤니티",description = "학교 조회 API입니다.")
 public class UniversityController {
     private final UniversityService universityService;
 
