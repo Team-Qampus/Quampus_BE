@@ -7,13 +7,14 @@ import org.springframework.stereotype.Repository;
 import swyp.qampus.answer.domain.QAnswer;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.like.domain.QLike;
-import swyp.qampus.user.domain.QUser;
+
 
 import java.util.Optional;
 
 import static swyp.qampus.answer.domain.QAnswer.*;
 import static swyp.qampus.like.domain.QLike.*;
-import static swyp.qampus.user.domain.QUser.*;
+import static swyp.qampus.login.entity.QUser.user;
+
 
 @Repository
 public class LikeRepositoryCustomImpl implements LikeRepositoryCustom{

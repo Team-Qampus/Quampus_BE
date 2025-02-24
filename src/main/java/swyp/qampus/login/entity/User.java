@@ -1,4 +1,4 @@
-package swyp.qampus.user.domain;
+package swyp.qampus.login.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,7 +21,7 @@ import java.util.List;
 public class User  {
     @Id
     @Column(nullable = false, name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -32,11 +32,16 @@ public class User  {
     @Column(nullable = false, length = 255)
     private String password;
 
+
     @Column(length = 100)
     private String universityName;
 
     @Column(length = 255)
     private String major;
+
+    // 닉네임
+    @Column(name = "nickname" , nullable = true)
+    private String nickname;
 
     @Column(nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -56,14 +61,15 @@ public class User  {
     @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
     private List<Curious> curiousList=new ArrayList<>();
 
-    @Builder
-    public User(Long userId, String name, String email, String password, String universityName, String major){
+    @Builder(toBuilder = true)
+    public User(String userId, String name, String email, String password, String universityName, String major,String nickname){
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
         this.universityName = universityName;
         this.major = major;
+        this.nickname=nickname;
     }
     public void addQuestion(Question question){
         this.questions.add(question);

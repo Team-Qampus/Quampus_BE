@@ -2,11 +2,10 @@ package swyp.qampus.answer.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import swyp.qampus.common.BaseEntity;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -5,7 +5,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import swyp.qampus.university.domain.response.QUniversityRankResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
-import swyp.qampus.user.domain.QUser;
+
 
 import java.util.List;
 
