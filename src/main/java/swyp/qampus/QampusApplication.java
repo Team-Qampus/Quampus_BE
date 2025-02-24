@@ -1,13 +1,13 @@
-package Quampus.demo;
+package swyp.qampus;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemoApplication {
+public class QampusApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(QampusApplication.class, args);
 	}
 
 }

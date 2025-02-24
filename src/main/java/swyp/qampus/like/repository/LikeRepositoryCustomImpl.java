@@ -1,0 +1,51 @@
+package swyp.qampus.like.repository;
+
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import org.springframework.stereotype.Repository;
+import swyp.qampus.answer.domain.QAnswer;
+import swyp.qampus.like.domain.Like;
+import swyp.qampus.like.domain.QLike;
+import swyp.qampus.user.domain.QUser;
+
+import java.util.Optional;
+
+import static swyp.qampus.answer.domain.QAnswer.*;
+import static swyp.qampus.like.domain.QLike.*;
+import static swyp.qampus.user.domain.QUser.*;
+
+@Repository
+public class LikeRepositoryCustomImpl implements LikeRepositoryCustom{
+    private final JPAQueryFactory queryFactory;
+    public LikeRepositoryCustomImpl(EntityManager em){this.queryFactory=new JPAQueryFactory(em);}
+
+
+    @Override
+    public Optional<Like> findLikesByAnswerAndUser(Long answerId, String userId) {
+        return  Optional.ofNullable(
+                queryFactory.select(like)
+                        .from(like)
+                        .join(like.user,user)
+                        .join(like.answer, answer)
+                        .where(userAndAnswerIdEq(userId,answerId))
+                        .fetchOne()
+        );
+    }
+
+    private BooleanExpression userIdEq(String userId){
+        return userId==null ? null : user.userId.eq(userId);
+    }
+    private BooleanExpression answerIdEq(Long answerId){
+        return answerId == null ? null : answer.answerId.eq(answerId);
+    }
+    private BooleanExpression userAndAnswerIdEq(String userId,Long answerId){
+        if(userIdEq(userId)==null){
+            return answerIdEq(answerId);
+        }
+        if(answerIdEq(answerId)==null){
+            return userIdEq(userId);
+        }
+        return answerIdEq(answerId).and(userIdEq(userId));
+    }
+}
