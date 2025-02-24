@@ -1,6 +1,7 @@
 package swyp.qampus.university.domain.response;
 
 import com.querydsl.core.annotations.QueryProjection;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Builder
 @Getter
+@Schema(name = "학교 상세보기 조회Dto")
 public class UniversityDetailResponseDto {
     //학교 인덱스
     private Long university_id;
