@@ -21,7 +21,7 @@ import java.util.List;
 public class User  {
     @Id
     @Column(nullable = false, name = "user_id")
-    private String userId;
+    private Long userId;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -62,7 +62,7 @@ public class User  {
     private List<Curious> curiousList=new ArrayList<>();
 
     @Builder(toBuilder = true)
-    public User(String userId, String name, String email, String password, String universityName, String major,String nickname){
+    public User(Long userId, String name, String email, String password, String universityName, String major,String nickname){
         this.userId = userId;
         this.name = name;
         this.email = email;
