@@ -8,17 +8,18 @@ import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.category.domain.Category;
 import swyp.qampus.question.domain.Question;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.exception.CustomException;
 import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.category.repository.CategoryRepository;
-import swyp.qampus.user.repository.UserRepository;
+
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class QuestionService {
     private final ImageRepository imageRepository;
     @Transactional
     public QuestionResponseDto createQuestion(String user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
-        User user = userRepository.findById(user_id)
+        User user = userRepository.findById(Long.valueOf(user_id))
                 .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
 
         Category category = categoryRepository.findById(requestDto.getCategory_id())

@@ -1,27 +1,24 @@
 package swyp.qampus.curious.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.category.domain.Category;
 import swyp.qampus.category.repository.CategoryRepository;
 import swyp.qampus.curious.domain.Curious;
-import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 @ActiveProfiles("secret")
 @Transactional
