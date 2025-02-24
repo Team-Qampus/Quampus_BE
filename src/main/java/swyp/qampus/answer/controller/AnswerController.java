@@ -32,7 +32,7 @@ public class AnswerController {
     private final AnswerService answerService;
 
     @Operation(
-            summary = "답변 생성 API입니다.",
+            summary = "답변 생성 API입니다.-[담당자:박재하]",
             description = "form-data형식입니다. 이미지는 삽입안하셔도 됩니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "답변 생성 성공",
@@ -54,7 +54,7 @@ public class AnswerController {
     }
 
     @Operation(
-            summary = "답변 수정 API입니다.",
+            summary = "답변 수정 API입니다.-[담당자:박재하]",
             responses = {
                     @ApiResponse(responseCode = "200", description = "답변 생성 성공",
                             content = @Content(mediaType = "application/json",
@@ -76,7 +76,7 @@ public class AnswerController {
     }
 
     @Operation(
-            summary = "답변 삭제 API입니다.",
+            summary = "답변 삭제 API입니다.-[담당자:박재하]",
             responses = {
                     @ApiResponse(responseCode = "200", description = "답변 삭제 성공",
                             content = @Content(mediaType = "application/json",
@@ -97,7 +97,7 @@ public class AnswerController {
     }
 
     @Operation(
-            summary = "채택하기 및 채택취소 API입니다.",
+            summary = "채택하기 및 채택취소 API입니다.-[담당자:김도연]",
             description = "is_chosen값을 true로 전달하면 채택하기 / is_chosen값을 false로 전달하면 채택취소입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "채택 또는 취소 성공",
@@ -134,7 +134,7 @@ public class AnswerController {
     }
 
     @Operation(
-            summary = "질문 리스트 API입니다.",
+            summary = "질문 리스트 API입니다.-[담당자:김도연]",
             description = "기본 sort=최신 게시물 순서입니다. size:한 페이지당 최대 항목 수 page:조회할 페이지 번호(0부터 시작)",
             responses = {
                     @ApiResponse(responseCode = "200",
@@ -159,7 +159,7 @@ public class AnswerController {
     }
 
     @Operation(
-            summary = "질문 상세보기 API입니다.",
+            summary = "질문 상세보기 API입니다.-[담당자:박재하]",
             description = "질문 상세보기 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "채택 또는 취소 성공",
@@ -181,7 +181,7 @@ public class AnswerController {
     }
 
     @Operation(
-            summary = "질문 검색하기 API입니다.",
+            summary = "질문 검색하기 API입니다.-[담당자:박재하]",
             description = "질문 검색하기 입니다. 기본 sort=최신 게시물 순서입니다. size:한 페이지당 최대 항목 수 page:조회할 페이지 번호(0부터 시작)",
             responses = {
                     @ApiResponse(responseCode = "200", description = "채택 또는 취소 성공",
