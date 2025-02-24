@@ -1,5 +1,6 @@
 package swyp.qampus.question.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import swyp.qampus.category.domain.CategoryType;
@@ -7,6 +8,7 @@ import swyp.qampus.category.domain.CategoryType;
 import java.time.LocalDateTime;
 
 @Getter
+@Schema(name = "나의 질문목록 조회Dto")
 public class MyQuestionResponseDto {
     private final Long questionId;
     private final String title;
