@@ -1,5 +1,6 @@
 package swyp.qampus.question.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import swyp.qampus.answer.domain.AnswerResponseDto;
 
@@ -17,14 +18,29 @@ public class QuestionDetailResponseDto {
     private final int curiousCount;
     private final List<AnswerResponseDto> answers;
 
-    public QuestionDetailResponseDto(Question question, List<AnswerResponseDto> answers) {
-        this.questionId = question.getQuestionId();
-        this.title = question.getTitle();
-        this.content = question.getContent();
-        this.universityName = question.getUser().getUniversityName();
-        this.createdDate = question.getCreateDate();
-        this.viewCnt = question.getViewCnt();
-        this.curiousCount = question.getCuriousCount();
+    @Builder
+    private QuestionDetailResponseDto(Long questionId, String title, String content, String universityName,
+                                      LocalDateTime createdDate, int viewCnt, int curiousCount, List<AnswerResponseDto> answers) {
+        this.questionId = questionId;
+        this.title = title;
+        this.content = content;
+        this.universityName = universityName;
+        this.createdDate = createdDate;
+        this.viewCnt = viewCnt;
+        this.curiousCount = curiousCount;
         this.answers = answers;
+    }
+
+    public static QuestionDetailResponseDto of(Question question, List<AnswerResponseDto> answers) {
+        return QuestionDetailResponseDto.builder()
+                .questionId(question.getQuestionId())
+                .title(question.getTitle())
+                .content(question.getContent())
+                .universityName(question.getUser().getUniversityName())
+                .createdDate(question.getCreateDate())
+                .viewCnt(question.getViewCnt())
+                .curiousCount(question.getCuriousCount())
+                .answers(answers)
+                .build();
     }
 }
