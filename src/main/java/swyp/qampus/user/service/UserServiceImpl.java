@@ -1,6 +1,7 @@
 package swyp.qampus.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
@@ -21,11 +22,11 @@ public class UserServiceImpl implements UserService {
     private final QuestionRepository questionRepository;
 
     @Override
-    public List<MyQuestionResponseDto> getMyQuestions(Long userId, Long categoryId, String sort, int page, int size) {
+    public List<MyQuestionResponseDto> getMyQuestions(Long userId, Long categoryId, String sort, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
-        List<Question> questions = questionRepository.findMyQuestions(userId, categoryId, sort, page, size);
+        List<Question> questions = questionRepository.findMyQuestions(userId, categoryId, sort, pageable);
 
         if (questions.isEmpty()) {
             throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);

@@ -1,6 +1,7 @@
 package swyp.qampus.answer.service;
 
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.question.domain.QuestionDetailResponseDto;
 import swyp.qampus.question.domain.QuestionListResponseDto;
@@ -17,6 +18,6 @@ public interface AnswerService {
     void deleteAnswer(Long answer_id);
     void choice(ChoiceRequestDto choiceRequestDto, String token);
     List<QuestionListResponseDto> getQuestions(Long categoryId, String sort, Pageable pageable);
-    QuestionDetailResponseDto getQuestionDetail(Long questionId);
+    QuestionDetailResponseDto getQuestionDetail(Long questionId, String token);
     List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable);
 }
