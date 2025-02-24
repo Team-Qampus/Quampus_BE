@@ -36,7 +36,7 @@ public class QuestionDetailResponseDto {
                 .questionId(question.getQuestionId())
                 .title(question.getTitle())
                 .content(question.getContent())
-                .universityName(question.getUser().getUniversityName())
+                .universityName(question.getUser().getUniversity().getUniversityName())
                 .createdDate(question.getCreateDate())
                 .viewCnt(question.getViewCnt())
                 .curiousCount(question.getCuriousCount())

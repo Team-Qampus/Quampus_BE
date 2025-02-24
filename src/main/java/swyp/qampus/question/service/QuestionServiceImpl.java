@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.exception.CommonErrorCode;
+import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
@@ -36,10 +37,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void createQuestion(Long user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
         User user = userRepository.findById(user_id)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Category category = categoryRepository.findById(requestDto.getCategory_id())
-                .orElseThrow(() -> new CustomException(CommonErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.CATEGORY_NOT_FOUND));
 
         Question question = Question.builder()
                 .user(user)
