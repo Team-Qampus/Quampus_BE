@@ -12,20 +12,20 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
-
+import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.login.util.JWTUtil;
+import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.domain.QuestionDetailResponseDto;
 import swyp.qampus.question.domain.QuestionListResponseDto;
-
-import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.exception.QuestionErrorCode;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.exception.CustomException;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.repository.UserRepository;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +35,13 @@ public class AnswerServiceImpl implements AnswerService {
     private final QuestionRepository questionRepository;
     private final ImageService imageService;
     private final ImageRepository imageRepository;
+    private final JWTUtil jwtUtil;
 
     @Transactional
     @Override
     public void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
-        User user = userRepository.findById(requestDto.getUser_id())
+
+        User user = userRepository.findById(Long.valueOf(requestDto.getUser_id()))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Question question = questionRepository.findById(requestDto.getQuestion_id())
@@ -106,23 +108,23 @@ public class AnswerServiceImpl implements AnswerService {
         answerRepository.save(answer);
     }
 
-    private void validateAndSetChoiceSet(Long questId, Answer answer, Boolean type) {
+    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
         //채택하는 경우
-        if (type) {
+        if(type){
             //해당 질문에서 이미 채택한 답변이 존재하는 경우
-            Integer exitedChosen = answerRepository.countChoiceOfAnswer(questId);
-            if (exitedChosen >= 1) {
+            Integer exitedChosen=answerRepository.countChoiceOfAnswer(questId);
+            if(exitedChosen>=1){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN_OF_QUESTION);
             }
             //이미 채택된 답변에 대한 요청 시
-            if (answer.getIsChosen()) {
+            if(answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_CHOSEN);
             }
         }
         //채택 취소하는 경우
-        else {
+        else{
             //이미 채택 취소된 답변에 대한 요청 시
-            if (!answer.getIsChosen()) {
+            if(!answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_NO_CHOSEN);
             }
         }

@@ -6,8 +6,9 @@ import jakarta.persistence.EntityManager;
 import swyp.qampus.curious.domain.Curious;
 import java.util.Optional;
 import static swyp.qampus.curious.domain.QCurious.*;
+import static swyp.qampus.login.entity.QUser.user;
 import static swyp.qampus.question.domain.QQuestion.*;
-import static swyp.qampus.user.domain.QUser.*;
+
 
 public class CuriousCustomRepositoryImpl implements CuriousCustomRepository {
     private final JPAQueryFactory queryFactory;

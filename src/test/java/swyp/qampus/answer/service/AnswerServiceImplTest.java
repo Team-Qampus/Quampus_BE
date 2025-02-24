@@ -21,7 +21,7 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.user.repository.UserRepository;
 
 import java.util.Collections;
@@ -115,7 +115,7 @@ class AnswerServiceImplTest {
         when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
         when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
         when(question.getUser()).thenReturn(user);
-        when(question.getUser().getUserId()).thenReturn(user2Id);
+        when(question.getUser().getUserId()).thenReturn(Long.valueOf(user2Id));
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
@@ -146,7 +146,7 @@ class AnswerServiceImplTest {
         when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
         when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
         when(question.getUser()).thenReturn(user);
-        when(question.getUser().getUserId()).thenReturn(user1Id);
+        when(question.getUser().getUserId()).thenReturn(Long.valueOf(user1Id));
         when(answerRepository.countChoiceOfAnswer(questionId)).thenReturn(3);
 
         //when
@@ -209,7 +209,7 @@ class AnswerServiceImplTest {
         when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
         when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
         when(question.getUser()).thenReturn(user);
-        when(question.getUser().getUserId()).thenReturn(user1Id);
+        when(question.getUser().getUserId()).thenReturn(Long.valueOf(user1Id));
         when(answerRepository.countChoiceOfAnswer(questionId)).thenReturn(0);
         when(answer.getIsChosen()).thenReturn(false);
 
@@ -223,7 +223,7 @@ class AnswerServiceImplTest {
 
     @Test
     @DisplayName("[실패케이스]-이미 채택 취소된 답변에 대해 채택 취소 요청 시 예외가 발생합니다.")
-    void choiceDelete_DUPLICATED_CHOSEN() {
+    void choiceDelete_DUPLICATED_CHOSEN(){
         //given
         Long answerId = 10L;
         Long questionId = 20L;
@@ -240,7 +240,7 @@ class AnswerServiceImplTest {
         when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
         when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
         when(question.getUser()).thenReturn(user);
-        when(question.getUser().getUserId()).thenReturn(user1Id);
+        when(question.getUser().getUserId()).thenReturn(Long.valueOf(user1Id));
         when(answerRepository.countChoiceOfAnswer(questionId)).thenReturn(0);
         when(answer.getIsChosen()).thenReturn(false);
 
@@ -252,7 +252,6 @@ class AnswerServiceImplTest {
         //then
         assertThat(exception.getMessage()).isEqualTo("채택이 되지 않은 답변입니다. 취소가 불가능합니다.");
     }
-
     @Test
     @DisplayName("[성공케이스]-답변을 채택 취소하면 해당 답변의 채택상태가 FALSE로 바뀝니다.")
     void choiceDelete_SUCCESS() {
@@ -272,7 +271,7 @@ class AnswerServiceImplTest {
         when(answerRepository.findById(answerId)).thenReturn(Optional.of(answer));
         when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
         when(question.getUser()).thenReturn(user);
-        when(question.getUser().getUserId()).thenReturn(user1Id);
+        when(question.getUser().getUserId()).thenReturn(Long.valueOf(user1Id));
         when(answerRepository.countChoiceOfAnswer(questionId)).thenReturn(0);
         when(answer.getIsChosen()).thenReturn(true);
 
@@ -338,7 +337,7 @@ class AnswerServiceImplTest {
         Long questionId = 10L;
         AnswerRequestDto requestDto = new AnswerRequestDto(userId, questionId, "테스트 답변");
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(mock(User.class)));
+        given(userRepository.findById(Long.valueOf(userId))).willReturn(Optional.of(mock(User.class)));
         given(questionRepository.findById(questionId)).willReturn(Optional.empty());
 
         //when
