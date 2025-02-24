@@ -17,7 +17,7 @@ public class Image extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "image_id")
-    private long imageId;
+    private Long imageId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String pictureUrl;
