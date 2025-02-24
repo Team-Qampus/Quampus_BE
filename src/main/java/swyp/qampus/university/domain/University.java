@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import swyp.qampus.common.BaseEntity;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
+
 
 import java.util.ArrayList;
 import java.util.List;

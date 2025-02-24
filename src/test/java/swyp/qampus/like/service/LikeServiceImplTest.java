@@ -14,9 +14,10 @@ import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.like.repository.LikeRepository;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
-import swyp.qampus.user.domain.User;
-import swyp.qampus.user.repository.UserRepository;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class LikeServiceImplTest {
     @Autowired
     private LikeService likeService;
@@ -38,19 +40,19 @@ class LikeServiceImplTest {
 
     @MockitoBean
     private AnswerRepository answerRepository;
-
     @MockitoBean
     private JWTUtil jwtUtil;
 
-    private User initUser(){
+    private User initUser(String userId){
         User user=User.builder()
                 .email("tt")
                 .major("tt")
                 .name("tt")
+                .universityName("tt")
                 .build();
         return user;
     }
-    private Answer initAnswer(User user){
+    private Answer initAnswer(Long answerId,User user){
         return Answer.builder()
                 .user(user)
                 .content("as")
@@ -96,18 +98,17 @@ class LikeServiceImplTest {
     @DisplayName("[실패케이스]좋아요 클릭-답변이 존재하지 않는 경우 예외가 발생합니다. ")
     void notExistAnswer_insert() {
         //given
-        Long userId=2L;
-        String token="token";
-        User user=initUser();
+        String userId="invalid";
+        User user=initUser(userId);
 
         Long answerId=1L;
-        when(jwtUtil.getUserIdFromToken(token)).thenReturn(userId);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        when(userRepository.findById(Long.valueOf(userId))).thenReturn(Optional.of(user));
         when(answerRepository.findById(any())).thenReturn(Optional.empty());
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
-            likeService.insert(token, answerId);
+            likeService.insert(userId, answerId);
         });
 
         //then
@@ -118,22 +119,23 @@ class LikeServiceImplTest {
     @DisplayName("[실패케이스]좋아요 삭제-답변이 존재하지 않는 경우 예외가 발생합니다. ")
     void notExistAnswer_delete() {
         //given
-        Long userId=2L;
-        String token="token";
+        String userId="invalid";
         User user=User.builder()
+                .userId(Long.valueOf(userId))
                 .email("tt"+userId)
                 .major("tt"+userId)
                 .name("tt"+userId)
+                .universityName("tt"+userId)
                 .build();
 
         Long answerId=1L;
-        when(jwtUtil.getUserIdFromToken(token)).thenReturn(userId);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        when(userRepository.findById(Long.valueOf(userId))).thenReturn(Optional.of(user));
         when(answerRepository.findById(any())).thenReturn(Optional.empty());
 
         //when
         RestApiException exception = assertThrows(RestApiException.class, () -> {
-            likeService.delete(token, answerId);
+            likeService.delete(userId, answerId);
         });
 
         //then
@@ -146,8 +148,8 @@ class LikeServiceImplTest {
         //given
         Long answerId=1L;
         String userId="fake";
-        User user=initUser();
-        Answer answer=initAnswer(user);
+        User user=initUser(userId);
+        Answer answer=initAnswer(answerId,user);
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
@@ -170,8 +172,8 @@ class LikeServiceImplTest {
         //given
         Long answerId=1L;
         String userId="fake";
-        User user=initUser();
-        Answer answer=initAnswer(user);
+        User user=initUser(userId);
+        Answer answer=initAnswer(answerId,user);
 
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);

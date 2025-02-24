@@ -1,6 +1,5 @@
 package swyp.qampus.answer.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +11,12 @@ import swyp.qampus.category.domain.Category;
 import swyp.qampus.category.repository.CategoryRepository;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.user.repository.UserRepository;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

@@ -2,11 +2,10 @@ package swyp.qampus.answer.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import swyp.qampus.common.BaseEntity;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.question.domain.Question;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -58,11 +57,11 @@ public class Answer {
         this.modifiedDate = LocalDateTime.now();
     }
 
-    public void decreaseLike() {
-        if (this.likeCnt < 0) {
-            this.likeCnt=0;
+    public void decreaseLike(Like like) {
+        if (this.likeCnt > 0) {
+            this.likeList.remove(like);
+            this.likeCnt--;
         }
-        this.likeCnt--;
     }
 
     public void addLike(Like like){
@@ -73,6 +72,7 @@ public class Answer {
     public void setIsChosen(Boolean chosen){
         this.isChosen=chosen;
     }
+
     @Builder
     public Answer(String content,int likeCnt,Question question,User user){
         this.likeCnt=likeCnt;
