@@ -30,7 +30,7 @@ public class QuestionWeeklyResponseDto {
         return QuestionWeeklyResponseDto.builder()
                 .question_id(question.getQuestionId())
                 .title(question.getTitle())
-                .university_name(question.getUser().getUniversityName())
+                .university_name(question.getUser().getUniversity().getUniversityName())
                 .major(question.getUser().getMajor())
                 .curious_count(question.getCuriousCount())
                 .view_count(question.getViewCnt())

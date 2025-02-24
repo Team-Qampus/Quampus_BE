@@ -53,7 +53,7 @@ public class AnswerServiceImpl implements AnswerService {
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Question question = questionRepository.findById(requestDto.getQuestion_id())
-                .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
+                .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         Answer answer = Answer.builder()
                 .user(user)
