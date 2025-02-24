@@ -1,9 +1,7 @@
 package swyp.qampus.answer.service;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -14,7 +12,7 @@ import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.user.repository.UserRepository;
 
 import java.util.Optional;
