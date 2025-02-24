@@ -81,5 +81,4 @@ public class QuestionServiceImpl implements QuestionService {
 
         question.delete();
     }
-
 }

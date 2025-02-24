@@ -1,5 +1,6 @@
 package swyp.qampus.question.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,13 +17,27 @@ public class QuestionListResponseDto {
     private LocalDateTime createdDate;
     private int viewCnt;
 
-    public QuestionListResponseDto(Question question) {
-        this.question_id = question.getQuestionId();
-        this.title = question.getTitle();
-        this.category = question.getCategory().getCategoryName();
-        this.content = question.getContent();
-        this.universityName = question.getUser().getUniversityName();
-        this.createdDate = question.getCreateDate();
-        this.viewCnt = question.getViewCnt();
+    @Builder
+    public QuestionListResponseDto(Long questionId, String title, String category,
+                                   String content, String universityName, LocalDateTime createdDate, int viewCnt) {
+        this.question_id = questionId;
+        this.title = title;
+        this.category = category;
+        this.content = content;
+        this.universityName = universityName;
+        this.createdDate = createdDate;
+        this.viewCnt = viewCnt;
+    }
+
+    public static QuestionListResponseDto of(Question question) {
+        return new QuestionListResponseDto(
+                question.getQuestionId(),
+                question.getTitle(),
+                question.getCategory().getCategoryName(),
+                question.getContent(),
+                question.getUser().getUniversityName(),
+                question.getCreateDate(),
+                question.getViewCnt()
+        );
     }
 }

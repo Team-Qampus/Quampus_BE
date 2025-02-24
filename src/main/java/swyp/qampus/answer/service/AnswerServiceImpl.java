@@ -1,6 +1,7 @@
 package swyp.qampus.answer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.domain.QuestionDetailResponseDto;
 import swyp.qampus.question.domain.QuestionListResponseDto;
+
 import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.login.entity.User;
@@ -52,8 +54,10 @@ public class AnswerServiceImpl implements AnswerService {
                 .content(requestDto.getContent())
                 .build();
 
-
         answerRepository.save(answer);
+
+        question.incrementUnreadAnswerCount();
+        question.incrementAnswerCount();
 
         //사진을 올린 경우 -> 사진업로드
         if (images != null) {
@@ -62,12 +66,10 @@ public class AnswerServiceImpl implements AnswerService {
                 Image newImage = Image.builder()
                         .pictureUrl(url)
                         .answer(answer)
-
                         .build();
                 imageRepository.save(newImage);
             }
         }
-
     }
 
     @Transactional
@@ -86,6 +88,11 @@ public class AnswerServiceImpl implements AnswerService {
                 .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
         answerRepository.delete(answer);
+
+        Question question = answer.getQuestion();
+        if (question != null) {
+            question.decrementAnswerCount();
+        }
     }
 
     @Override
@@ -131,55 +138,64 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setIsChosen(type);
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionListResponseDto> getQuestions(String sort, Long categoryId, int page, int size) {
+    public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable) {
         List<Question> questions;
 
         //특정 카테고리의 질문 조회
         if (categoryId != null) {
-            questions = questionRepository.findByCategoryId(categoryId, page, size, sort);
+            questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
             if (questions.isEmpty()) {
                 throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
             }
         }
         //전체 질문 조회
         else {
-            questions = questionRepository.findAllPaged(page, size, sort);
+            questions = questionRepository.findAllPaged(pageable, sort);
             if (questions.isEmpty()) {
                 throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
             }
         }
 
         return questions.stream()
-                .map(QuestionListResponseDto::new)
+                .map(QuestionListResponseDto::of)
                 .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public QuestionDetailResponseDto getQuestionDetail(Long questionId) {
+    @Transactional
+    public QuestionDetailResponseDto getQuestionDetail(Long questionId, String token) {
+        //TODO:JWT로 교체
+        String userId = token;
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
-        question.increseViewCount();
-        questionRepository.save(question);
+        question.increseViewCount();    //조회수 증가
+
+        //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
+        if (question.getUser().getUserId().equals(userId)) {
+            question.updateLastViewedDate();
+        } else {
+            throw new RestApiException(CommonErrorCode.FORBIDDEN);
+        }
 
         List<AnswerResponseDto> answers = answerRepository.findByQuestionId(questionId)
                 .stream()
-                .map(AnswerResponseDto::new)
+                .map(AnswerResponseDto::of)
                 .collect(Collectors.toList());
 
-        return new QuestionDetailResponseDto(question, answers);
+        return QuestionDetailResponseDto.of(question, answers);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionResponseDto> searchQuestions(String value, String sort, int page, int size) {
-        List<Question> questions = questionRepository.searchByKeyword(value, sort, page, size);
+    public List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable) {
+        List<Question> questions = questionRepository.searchByKeyword(value, sort, pageable);
 
         return questions.stream()
-                .map(QuestionResponseDto::new)
+                .map(QuestionResponseDto::of)
                 .collect(Collectors.toList());
     }
 }

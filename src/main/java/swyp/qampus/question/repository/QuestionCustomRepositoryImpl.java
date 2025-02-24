@@ -4,6 +4,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import swyp.qampus.question.domain.Question;
 
@@ -21,34 +22,54 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     }
 
     @Override
-    public List<Question> findByCategoryId(Long categoryId, int page, int size, String sort) {
+    public List<Question> findByCategoryId(Long categoryId, Pageable pageable, String sort) {
         return queryFactory
                 .selectFrom(question)
-                .where(question.category.categoryId.eq(categoryId))
+                .where(categoryIdEq(categoryId))
                 .orderBy(getSortOrder(sort))
-                .offset((long) (page - 1) * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 
     @Override
-    public List<Question> findAllPaged(int page, int size, String sort) {
+    public List<Question> findAllPaged(Pageable pageable, String sort) {
         return queryFactory
                 .selectFrom(question)
                 .orderBy(getSortOrder(sort))
-                .offset((long) (page - 1) * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 
     @Override
-    public List<Question> searchByKeyword(String value, String sort, int page, int size) {
+    public List<Question> searchByKeyword(String value, String sort, Pageable pageable) {
         return queryFactory
                 .selectFrom(question)
                 .where(titleOrContentContains(value))
                 .orderBy(getSortOrder(sort))
-                .offset((long) (page - 1) * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    @Override
+    public List<Question> findWeeklyPopularQuestions() {
+        return queryFactory
+                .selectFrom(question)
+                .orderBy(question.curiousCount.add(question.viewCnt).desc()) //(curiousCount + viewCnt) 기준 정렬
+                .limit(3) //상위 3개만 조회
+                .fetch();
+    }
+
+    @Override
+    public List<Question> findMyQuestions(Long userId, Long categoryId, String sort, Pageable pageable) {
+        return queryFactory
+                .selectFrom(question)
+                .where(userIdEq(userId), categoryIdEq(categoryId))
+                .orderBy(getSortOrder(sort))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 
@@ -68,5 +89,13 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
         }
         return question.title.containsIgnoreCase(value)
                 .or(question.content.containsIgnoreCase(value));
+    }
+
+    private BooleanExpression userIdEq(Long userId) {
+        return userId != null ? question.user.userId.eq(userId) : null;
+    }
+
+    private BooleanExpression categoryIdEq(Long categoryId) {
+        return categoryId != null ? question.category.categoryId.eq(categoryId) : null;
     }
 }
