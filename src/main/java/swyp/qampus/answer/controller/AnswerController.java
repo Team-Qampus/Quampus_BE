@@ -1,6 +1,7 @@
 package swyp.qampus.answer.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,27 +50,26 @@ public class AnswerController {
 
     @GetMapping
     public ResponseEntity<List<QuestionListResponseDto>> getQuestions(
-            @RequestParam(value = "sort", defaultValue = "latest") String sort,
-            @RequestParam(value = "category_id", required = false) Long categoryId,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @PathVariable(value = "category_id") Long categoryId,
+            @RequestParam(defaultValue = "latest") String sort,
+            Pageable pageable) {
 
-        return ResponseEntity.ok(answerService.getQuestions(sort, categoryId, page, size));
+        return ResponseEntity.ok(answerService.getQuestions(categoryId, sort, pageable));
     }
 
     @GetMapping("/{question_id}")
-    public ResponseEntity<QuestionDetailResponseDto> getQuestionDetail(@PathVariable Long question_id) {
-        return ResponseEntity.ok(answerService.getQuestionDetail(question_id));
+    public ResponseEntity<QuestionDetailResponseDto> getQuestionDetail(@PathVariable Long question_id,
+                                                                       @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(answerService.getQuestionDetail(question_id, token));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<QuestionResponseDto>> searchQuestions(
             @RequestParam String value,
             @RequestParam(defaultValue = "latest") String sort,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            Pageable pageable) {
 
-        List<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, page, size);
+        List<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, pageable);
         return ResponseEntity.ok(questions);
     }
 }
