@@ -16,7 +16,7 @@ public interface AnswerService {
     void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto);
     void deleteAnswer(Long answer_id);
     void choice(ChoiceRequestDto choiceRequestDto, String token);
-    List<QuestionListResponseDto> getQuestions(String sort, Long categoryId, int page, int size);
-    QuestionDetailResponseDto getQuestionDetail(Long questionId, String token);
-    List<QuestionResponseDto> searchQuestions(String value, String sort, int page, int size);
+    List<QuestionListResponseDto> getQuestions(Long categoryId, String sort, Pageable pageable);
+    QuestionDetailResponseDto getQuestionDetail(Long questionId);
+    List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable);
 }
