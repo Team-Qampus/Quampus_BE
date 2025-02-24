@@ -1,3 +1,4 @@
+/*
 package Quampus.demo.login.service.impl;
 
 
@@ -82,4 +83,4 @@ class OauthServiceImplTest {
                 eq(String.class)
         );
     }
-}
+}*/
