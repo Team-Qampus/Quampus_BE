@@ -59,6 +59,9 @@ public class QuestionServiceImpl implements QuestionService {
                         .pictureUrl(url)
                         .question(question)
                         .build();
+                question.addImage(newImage);
+                questionRepository.save(question);
+
                 imageRepository.save(newImage);
             }
         }

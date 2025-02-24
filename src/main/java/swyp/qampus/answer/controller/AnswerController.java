@@ -32,7 +32,7 @@ public class AnswerController {
     private final AnswerService answerService;
 
     @Operation(
-            summary = "답변 생성 API입니다.-[담당자:박재하]",
+            summary = "답변 생성 API입니다.-[담당자:박재하],이미지 업로드 관련 - [담당자:김도연]",
             description = "form-data형식입니다. 이미지는 삽입안하셔도 됩니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "답변 생성 성공",
