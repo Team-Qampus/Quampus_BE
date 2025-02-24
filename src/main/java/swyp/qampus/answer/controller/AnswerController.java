@@ -48,8 +48,9 @@ public class AnswerController {
     )
     @PostMapping
     public ResponseEntity<?> createAnswer(@RequestPart(value = "requestDto", required = true) AnswerRequestDto requestDto,
-                                          @RequestPart(value = "images", required = false) List<MultipartFile> images) {
-        answerService.createAnswer(requestDto, images);
+                                          @RequestPart(value = "images", required = false) List<MultipartFile> images,
+                                          @RequestHeader("Authorization")String token) {
+        answerService.createAnswer(requestDto, images,token);
         return ResponseEntity.ok().body(ResponseDto.of(true, 200, "답변 생성 성공"));
     }
 
@@ -70,8 +71,9 @@ public class AnswerController {
     )
     @PutMapping("/{answer_id}")
     public ResponseEntity<?> updateAnswer(@PathVariable(name = "answer_id") Long answer_id,
-                                          @RequestBody AnswerUpdateRequestDto requestDto) {
-        answerService.updateAnswer(answer_id, requestDto);
+                                          @RequestBody AnswerUpdateRequestDto requestDto,
+                                          @RequestHeader("Authorization")String token) {
+        answerService.updateAnswer(answer_id, requestDto,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 수정 성공"));
     }
 
@@ -91,8 +93,9 @@ public class AnswerController {
 
     )
     @DeleteMapping("/{answer_id}")
-    public ResponseEntity<?> deleteAnswer(@PathVariable(name = "answer_id") Long answer_id) {
-        answerService.deleteAnswer(answer_id);
+    public ResponseEntity<?> deleteAnswer(@PathVariable(name = "answer_id") Long answer_id,
+                                          @RequestHeader("Authorization")String token) {
+        answerService.deleteAnswer(answer_id,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 삭제 성공"));
     }
 
@@ -151,11 +154,12 @@ public class AnswerController {
     )
     @GetMapping
     public ResponseEntity<List<QuestionListResponseDto>> getQuestions(
+            @RequestHeader("Authorization") String token,
             @PathVariable(value = "category_id") Long categoryId,
             @RequestParam(defaultValue = "latest") String sort,
             Pageable pageable) {
 
-        return ResponseEntity.ok(answerService.getQuestions(categoryId, sort, pageable));
+        return ResponseEntity.ok(answerService.getQuestions(categoryId, sort, pageable,token));
     }
 
     @Operation(
@@ -200,9 +204,10 @@ public class AnswerController {
     public ResponseEntity<List<QuestionResponseDto>> searchQuestions(
             @RequestParam String value,
             @RequestParam(defaultValue = "latest") String sort,
+            @RequestHeader("Authorization") String token,
             Pageable pageable) {
 
-        List<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, pageable);
+        List<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, pageable,token);
         return ResponseEntity.ok(questions);
     }
 }

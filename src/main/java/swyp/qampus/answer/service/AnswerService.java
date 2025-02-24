@@ -15,11 +15,11 @@ import swyp.qampus.question.domain.QuestionResponseDto;
 import java.util.List;
 
 public interface AnswerService {
-    void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images);
-    void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto);
-    void deleteAnswer(Long answer_id);
+    void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images,String token);
+    void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto,String token);
+    void deleteAnswer(Long answer_id,String token);
     void choice(ChoiceRequestDto choiceRequestDto, String token);
-    List<QuestionListResponseDto> getQuestions(Long categoryId, String sort, Pageable pageable);
+    List<QuestionListResponseDto> getQuestions(Long categoryId, String sort, Pageable pageable,String token);
     QuestionDetailResponseDto getQuestionDetail(Long questionId, String token);
-    List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable);
+    List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable,String token);
 }

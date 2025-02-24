@@ -14,6 +14,7 @@ import swyp.qampus.ai.domain.response.ChatGPTResponse;
 import swyp.qampus.ai.repository.AiRepository;
 import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.answer.repository.AnswerRepository;
+import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.Question;
@@ -53,7 +54,9 @@ public class AiServiceImpl implements AiService {
     public AiResponseDto getAiAnswer(String token, Long questionId) throws IOException {
         //API 요청한 유저가 작성한 질문인지 확인
         //TODO:JWT 검증으로 교체
-        Long userId = jwtUtil.getUserIdFromToken(token);
+        if (!jwtUtil.validateToken(token)){
+            throw new RestApiException(CommonErrorCode.UNAUTHORIZED);
+        }
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
         Ai ai = question.getAi();

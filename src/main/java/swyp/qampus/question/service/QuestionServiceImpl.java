@@ -11,6 +11,7 @@ import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.category.domain.Category;
@@ -32,11 +33,12 @@ public class QuestionServiceImpl implements QuestionService {
     private final CategoryRepository categoryRepository;
     private final ImageService imageService;
     private final ImageRepository imageRepository;
+    private final JWTUtil jwtUtil;
 
     @Transactional
     @Override
-    public void createQuestion(Long user_id, QuestionRequestDto requestDto, List<MultipartFile> images) {
-        User user = userRepository.findById(user_id)
+    public void createQuestion( QuestionRequestDto requestDto, List<MultipartFile> images,String token) {
+        User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Category category = categoryRepository.findById(requestDto.getCategory_id())
@@ -69,9 +71,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public void updateQuestion(Long question_id, QuestionUpdateRequestDto requestDto) {
+    public void updateQuestion(Long question_id, QuestionUpdateRequestDto requestDto,String token) {
         Question question = questionRepository.findById(question_id)
                 .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
+
+        if(!question.getUser().getUserId().equals(jwtUtil.getUserIdFromToken(token))){
+            throw new RestApiException(CommonErrorCode.UNAUTHORIZED);
+        }
 
         Category category = categoryRepository.findById(requestDto.getCategory_id())
                 .orElseThrow(() -> new CustomException(CommonErrorCode.CATEGORY_NOT_FOUND));
@@ -81,10 +87,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public void deleteQuestion(Long question_id) {
+    public void deleteQuestion(Long question_id,String token) {
         Question question = questionRepository.findById(question_id)
                 .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
+        if(!question.getUser().getUserId().equals(jwtUtil.getUserIdFromToken(token))){
+            throw new RestApiException(CommonErrorCode.UNAUTHORIZED);
+        }
         question.delete();
     }
 }

@@ -37,7 +37,8 @@ public class CuriousServiceImpl implements CuriousService{
         }
 
         //자신의 질문 나도 궁금해요 클릭 시 예외처리
-        if(result.question().getUser().getUserId().equals(token)){
+        if(result.question().getUser().getUserId()
+                .equals(jwtUtil.getUserIdFromToken(token))){
             throw new RestApiException(CuriousErrorCode.CAN_NOT_CLICK_MINE);
         }
 
@@ -58,7 +59,8 @@ public class CuriousServiceImpl implements CuriousService{
         );
 
         //자신의 질문 나도 궁금해요 클릭 시 예외처리
-        if(result.question.getUser().getUserId().equals(token)){
+        if(result.question.getUser().getUserId()
+                .equals(jwtUtil.getUserIdFromToken(token))){
             throw new RestApiException(CuriousErrorCode.CAN_NOT_CLICK_MINE);
         }
 
@@ -69,7 +71,7 @@ public class CuriousServiceImpl implements CuriousService{
     private Result getResult(String token,Long questionId){
 
         //유저 예외처리
-        User user=userRepository.findById(Long.valueOf(token))
+        User user=userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(()->new RestApiException(CommonErrorCode.USER_NOT_FOUND));
         //질문 찾기 예외
         Question question=questionRepository.findById(questionId)
