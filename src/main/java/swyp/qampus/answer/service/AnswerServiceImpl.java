@@ -7,20 +7,20 @@ import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
-import swyp.qampus.common.ResponseDto;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
-import swyp.qampus.user.domain.User;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.exception.CustomException;
-import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.repository.UserRepository;
+
 
 import java.util.List;
 
@@ -32,11 +32,13 @@ public class AnswerServiceImpl implements AnswerService {
     private final QuestionRepository questionRepository;
     private final ImageService imageService;
     private final ImageRepository imageRepository;
+    private final JWTUtil jwtUtil;
 
     @Transactional
     @Override
     public AnswerResponseDto createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
-        User user = userRepository.findById(requestDto.getUser_id())
+
+        User user = userRepository.findById(Long.valueOf(requestDto.getUser_id()))
                 .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
 
         Question question = questionRepository.findById(requestDto.getQuestion_id())

@@ -2,52 +2,94 @@ package swyp.qampus.login.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import swyp.qampus.answer.domain.Answer;
+import swyp.qampus.common.BaseEntity;
+import swyp.qampus.curious.domain.Curious;
+import swyp.qampus.like.domain.Like;
+import swyp.qampus.question.domain.Question;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Entity
 @Getter
 @Setter
-@Builder(toBuilder = true)
-public class User {
+@NoArgsConstructor
 
-    // 고유 식별자
+@Table(name = "Users")
+public class User  {
     @Id
-    @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    // 비밀번호
-    @Column(name = "password")
-    private String password;
-    // 이름
-    @Column(name = "name")
+    @Column(nullable = false, name = "user_id")
+    private String userId;
+
+    @Column(nullable = false, length = 100)
     private String name;
 
-    // 이메일
-    @Column(name = "email")
+    @Column(nullable = false, unique = true, length = 255)
     private String email;
+
+    @Column(nullable = false, length = 255)
+    private String password;
+
+
+    @Column(length = 100)
+    private String universityName;
+
+    @Column(length = 255)
+    private String major;
 
     // 닉네임
     @Column(name = "nickname" , nullable = true)
     private String nickname;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdDate = LocalDateTime.now();
 
-    // 대학교
-    @Column(name = "university_name" , nullable = true)
-    private String universityName;
+    @Column(nullable = false)
+    private LocalDateTime modifiedDate = LocalDateTime.now();
 
-    // 학과
-    @Column(name = "major", nullable = true)
-    private String major;
+    @OneToMany(mappedBy = "user")
+    private List<Question> questions=new ArrayList<>();
 
-    // 프로필 이미지
-    private String profileImageUrl;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    private List<Like> likeList=new ArrayList<>();
 
-    @CreationTimestamp
-    private LocalDateTime createdDate;
+    @OneToMany(mappedBy = "user")
+    private List<Answer> answers=new ArrayList<>();
 
-    private LocalDateTime modifiedDate;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+    private List<Curious> curiousList=new ArrayList<>();
+
+    @Builder(toBuilder = true)
+    public User(String userId, String name, String email, String password, String universityName, String major,String nickname){
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.universityName = universityName;
+        this.major = major;
+        this.nickname=nickname;
+    }
+    public void addQuestion(Question question){
+        this.questions.add(question);
+    }
+    public void addLike(Like like){
+        this.likeList.add(like);
+    }
+    public void decreaseLike(Like like){
+        likeList.remove(like);
+    }
+    //나도 궁금해요 추가
+    public void addCurious(Curious curious){
+        this.curiousList.add(curious);
+    }
+    //나도 궁금해요 삭제
+    public void deleteCurious(Curious curious){
+        curiousList.remove(curious);
+    }
+
+    public void addAnswer(Answer answer){
+        this.answers.add(answer);
+    }
 }
