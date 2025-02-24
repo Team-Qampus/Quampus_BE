@@ -2,6 +2,7 @@ package swyp.qampus.image.service;
 
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +45,13 @@ public class ImageServiceImpl implements ImageService {
             String fileName= UUID.randomUUID()+"_"+file.getOriginalFilename();
             try {
                 //사진 업로드 및 url저장
-                PutObjectRequest request=new PutObjectRequest(FILE_DIRECTORY,fileName,file.getInputStream(),objectMetadata);
+                PutObjectRequest request=new PutObjectRequest(FILE_DIRECTORY,fileName,file.getInputStream(),objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead);
                 objectStorageClient.putObject(request);
-                urls.add(objectStorageClient.getUrl(BUCKET_NAME,fileName).toString());
+                String string = "https://kr.object.ncloudstorage.com"+"/"
+                        +FILE_DIRECTORY+"/"+fileName;
+                urls.add(string);
+
 
             }catch (IOException e){
                 throw new RestApiException(ImageErrorCode.FAILED_UPLOAD);

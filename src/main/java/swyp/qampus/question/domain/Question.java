@@ -2,6 +2,7 @@ package swyp.qampus.question.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import swyp.qampus.ai.domain.Ai;
 import swyp.qampus.category.domain.Category;
 import swyp.qampus.curious.domain.Curious;
 import swyp.qampus.image.domain.Image;
@@ -56,6 +57,13 @@ public class Question {
     @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE)
     private List<Curious> curiousList=new ArrayList<>();
 
+    //이미지 리스트
+    @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE)
+    private List<Image> imageList=new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "ai_id")
+    private Ai ai;
 
     @Column(nullable = false)
     private int unreadAnswerCnt = 0;
@@ -119,6 +127,11 @@ public class Question {
         if (this.answerCount > 0) {
             this.answerCount--;
         }
+    }
+
+    //이미지 추가
+    public void addImage(Image image){
+        this.imageList.add(image);
     }
 
 }
