@@ -2,6 +2,7 @@ package swyp.qampus.question.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import swyp.qampus.category.domain.CategoryType;
 
 import java.time.LocalDateTime;
 
@@ -9,14 +10,14 @@ import java.time.LocalDateTime;
 public class QuestionResponseDto {
     private Long questionId;
     private String title;
-    private String category;
+    private CategoryType category;
     private String content;
     private String universityName;
     private LocalDateTime createdDate;
     private int viewCnt;
 
     @Builder
-    public QuestionResponseDto(Long questionId, String title, String category,
+    public QuestionResponseDto(Long questionId, String title, CategoryType category,
                                String content, String universityName, LocalDateTime createdDate, int viewCnt) {
         this.questionId = questionId;
         this.title = title;
