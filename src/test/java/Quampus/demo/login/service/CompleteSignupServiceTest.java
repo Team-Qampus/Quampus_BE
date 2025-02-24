@@ -1,11 +1,11 @@
 package Quampus.demo.login.service;
 
-import Quampus.demo.login.config.data.RedisCustomServiceImpl;
-import Quampus.demo.login.dto.UserRequestDTO;
-import Quampus.demo.login.entity.User;
-import Quampus.demo.login.repository.UserRepository;
-import Quampus.demo.login.service.CompleteSignupService;
-import Quampus.demo.login.util.JWTUtil;
+import swyp.qampus.login.config.data.RedisCustomServiceImpl;
+import swyp.qampus.login.dto.UserRequestDTO;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.login.service.CompleteSignupService;
+import swyp.qampus.login.util.JWTUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
