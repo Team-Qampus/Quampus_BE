@@ -29,7 +29,17 @@ public class JWTUtil {
     // secretKey를 Base64 인코딩하여 보안 강화
     @PostConstruct
     protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        try {
+            byte[] decodedKey = Base64.getUrlDecoder().decode(secretKey); // URL-safe Base64 디코딩
+
+            if (decodedKey.length < 32) {
+                throw new IllegalArgumentException("JWT Secret Key must be at least 256 bits (32 bytes) for HS256.");
+            }
+
+            secretKey = new String(decodedKey);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid Base64 encoding for JWT Secret Key. Please check application.properties.", e);
+        }
     }
 
 
@@ -38,9 +48,10 @@ public class JWTUtil {
      * @param email 사용자 이메일 (토큰에 저장할 정보)
      * @return 생성된 JWT 토큰 (문자열)
      */
-    public String createAccessToken(String email) {
+    public String createAccessToken(String email, Long userId) {
         // 토큰에 담을 클레임(Claims) 설정 (이메일을 subject로 저장)
         Claims claims = Jwts.claims().setSubject(email);
+        claims.put("userId", userId);
 
         // 현재 시간과 만료 시간 설정
         Date now = new Date();
@@ -51,7 +62,7 @@ public class JWTUtil {
                 .setClaims(claims) // 사용자 정보(Claims) 설정
                 .setIssuedAt(now) // 토큰 발급 시간
                 .setExpiration(validity) // 토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS256, secretKey)  // HMAC SHA-256 알고리즘을 사용하여 서명
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) // secretKey를 바이트 배열로 변환
                 .compact();  // 최종적으로 JWT 토큰을 문자열로 반환
     }
 
@@ -63,7 +74,7 @@ public class JWTUtil {
      */
     public String getEmailFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey) // 서명 검증을 위해 secretKey 사용
+                .setSigningKey(secretKey.getBytes())// 서명 검증을 위해 secretKey 사용
                 .parseClaimsJws(token) // 토큰을 파싱하여 클레임 추출
                 .getBody()
                 .getSubject(); // subject (이메일) 반환
@@ -79,7 +90,7 @@ public class JWTUtil {
         try {
             // JWT 토큰을 파싱하여 클레임 추출
             Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey) // 서명 검증을 위해 secretKey 사용
+                    .setSigningKey(secretKey.getBytes()) // 서명 검증을 위해 secretKey 사용
                     .parseClaimsJws(token) // 토큰을 파싱하여 클레임 추출
                     .getBody();
 
@@ -91,7 +102,18 @@ public class JWTUtil {
         }
     }
 
+    /**
+     * JWT에서 유저 아이디(userId) 추출
+     *
+     * @param token
+     * @return
+     */
     public Long getUserIdFromToken(String token) {
-        return 1L;
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("userId", Long.class);
     }
 }
