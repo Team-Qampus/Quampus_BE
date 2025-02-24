@@ -5,7 +5,7 @@ import swyp.qampus.question.domain.Question;
 
 import java.util.List;
 
-public interface QuestionRepository extends JpaRepository<Question, Long> {
+public interface QuestionRepository extends JpaRepository<Question, Long>, QuestionCustomRepository {
 
     // 특정 사용자가 작성한 질문 조회
     List<Question> findByUserUserId(Long userId);

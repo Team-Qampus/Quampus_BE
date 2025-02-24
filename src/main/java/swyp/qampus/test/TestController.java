@@ -5,10 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
-import swyp.qampus.user.domain.User;
-import swyp.qampus.user.repository.UserRepository;
+
 
 @RestController
 @RequiredArgsConstructor

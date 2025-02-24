@@ -10,11 +10,12 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.like.exception.LikeErrorCode;
 import swyp.qampus.like.repository.LikeRepository;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
-import swyp.qampus.user.domain.User;
-import swyp.qampus.user.repository.UserRepository;
 
-import java.util.Optional;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class LikeServiceImpl implements LikeService{
         TODO: jwt로 교체 해야함
         */
         Long userId=jwtUtil.getUserIdFromToken(token);
-        Result result = getResult(userId, answerId);
+        Result result = getResult(token, answerId);
         //임
         //이미 좋아요가 눌러져있으면 에러 반환
         if(likeRepository.findLikesByAnswerAndUser(answerId,userId ).isPresent()){
@@ -47,18 +48,19 @@ public class LikeServiceImpl implements LikeService{
         /*
         TODO: jwt로 교체 해야함
         */
-        Long userId= jwtUtil.getUserIdFromToken(token);
-        Result result=getResult(userId,answerId);
+        Result result=getResult(token,answerId);
 
-        Like like=likeRepository.findLikesByAnswerAndUser(answerId,result.user().getUserId()).orElseThrow(
+        Like like=likeRepository.findLikesByAnswerAndUser(answerId, Long.valueOf(result.user.getUserId())).orElseThrow(
                 ()->new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST)
         );
-        result.answer.decreaseLike();
+        result.answer.decreaseLike(like);
+        result.user.decreaseLike(like);
         likeRepository.delete(like);
     }
 
-    private Result getResult(Long userId, Long answerId) {
+    private Result getResult(String token, Long answerId) {
         //유저 예외처리
+        Long userId=Long.valueOf(token);
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new RestApiException(CommonErrorCode.USER_NOT_FOUND));
         //답변 예외처리

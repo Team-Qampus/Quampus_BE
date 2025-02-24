@@ -1,6 +1,7 @@
 package swyp.qampus.answer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,20 +14,25 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
-import swyp.qampus.question.domain.MessageResponseDto;
 import swyp.qampus.question.domain.Question;
+import swyp.qampus.question.domain.QuestionDetailResponseDto;
+import swyp.qampus.question.domain.QuestionListResponseDto;
+import swyp.qampus.question.domain.QuestionResponseDto;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.exception.UniversityErrorCode;
 import swyp.qampus.university.repository.UniversityRepository;
-import swyp.qampus.user.domain.User;
+
 import swyp.qampus.exception.CustomException;
 import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
-import swyp.qampus.user.repository.UserRepository;
+
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,12 +47,13 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Transactional
     @Override
-    public AnswerResponseDto createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
-        User user = userRepository.findById(requestDto.getUser_id())
-                .orElseThrow(() -> new CustomException(CommonErrorCode.USER_NOT_FOUND));
+    public void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images) {
+
+        User user = userRepository.findById(Long.valueOf(requestDto.getUser_id()))
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         Question question = questionRepository.findById(requestDto.getQuestion_id())
-                .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
         Answer answer = Answer.builder()
                 .user(user)
@@ -54,40 +61,45 @@ public class AnswerServiceImpl implements AnswerService {
                 .content(requestDto.getContent())
                 .build();
 
-        Answer savedAnswer = answerRepository.save(answer);
+        answerRepository.save(answer);
 
-        //이미지 올린 경우
-        if(images!=null){
-            List<String> urls=imageService.putFileToBucket(images,"ANSWER");
-            for (String url:urls){
-                Image image=Image.builder()
+        question.incrementUnreadAnswerCount();
+        question.incrementAnswerCount();
+
+        //사진을 올린 경우 -> 사진업로드
+        if (images != null) {
+            List<String> urls = imageService.putFileToBucket(images, "ANSWER");
+            for (String url : urls) {
+                Image newImage = Image.builder()
                         .pictureUrl(url)
                         .answer(answer)
                         .build();
-                imageRepository.save(image);
+                imageRepository.save(newImage);
             }
         }
-        return new AnswerResponseDto(savedAnswer.getAnswerId(), "답변 생성 성공");
     }
 
     @Transactional
     @Override
-    public MessageResponseDto updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto) {
+    public void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto) {
         Answer answer = answerRepository.findById(answer_id)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
         answer.update(requestDto.getContent());
-        return new MessageResponseDto("답변 수정 성공");
     }
 
     @Transactional
     @Override
-    public MessageResponseDto deleteAnswer(Long answer_id) {
+    public void deleteAnswer(Long answer_id) {
         Answer answer = answerRepository.findById(answer_id)
-                .orElseThrow(() -> new CustomException(CommonErrorCode.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
 
         answerRepository.delete(answer);
-        return new MessageResponseDto("답변 삭제 성공");
+
+        Question question = answer.getQuestion();
+        if (question != null) {
+            question.decrementAnswerCount();
+        }
     }
 
     @Override
@@ -104,18 +116,18 @@ public class AnswerServiceImpl implements AnswerService {
         Question question=questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
                 ()->new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION)
         );
-        Boolean type=choiceRequestDto.getIs_chosen();
+        Boolean type = choiceRequestDto.getIs_chosen();
         //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
-        if(!userId.equals(question.getUser().getUserId())){
+        if (!userId.equals(question.getUser().getUserId())) {
             throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
-        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(),answer,type);
+        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(), answer, type);
 
         answerRepository.save(answer);
     }
 
     private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
-
+        //채택하는 경우
         if(type){
             //해당 질문에서 이미 채택한 답변이 존재하는 경우
             Integer exitedChosen=answerRepository.countChoiceOfAnswer(questId);
@@ -147,4 +159,64 @@ public class AnswerServiceImpl implements AnswerService {
         answer.setIsChosen(type);
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable) {
+        List<Question> questions;
+
+        //특정 카테고리의 질문 조회
+        if (categoryId != null) {
+            questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
+            if (questions.isEmpty()) {
+                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
+            }
+        }
+        //전체 질문 조회
+        else {
+            questions = questionRepository.findAllPaged(pageable, sort);
+            if (questions.isEmpty()) {
+                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
+            }
+        }
+
+        return questions.stream()
+                .map(QuestionListResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public QuestionDetailResponseDto getQuestionDetail(Long questionId, String token) {
+        //TODO:JWT로 교체
+        String userId = token;
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
+
+        question.increseViewCount();    //조회수 증가
+
+        //사용자 권한 검사 -> 해당 질문을 올린 유저와 일치하는가?
+        if (question.getUser().getUserId().equals(userId)) {
+            question.updateLastViewedDate();
+        } else {
+            throw new RestApiException(CommonErrorCode.FORBIDDEN);
+        }
+
+        List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
+                .stream()
+                .map(AnswerResponseDto::of)
+                .collect(Collectors.toList());
+
+        return QuestionDetailResponseDto.of(question, answers);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable) {
+        List<Question> questions = questionRepository.searchByKeyword(value, sort, pageable);
+
+        return questions.stream()
+                .map(QuestionResponseDto::of)
+                .collect(Collectors.toList());
+    }
 }

@@ -12,21 +12,23 @@ import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.answer.domain.QAnswer;
+import swyp.qampus.login.entity.QUser;
 import swyp.qampus.question.domain.QQuestion;
 import swyp.qampus.university.domain.QUniversity;
 import swyp.qampus.university.domain.response.QUniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
-import swyp.qampus.user.domain.QUser;
+
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import static swyp.qampus.answer.domain.QAnswer.*;
+import static swyp.qampus.login.entity.QUser.*;
 import static swyp.qampus.question.domain.QQuestion.*;
 import static swyp.qampus.university.domain.QUniversity.*;
-import static swyp.qampus.user.domain.QUser.*;
+
 
 
 @Repository
@@ -107,7 +109,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                 .from(university)
                 .fetchOne();
 
-        UniversityDetailResponseDto result =
+        UniversityDetailResponseDto result =null;
                 queryFactory.select(new QUniversityDetailResponseDto(
                                 university.universityId,
                                 university.universityName,
