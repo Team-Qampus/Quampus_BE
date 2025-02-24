@@ -163,21 +163,10 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     @Transactional(readOnly = true)
     public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable) {
-        List<Question> questions;
+        List<Question> questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
 
-        //특정 카테고리의 질문 조회
-        if (categoryId != null) {
-            questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
-            if (questions.isEmpty()) {
-                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
-            }
-        }
-        //전체 질문 조회
-        else {
-            questions = questionRepository.findAllPaged(pageable, sort);
-            if (questions.isEmpty()) {
-                throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
-            }
+        if (questions.isEmpty()) {
+            throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
         }
 
         return questions.stream()

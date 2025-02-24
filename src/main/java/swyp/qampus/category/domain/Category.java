@@ -16,6 +16,13 @@ public class Category {
     @Column(name = "category_id")
     private long categoryId;
 
-    @Column(nullable = false, length = 255)
-    private String categoryName;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true, length = 50)
+    private CategoryType categoryName;
+
+    public static Category of(CategoryType categoryName) {
+        return Category.builder()
+                .categoryName(categoryName)
+                .build();
+    }
 }
