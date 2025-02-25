@@ -3,7 +3,7 @@ pipeline {
 
     
     environment {
-        JAVA_HOME = "/usr/lib/jvm/java-21-openjdk-amd64"  
+        JAVA_HOME = "/usr/lib/jvm/temurin-21-jdk-amd64"  
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
     
