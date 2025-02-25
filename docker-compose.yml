@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306"  # MySQL의 기본 3306 포트를 호스트의 3307 포트로 매핑
+    environment:
+      MYSQL_ROOT_PASSWORD: rlaehdus00
+      MYSQL_DATABASE: qampus
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: rlaehdus00
+    ports:
+      - "8080:8080"
+    networks:
+      - springboot-mysql
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+
+networks:
+  springboot-mysql:
