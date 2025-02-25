@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-    
     environment {
         JAVA_HOME = "/usr/lib/jvm/temurin-21-jdk-amd64"  
         PATH = "${JAVA_HOME}/bin:${PATH}"
@@ -18,31 +17,35 @@ pipeline {
                     url: 'https://github.com/Team-Qampus/Quampus_BE.git'
             }
             post {
-                success { 
-                    sh 'echo "Successfully Cloned Repository"'
-                }
-                failure {
-                    sh 'echo "Failed to Clone Repository"'
-                }
-            }    
+                success { sh 'echo "Successfully Cloned Repository"' }
+                failure { sh 'echo "Failed to Clone Repository"' }
+            }
+        }
+
+        stage('Start MySQL Container') {
+            steps {
+                sh 'echo "Starting MySQL Container..."'
+                sh 'docker compose up -d mysql'
+                sh 'sleep 10'  // MySQL이 완전히 실행될 시간을 줌
+            }
+            post {
+                success { sh 'echo "Successfully Started MySQL Container"' }
+                failure { sh 'echo "Failed to Start MySQL Container"' }
+            }
         }
 
         stage('Build Gradle Test') {
             steps {
                 sh 'echo "Build Gradle Test Start"'
                 sh 'echo "JAVA_HOME is set to: $JAVA_HOME"'
-                sh 'java -version'  // 현재 Java 버전 확인
+                sh 'java -version'
                 sh 'chmod +x gradlew'
                 sh './gradlew clean build'
             }
             post {
-                success { 
-                    sh 'echo "Successfully Built Gradle Project"'
-                }
-                failure {
-                    sh 'echo "Failed to Build Gradle Project"'
-                }
-            }    
+                success { sh 'echo "Successfully Built Gradle Project"' }
+                failure { sh 'echo "Failed to Build Gradle Project"' }
+            }
         }
 
         stage('Remove Existing Docker Containers') {
@@ -55,27 +58,19 @@ pipeline {
                 """
             }
             post {
-                success { 
-                    sh 'echo "Successfully Removed Docker Containers"'
-                }
-                failure {
-                    sh 'echo "Failed to Remove Docker Containers"'
-                }
+                success { sh 'echo "Successfully Removed Docker Containers"' }
+                failure { sh 'echo "Failed to Remove Docker Containers"' }
             }
         }
 
-        stage('Build Docker Image with Docker Compose') {
+        stage('Build and Deploy with Docker Compose') {
             steps {
-                sh 'echo "Building Docker Image with Docker Compose"'
+                sh 'echo "Building and Deploying Containers with Docker Compose"'
                 sh 'docker compose up -d --build'
             }
             post {
-                success {
-                    sh 'echo "Successfully Built and Started Containers with Docker Compose"'
-                }
-                failure {
-                    sh 'echo "Failed to Build Docker Image"'
-                }
+                success { sh 'echo "Successfully Built and Started Containers"' }
+                failure { sh 'echo "Failed to Deploy Containers"' }
             }
         }
     }
