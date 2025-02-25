@@ -9,7 +9,7 @@ pipeline {
         stage('Prepare') {
             steps {
                 git branch: 'master',
-                    url: 'git@github.com:Team-Qampus/Quampus_BE.git'
+                    url: 'https://github.com/Team-Qampus/Quampus_BE.git'
             }
             post {
                 success { 
