@@ -5,7 +5,7 @@ services:
     container_name: mysql
     restart: always
     ports:
-      - "3307:3306"  # MySQL의 기본 포트를 3307로 매핑
+      - "3307:3306"  # MySQL의 기본 포트를 3307로 매핑 ##
     environment:
       MYSQL_ROOT_PASSWORD: rlaehdus00
       MYSQL_DATABASE: qampus
