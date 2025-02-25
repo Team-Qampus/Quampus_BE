@@ -3,24 +3,19 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8
-    container_name: mysql_1
+    container_name: mysql
     restart: always
+    ports:
+      - "3306:3306"  
     environment:
       MYSQL_ROOT_PASSWORD: rlaehdus00
       MYSQL_DATABASE: qampus
       MYSQL_USER: myuser
       MYSQL_PASSWORD: rlaehdus00
-    ports:
-      - "3306:3306"
     networks:
       - springboot-mysql
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --password=rlaehdus00"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-app:
+  app:
     image: qampus-be
     container_name: qampus
     depends_on:
@@ -33,6 +28,6 @@ app:
       - "8080:8080"
     networks:
       - springboot-mysql
-      
+
 networks:
   springboot-mysql:
