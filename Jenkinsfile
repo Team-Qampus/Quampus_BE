@@ -1,13 +1,9 @@
 pipeline {
     agent any
 
-    environment {
-        JAVA_HOME = "/usr/lib/jvm/temurin-21-jdk-amd64"  
-        PATH = "${JAVA_HOME}/bin:${PATH}"
-    }
     
     tools {
-        jdk 'jdk21'
+        jdk ("jdk21")
     }
 
     stages {
