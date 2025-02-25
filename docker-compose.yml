@@ -1,3 +1,6 @@
+version: '3.8'
+
+services:
   mysql:
     image: mysql:8
     container_name: mysql_1
@@ -17,12 +20,11 @@
       timeout: 5s
       retries: 5
 
-  app:
+app:
     image: qampus-be
     container_name: qampus
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/qampus?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
       SPRING_DATASOURCE_USERNAME: root
@@ -31,3 +33,6 @@
       - "8080:8080"
     networks:
       - springboot-mysql
+      
+networks:
+  springboot-mysql:
