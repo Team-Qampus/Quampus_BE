@@ -8,7 +8,7 @@
       MYSQL_USER: myuser
       MYSQL_PASSWORD: rlaehdus00
     ports:
-      - "3307:3306"
+      - "3306:3306"
     networks:
       - springboot-mysql
     healthcheck:
