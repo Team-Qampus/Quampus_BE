@@ -6,26 +6,56 @@ services:
     container_name: mysql
     restart: always
     ports:
-      - "3306:3306"  # MySQL의 기본 3306 포트를 호스트의 3307 포트로 매핑
+      - "3307:3306"  # MySQL의 기본 포트를 3307로 매핑
     environment:
       MYSQL_ROOT_PASSWORD: rlaehdus00
       MYSQL_DATABASE: qampus
       MYSQL_USER: myuser
       MYSQL_PASSWORD: rlaehdus00
-    ports:
-      - "8080:8080"
     networks:
       - springboot-mysql
 
   redis:
     image: redis:latest
+    container_name: redis
     restart: always
     ports:
-      - "6379:6379"
-    deploy:
-      resources:
-        limits:
-          memory: 500M
+      - "6380:6379"  # Redis 기본 포트 6379를 6380으로 매핑
+    networks:
+      - springboot-mysql
+
+  quampus-be:
+    build: .
+    container_name: quampus-be
+    command: "java -Xmx2g -jar /app.jar"  # JVM 메모리 최대 크기 2GB 설정
+    restart: always
+    ports:
+      - "8080:8080"  # Spring Boot 애플리케이션의 기본 포트 8080을 매핑
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/qampus
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: rlaehdus00
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - springboot-mysql
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    restart: always
+    ports:
+      - "8081:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - springboot-mysql
 
 networks:
   springboot-mysql:
+    driver: bridge
+
+volumes:
+  jenkins_home:
+    driver: local
