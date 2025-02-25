@@ -42,15 +42,18 @@ services:
       - springboot-mysql
 
   jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'jenkins_docker'
     restart: always
+    user: root
     ports:
-      - "8081:8080"
+      - '8081:8080'
+      - '50200:50000'
     volumes:
-      - jenkins_home:/var/jenkins_home
-    networks:
-      - springboot-mysql
+      - './jenkins_home:/var/jenkins_home'
+      - '/var/run/docker.sock:/var/run/docker.sock'
 
 networks:
   springboot-mysql:
