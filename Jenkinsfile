@@ -22,18 +22,6 @@ pipeline {
             }
         }
 
-        stage('Start MySQL Container') {
-            steps {
-                sh 'echo "Starting MySQL Container..."'
-                sh 'docker compose up -d mysql'
-                sh 'sleep 10'  // MySQL이 완전히 실행될 시간을 줌
-            }
-            post {
-                success { sh 'echo "Successfully Started MySQL Container"' }
-                failure { sh 'echo "Failed to Start MySQL Container"' }
-            }
-        }
-
         stage('Build Gradle Test') {
             steps {
                 sh 'echo "Build Gradle Test Start"'
