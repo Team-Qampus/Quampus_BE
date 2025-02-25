@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    
+    environment {
+        JAVA_HOME = "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"  // 올바른 경로로 변경
+        PATH = "${JAVA_HOME}/bin:${PATH}"
+    }
+    
     tools {
         jdk 'jdk21'
     }
