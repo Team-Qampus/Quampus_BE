@@ -28,7 +28,8 @@ pipeline {
                 sh 'echo "JAVA_HOME is set to: $JAVA_HOME"'
                 sh 'java -version'
                 sh 'chmod +x gradlew'
-                sh './gradlew clean build'
+                sh './gradlew clean build --info'
+
             }
             post {
                 success { sh 'echo "Successfully Built Gradle Project"' }
