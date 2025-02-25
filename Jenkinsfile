@@ -3,7 +3,7 @@ pipeline {
 
     
     environment {
-        JAVA_HOME = "/usr/lib/jvm/java-21-openjdk-amd64/bin/java"  // 올바른 경로로 변경
+        JAVA_HOME = JAVA_HOME = "/usr/lib/jvm/java-21-openjdk-amd64"  
         PATH = "${JAVA_HOME}/bin:${PATH}"
     }
     
@@ -30,6 +30,8 @@ pipeline {
         stage('Build Gradle Test') {
             steps {
                 sh 'echo "Build Gradle Test Start"'
+                sh 'echo "JAVA_HOME is set to: $JAVA_HOME"'
+                sh 'java -version'  // 현재 Java 버전 확인
                 sh 'chmod +x gradlew'
                 sh './gradlew clean build'
             }
