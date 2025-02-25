@@ -19,7 +19,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JWTUtil {
 
-    @Value("${jwt.secret}")
+    @Value("{jwt.secret}")
     private String secretKey;
 
     @Value("${jwt.expiration}")
