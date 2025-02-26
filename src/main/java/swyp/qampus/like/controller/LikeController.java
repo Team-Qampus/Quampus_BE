@@ -38,7 +38,7 @@ public class LikeController {
     )
     @PostMapping
     public ResponseEntity<?> insertLike(
-            @Parameter(description = "좋아요를 할 질문 ID")
+            @Parameter(description = "좋아요를 할 답변 ID")
             @RequestParam("answer")Long answerId,
 
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
@@ -66,7 +66,7 @@ public class LikeController {
     )
     @DeleteMapping
     public ResponseEntity<?> deleteLike(
-            @Parameter(description = "좋아요를 취소할 질문 ID")
+            @Parameter(description = "좋아요를 취소할 답변 ID")
             @RequestParam("answer")Long answerId,
 
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
