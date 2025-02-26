@@ -17,7 +17,7 @@ services:
     image: redis:latest
     restart: always
     ports:
-      - "6385:6379"  # Redis 기본 포트 6379를 6380으로 매핑
+      - "6385:6379"  # Redis 기본 포트 6379를 6380으로 매핑dd
     networks:
       - springboot-mysql
 
