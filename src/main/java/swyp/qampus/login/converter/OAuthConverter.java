@@ -17,9 +17,9 @@ public class OAuthConverter {
     public static User toUser(String email, String name, String nickname, String password, PasswordEncoder passwordEncoder, String profileImageUrl) {
         return User.builder()
                 .email(email)
-                .password(passwordEncoder.encode(password))
                 .name(name)
                 .nickname(nickname)
+                .password(passwordEncoder.encode(password))
                 .build();
     }
 }
