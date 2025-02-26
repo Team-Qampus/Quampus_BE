@@ -54,6 +54,9 @@ pipeline {
                 docker stop qampus-be || true
                 docker rm -f qampus-be || true
                 docker rmi -f qampus-be || true
+                
+                docker stop qampus-redis-1 || true
+                docker rm -f qampus-redis-1 || true
                 """
             }
             post {
