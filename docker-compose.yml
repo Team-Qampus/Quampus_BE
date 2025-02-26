@@ -37,14 +37,7 @@ services:
     networks:
       - springboot-mysql
 
-  jenkins:
-    image: jenkins/jenkins:lts
-    user: root
-    ports:
-      - "8081:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - jenkins_home:/var/jenkins_home
+
 
 networks:
   springboot-mysql:
