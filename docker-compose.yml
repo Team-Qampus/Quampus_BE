@@ -23,7 +23,6 @@ services:
 
   quampus-be:
     build: .
-    container_name: quampus-be
     command: "java -Xmx2g -jar /app.jar"  # JVM 메모리 최대 크기 2GB 설정
     restart: always
     ports:
