@@ -40,7 +40,7 @@ public class CompleteSignupService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "임시로 저장된 사용자 정보를 파싱하는 중 오류가 발생되었습니다.");
         }
 
-        // 1. `universityName`을 이용하여 University 조회
+        // 1. universityName을 이용하여 University 조회
         University university = universityRepository.findByUniversityName(request.getUniversityName())
                 .orElseGet(() -> universityRepository.save(University.builder()
                         .universityName(request.getUniversityName())
