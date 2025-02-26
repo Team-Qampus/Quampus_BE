@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8
+    environment:
+      MYSQL_DATABASE: qampus
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: rlaehdus00
+      MYSQL_ROOT_PASSWORD: rlaehdus00
+    networks:
+      - springboot-mysql
+    ports:
+      - "3307:3306"
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  quampus-be:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["java", "-Xmx2g", "-jar", "/app.jar"]
+    container_name: quampus-be
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/qampus
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: rlaehdus00
+    networks:
+      - springboot-mysql
+    ports:
+      - "8080:8080"
+    restart: always
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    networks:
+      - springboot-mysql
+    ports:
+      - "6380:6379"
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  springboot-mysql:
+    driver: bridge

@@ -72,9 +72,6 @@ public class HomeController {
                                         }
                                         """)
                             )),
-                    @ApiResponse(responseCode = "404", description = "금주의 인기 질문 또는 답변을 찾을 수 없습니다.",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorCode.class))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorCode.class)))
