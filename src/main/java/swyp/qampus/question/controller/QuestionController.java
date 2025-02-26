@@ -28,6 +28,7 @@ public class QuestionController {
     private final QuestionService questionService;
     @Operation(
             summary = "질문하기 작성 API입니다.-[담당자 : 박재하]",
+            description = "카테고리 ID - 1:전체\n 2:자연계\n 3:인문계\n 4:예체능\n 5:실무\n",
             responses = {
                     @ApiResponse(responseCode = "200", description = "질문 생성 성공",
                             content = @Content(mediaType = "application/json",

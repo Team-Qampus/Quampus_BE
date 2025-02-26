@@ -2,6 +2,7 @@ package swyp.qampus.login.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,11 +29,11 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = MyQuestionResponseDto.class))),
+                                    array = @ArraySchema(schema = @Schema(implementation = MyQuestionResponseDto.class)))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorCode.class))),
-                    @ApiResponse(responseCode = "400",description = "질문이 존재하지 않습니다.",
+                    @ApiResponse(responseCode = "400", description = "질문이 존재하지 않습니다.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorCode.class)))
             }

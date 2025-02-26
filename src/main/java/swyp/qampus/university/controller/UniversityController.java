@@ -2,7 +2,9 @@ package swyp.qampus.university.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,7 +37,41 @@ public class UniversityController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = UniversityRankResponseDto.class))),
+                                    array = @ArraySchema(schema = @Schema(implementation = UniversityRankResponseDto.class)),
+                                    examples = @ExampleObject(value = """
+                                        {
+                                          "rank": [
+                                            {
+                                              "university_id": 1,
+                                              "university_name": "대학1",
+                                              "ranking": 1,
+                                              "participant_count": 12000,
+                                              "rate": 50,
+                                              "choice_cnt": 123
+                                            },
+                                            {
+                                              "university_id": 2,
+                                              "university_name": "대학2",
+                                              "ranking": 2,
+                                              "participant_count": 12000,
+                                              "rate": 30,
+                                              "choice_cnt": 123
+                                            },
+                                            {
+                                              "university_id": 13,
+                                              "university_name": "대학3",
+                                              "ranking": 3,
+                                              "participant_count": 12000,
+                                              "rate": 10,
+                                              "choice_cnt": 123
+                                            }
+                                          ]
+                                        }
+                                    """))
+                    ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorCode.class)))
             }
     )
     @GetMapping("/university/rank")
@@ -46,7 +82,7 @@ public class UniversityController {
             @Parameter(description = "조회할 최대 학교 개수")
             @RequestParam(value = "limit",required = false)Integer limit,
 
-            @Parameter(description = "조회할 기간")
+            @Parameter(description = "조회할 기간 입력값:weekly->주간 monthly->월간")
             @RequestParam(value = "period")String period
     ){
         Optional<List<UniversityRankResponseDto>>results=universityService
@@ -60,6 +96,7 @@ public class UniversityController {
 
     @Operation(
             summary = "학교 상세보기 조회 API입니다.-[담당자 : 김도연]",
+            description = "rate:0~100 퍼센트 변환입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공",
                             content = @Content(mediaType = "application/json",

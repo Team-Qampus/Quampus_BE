@@ -11,12 +11,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.repository.UniversityRepository;
 
 @Service
 @RequiredArgsConstructor
 public class CompleteSignupService {
 
     private final UserRepository userRepository;
+    private final UniversityRepository universityRepository;
     private final RedisCustomServiceImpl redisCustomService;
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();

@@ -26,6 +26,7 @@ public class AiController {
     private final AiService aiService;
     @Operation(
             summary = "GPT AI 답변 API입니다.-[담당자:김도연]",
+            description = "날짜 형식 예시입니다. 2022-02-22",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공",
                             content = @Content(mediaType = "application/json",
