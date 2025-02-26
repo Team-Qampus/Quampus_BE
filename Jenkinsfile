@@ -25,7 +25,6 @@ pipeline {
                 sh 'java -version'
                 sh 'chmod +x gradlew'
                 sh './gradlew clean build  -x test --info'
-
             }
             post {
                 success { sh 'echo "Successfully Built Gradle Project"' }
@@ -54,6 +53,7 @@ pipeline {
                     sh 'docker stop $(docker ps -aq) || true'
                     sh 'docker rm -f $(docker ps -aq) || true'
                     sh 'docker-compose down --rmi all --volumes --remove-orphans || true'
+            }
             post {
                 success { sh 'echo "Successfully Removed Docker Containers"' }
                 failure { sh 'echo "Failed to Remove Docker Containers"' }
