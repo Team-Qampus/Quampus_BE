@@ -49,15 +49,8 @@ pipeline {
 
         stage('Remove Existing Docker Containers') {
             steps {
-                sh 'echo "Stopping and Removing Existing Docker Containers"'
-                sh """
-                docker stop qampus-be || true
-                docker rm -f qampus-be || true
-                docker rmi -f qampus-be || true
-                
-                docker stop qampus-redis-1 || true
-                docker rm -f qampus-redis-1 || true
-                """
+                     sh 'echo "Stopping and Removing Existing Docker Containers"'
+                     sh 'docker-compose down --rmi all --volumes --remove-orphans || true'
             }
             post {
                 success { sh 'echo "Successfully Removed Docker Containers"' }
@@ -67,8 +60,9 @@ pipeline {
 
         stage('Build and Deploy with Docker Compose') {
             steps {
-                sh 'echo "Building and Deploying Containers with Docker Compose"'
-                sh 'docker-compose up -d --build'
+                  sh 'echo "Building and Deploying Containers with Docker Compose"'
+                  sh 'docker system prune -af'
+                  sh 'docker-compose up -d --build'
             }
             post {
                 success { sh 'echo "Successfully Built and Started Containers"' }
