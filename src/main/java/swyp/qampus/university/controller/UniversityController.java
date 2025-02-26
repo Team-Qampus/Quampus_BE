@@ -1,6 +1,7 @@
 package swyp.qampus.university.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,9 +39,16 @@ public class UniversityController {
             }
     )
     @GetMapping("/university/rank")
-    public ResponseEntity<?>getRanking(@RequestHeader("Authorization")String token,
-                                       @RequestParam(value = "limit",required = false)Integer limit,
-                                       @RequestParam(value = "period")String period){
+    public ResponseEntity<?>getRanking(
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token,
+
+            @Parameter(description = "조회할 최대 학교 개수")
+            @RequestParam(value = "limit",required = false)Integer limit,
+
+            @Parameter(description = "조회할 기간")
+            @RequestParam(value = "period")String period
+    ){
         Optional<List<UniversityRankResponseDto>>results=universityService
                 .getUniversityRanking(token,limit,period);
 
@@ -62,8 +70,13 @@ public class UniversityController {
             }
     )
     @GetMapping("/university/detail")
-    public ResponseEntity<?>getUniversityName(@RequestHeader("Authorization")String token,
-                                              @RequestParam("name")String universityName){
+    public ResponseEntity<?>getUniversityName(
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token,
+
+            @Parameter(description = "대학교 이름")
+            @RequestParam("name")String universityName
+    ){
 
         return ResponseEntity.ok(universityService.getUniversityDetail(token,universityName));
     }
