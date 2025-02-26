@@ -33,6 +33,20 @@ pipeline {
             }
         }
 
+        stage('Check and Free Up Ports') {
+            steps {
+                sh 'echo "Checking and Freeing Up Ports (6380 for Redis)"'
+                sh """
+                if lsof -i :6380; then
+                    echo "Port 6380 is in use. Killing the process..."
+                    sudo kill -9 \$(lsof -ti :6380)
+                else
+                    echo "Port 6380 is free."
+                fi
+                """
+            }
+        }
+
         stage('Remove Existing Docker Containers') {
             steps {
                 sh 'echo "Stopping and Removing Existing Docker Containers"'
