@@ -8,5 +8,5 @@ import java.util.List;
 
 
 public interface UserService {
-    List<MyQuestionResponseDto> getMyQuestions(Long userId, Long categoryId, String sort, Pageable pageable);
+    List<MyQuestionResponseDto> getMyQuestions(String token, Long categoryId, String sort, Pageable pageable);
 }

@@ -1,6 +1,7 @@
 package swyp.qampus.curious.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,8 +40,13 @@ public class CuriousController {
             }
     )
     @PostMapping
-    public ResponseEntity<?> insertCurious(@RequestParam("question")Long questionId,
-                                           @RequestHeader("Authorization")String token){
+    public ResponseEntity<?> insertCurious(
+            @Parameter(description = "나도 궁금해요를 할 질문 ID")
+            @RequestParam("question")Long questionId,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ){
         curiousService.insert(token, questionId);
         return ResponseEntity.ok().body(ResponseDto.of(true,200,"나도 궁금해요 성공"));
     }
@@ -65,8 +71,13 @@ public class CuriousController {
             }
     )
     @DeleteMapping
-    public ResponseEntity<?> deleteCurious(@RequestParam("question")Long questionId,
-                                           @RequestHeader("Authorization")String token){
+    public ResponseEntity<?> deleteCurious(
+            @Parameter(description = "나도 궁금해요를 취소할 질문 ID")
+            @RequestParam("question")Long questionId,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ){
         curiousService.delete(token,questionId);
         return ResponseEntity.ok().body(ResponseDto.of(true,200,"나도 궁금해요 취소"));
     }

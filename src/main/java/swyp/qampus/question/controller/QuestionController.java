@@ -1,6 +1,7 @@
 package swyp.qampus.question.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,9 +41,13 @@ public class QuestionController {
             }
     )
     @PostMapping
-    public ResponseEntity<?> createQuestion(@RequestPart(value = "requestDto", required = true) QuestionRequestDto requestDto,
-                                            @RequestPart(value = "images",required = false) List<MultipartFile> images,
-                                            @RequestHeader("Authorization")String token) {
+    public ResponseEntity<?> createQuestion(
+            @RequestPart(value = "requestDto") QuestionRequestDto requestDto,
+            @RequestPart(value = "images",required = false) List<MultipartFile> images,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ) {
         questionService.createQuestion(requestDto, images,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 생성 성공"));
     }
@@ -65,9 +70,15 @@ public class QuestionController {
             }
     )
     @PutMapping("/{question_id}")
-    public ResponseEntity<?> updateQuestion(@PathVariable Long question_id,
-                                            @RequestBody QuestionUpdateRequestDto requestDto,
-                                            @RequestHeader("Authorization")String token) {
+    public ResponseEntity<?> updateQuestion(
+            @Parameter(description = "수정할 질문 ID")
+            @PathVariable(name = "question_id") Long question_id,
+
+            @RequestBody QuestionUpdateRequestDto requestDto,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ) {
         questionService.updateQuestion(question_id, requestDto,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 수정 성공"));
     }
@@ -87,8 +98,13 @@ public class QuestionController {
             }
     )
     @DeleteMapping("/{question_id}")
-    public ResponseEntity<?> deleteQuestion(@PathVariable Long question_id,
-                                            @RequestHeader("Authorization")String token) {
+    public ResponseEntity<?> deleteQuestion(
+            @Parameter(description = "삭제할 답변 ID")
+            @PathVariable(name = "question_id") Long question_id,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ) {
         questionService.deleteQuestion(question_id,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 삭제 성공"));
     }

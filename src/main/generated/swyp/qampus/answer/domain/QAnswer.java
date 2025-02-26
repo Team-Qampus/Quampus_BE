@@ -28,6 +28,8 @@ public class QAnswer extends EntityPathBase<Answer> {
 
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
+    public final ListPath<swyp.qampus.image.domain.Image, swyp.qampus.image.domain.QImage> imageList = this.<swyp.qampus.image.domain.Image, swyp.qampus.image.domain.QImage>createList("imageList", swyp.qampus.image.domain.Image.class, swyp.qampus.image.domain.QImage.class, PathInits.DIRECT2);
+
     public final ListPath<swyp.qampus.image.domain.Image, swyp.qampus.image.domain.QImage> images = this.<swyp.qampus.image.domain.Image, swyp.qampus.image.domain.QImage>createList("images", swyp.qampus.image.domain.Image.class, swyp.qampus.image.domain.QImage.class, PathInits.DIRECT2);
 
     public final BooleanPath isChosen = createBoolean("isChosen");

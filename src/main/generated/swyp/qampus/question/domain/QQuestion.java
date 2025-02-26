@@ -22,6 +22,8 @@ public class QQuestion extends EntityPathBase<Question> {
 
     public static final QQuestion question = new QQuestion("question");
 
+    public final swyp.qampus.ai.domain.QAi ai;
+
     public final NumberPath<Integer> answerCount = createNumber("answerCount", Integer.class);
 
     public final swyp.qampus.category.domain.QCategory category;
@@ -33,6 +35,8 @@ public class QQuestion extends EntityPathBase<Question> {
     public final NumberPath<Integer> curiousCount = createNumber("curiousCount", Integer.class);
 
     public final ListPath<swyp.qampus.curious.domain.Curious, swyp.qampus.curious.domain.QCurious> curiousList = this.<swyp.qampus.curious.domain.Curious, swyp.qampus.curious.domain.QCurious>createList("curiousList", swyp.qampus.curious.domain.Curious.class, swyp.qampus.curious.domain.QCurious.class, PathInits.DIRECT2);
+
+    public final ListPath<swyp.qampus.image.domain.Image, swyp.qampus.image.domain.QImage> imageList = this.<swyp.qampus.image.domain.Image, swyp.qampus.image.domain.QImage>createList("imageList", swyp.qampus.image.domain.Image.class, swyp.qampus.image.domain.QImage.class, PathInits.DIRECT2);
 
     public final BooleanPath isDeleted = createBoolean("isDeleted");
 
@@ -66,6 +70,7 @@ public class QQuestion extends EntityPathBase<Question> {
 
     public QQuestion(Class<? extends Question> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.ai = inits.isInitialized("ai") ? new swyp.qampus.ai.domain.QAi(forProperty("ai")) : null;
         this.category = inits.isInitialized("category") ? new swyp.qampus.category.domain.QCategory(forProperty("category")) : null;
         this.user = inits.isInitialized("user") ? new swyp.qampus.login.entity.QUser(forProperty("user"), inits.get("user")) : null;
     }
