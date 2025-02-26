@@ -34,6 +34,8 @@ public class UserConverter {
     public static UserResponseDTO.JoinResultDTO toJoinResultDTO(User user) {
         return UserResponseDTO.JoinResultDTO.builder()
                 .email(user.getEmail())// 사용자 ID 설정
+                .name(user.getName())
+                .nickname(user.getNickname())
                 .createAt(user.getCreatedDate()) // 계정 생성 날짜 설정
                 .build();
     }
