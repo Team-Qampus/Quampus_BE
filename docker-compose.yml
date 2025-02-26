@@ -22,7 +22,7 @@ services:
 
   quampus-be:
     build:
-      context: /docker_projects/qampus/project/Quampus_BE
+      context: .
       dockerfile: Dockerfile
     command: ["java", "-Xmx2g", "-jar", "/app.jar"]
     container_name: quampus-be
