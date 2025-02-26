@@ -46,19 +46,33 @@ pipeline {
             }
         }
 
-        stage('Remove Existing Docker Containers') {
-            steps {
-                    sh 'echo "Stopping and Removing Existing Docker Containers"'
-                    sh 'docker ps -a' // 현재 실행 중인 컨테이너 확인
-                    sh 'docker stop $(docker ps -aq) || true'
-                    sh 'docker rm -f $(docker ps -aq) || true'
-                    sh 'docker-compose down --rmi all --volumes --remove-orphans || true'
-            }
-            post {
-                success { sh 'echo "Successfully Removed Docker Containers"' }
-                failure { sh 'echo "Failed to Remove Docker Containers"' }
-            }
-        }
+       stage('Remove Existing Docker Containers') {
+    steps {
+        sh 'echo "Stopping and Removing Existing Docker Containers except Jenkins"'
+        sh '''
+        JENKINS_CONTAINER=$(docker ps -aqf "name=jenkins")
+        
+        # 모든 컨테이너 ID 가져오기
+        ALL_CONTAINERS=$(docker ps -aq)
+
+        # Jenkins 컨테이너 제외하고 정지 및 삭제
+        for CONTAINER in $ALL_CONTAINERS; do
+            if [ "$CONTAINER" != "$JENKINS_CONTAINER" ]; then
+                docker stop $CONTAINER || true
+                docker rm -f $CONTAINER || true
+            fi
+        done
+        
+        # Docker-compose 사용하여 제거 (Jenkins 영향 없음)
+        docker-compose down --rmi all --volumes --remove-orphans || true
+        '''
+    }
+    post {
+        success { sh 'echo "Successfully Removed Docker Containers"' }
+        failure { sh 'echo "Failed to Remove Docker Containers"' }
+    }
+}
+
 
         stage('Build and Deploy with Docker Compose') {
             steps {
