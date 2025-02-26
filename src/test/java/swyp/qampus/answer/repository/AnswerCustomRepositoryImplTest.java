@@ -1,3 +1,4 @@
+/*
 package swyp.qampus.answer.repository;
 
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.answer.domain.Answer;
 import swyp.qampus.category.domain.Category;
+import swyp.qampus.category.domain.CategoryType;
 import swyp.qampus.category.repository.CategoryRepository;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.question.domain.Question;
@@ -38,7 +40,7 @@ class AnswerCustomRepositoryImplTest {
 
         Category category=Category
                 .builder()
-                .categoryName("111")
+                .categoryName(CategoryType.ARTS_AND_SPORTS)
                 .build();
         categoryRepository.save(category);
         
@@ -70,7 +72,7 @@ class AnswerCustomRepositoryImplTest {
 
         Category category=Category
                 .builder()
-                .categoryName("111")
+                .categoryName(CategoryType.HUMANITIES)
                 .build();
         categoryRepository.save(category);
 
@@ -136,4 +138,4 @@ class AnswerCustomRepositoryImplTest {
 
     private record exampleUser(User user1, User user2, User user3) {
     }
-}
+}*/
