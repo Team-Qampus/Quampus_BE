@@ -12,6 +12,8 @@ services:
       MYSQL_PASSWORD: rlaehdus00
     networks:
       - springboot-mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   redis:
     image: redis:latest
@@ -45,4 +47,6 @@ networks:
 
 volumes:
   jenkins_home:
+    driver: local
+  mysql_data:
     driver: local
