@@ -49,9 +49,11 @@ pipeline {
 
         stage('Remove Existing Docker Containers') {
             steps {
-                     sh 'echo "Stopping and Removing Existing Docker Containers"'
-                     sh 'docker-compose down --rmi all --volumes --remove-orphans || true'
-            }
+                    sh 'echo "Stopping and Removing Existing Docker Containers"'
+                    sh 'docker ps -a' // 현재 실행 중인 컨테이너 확인
+                    sh 'docker stop $(docker ps -aq) || true'
+                    sh 'docker rm -f $(docker ps -aq) || true'
+                    sh 'docker-compose down --rmi all --volumes --remove-orphans || true'
             post {
                 success { sh 'echo "Successfully Removed Docker Containers"' }
                 failure { sh 'echo "Failed to Remove Docker Containers"' }
