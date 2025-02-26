@@ -2,7 +2,6 @@
 services:
   mysql:
     image: mysql:8
-    container_name: mysql
     restart: always
     ports:
       - "3307:3306"  # MySQL의 기본 포트를 3307로 매핑 ##
