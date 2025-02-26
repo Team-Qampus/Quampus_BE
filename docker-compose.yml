@@ -41,7 +41,6 @@ services:
       - springboot-mysql
 
   jenkins:
-   jenkins:
     image: jenkins/jenkins:lts
     user: root
     ports:
