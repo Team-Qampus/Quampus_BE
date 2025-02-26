@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.server.ResponseStatusException;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.exception.ErrorCode;
@@ -27,6 +28,7 @@ import swyp.qampus.question.domain.MyQuestionResponseDto;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 @Tag(name = "로그인",description = "로그인 API")
+@Log4j2
 public class OAuthController {
 
     private final OauthService oauthService;
@@ -50,6 +52,7 @@ public class OAuthController {
     public ResponseEntity<UserResponseDTO.JoinResultDTO> kakaoLogin(@RequestParam("code") String code
             , HttpServletResponse httpServletResponse) {
 
+        log.info("Kakao Authorization Code: " + code);
         // 카카오 OAuth 로그인 처리
         User user = oauthService.oAuthLogin(code, httpServletResponse);
 

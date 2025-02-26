@@ -48,15 +48,16 @@ public class OauthServiceImpl implements OauthService {
 
         // 카카오 서버에서 인가 코드를 사용하여 액세스 토큰 요청
         KakaoDTO.OAuthToken oAuthToken = kakaoUtil.requestToken(code);
+
         System.out.println("oAuthToken = " + oAuthToken);
 
         // 액세스 토큰을 이용하여 카카오 사용자 프로필 정보 요청
         KakaoDTO.KakaoProfile kakaoProfile = kakaoUtil.requestProfile(oAuthToken);
-        System.out.println("kakaoProfile = " + kakaoProfile);
+        System.out.println("kakaoProfile = " + kakaoProfile.toString());
 
         // 카카오에서 받은 이메일 정보를 기반으로 기존 사용자 조회
         Optional<User> queryUser = userRepository.findByEmail(kakaoProfile.getKakao_account().getEmail());
-        System.out.println("queryUser = " + queryUser);
+        System.out.println("queryUser = " + queryUser.toString());
 
         // 기존 회원이 존재하는 경우
         if (queryUser.isPresent()) {
@@ -83,7 +84,7 @@ public class OauthServiceImpl implements OauthService {
                     );
 
 
-            // 임시 사용자 정보를 Redisdp JSON 형태로 저장
+            // 임시 사용자 정보를 Redis에 JSON 형태로 저장
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 String userJson = objectMapper.writeValueAsString(tempUser);

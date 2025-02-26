@@ -1,5 +1,6 @@
 package swyp.qampus.login.service;
 
+import lombok.extern.log4j.Log4j2;
 import swyp.qampus.login.config.data.RedisCustomServiceImpl;
 import swyp.qampus.login.dto.UserRequestDTO;
 import swyp.qampus.login.entity.User;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class CompleteSignupService {
 
     private final UserRepository userRepository;
@@ -41,6 +43,8 @@ public class CompleteSignupService {
         User updateUser = tempUser.toBuilder()
                 .major(request.getMajor())
                 .build();
+
+        log.info("updateUser: " + updateUser.toString());
 
         // 최종적으로 DB에 저장
         userRepository.save(updateUser);
