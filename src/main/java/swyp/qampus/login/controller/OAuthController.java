@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.MyQuestionResponseDto;
 
 @RestController
@@ -32,6 +33,7 @@ public class OAuthController {
 
     private final OauthService oauthService;
     private final CompleteSignupService completeSignupService;
+    private final JWTUtil jwtUtil;
 
     /**
      * 카카오 로그인 요청을 처리하는 API 엔드포인트
@@ -113,15 +115,19 @@ public class OAuthController {
             }
     )
     @PostMapping("/signup/complete")
-    public ResponseEntity<?> completeSignup(
-            @Parameter(description = "회원가입 할 사용자의 이메일")
-            @RequestParam("email") String email,
-            @RequestBody UserRequestDTO.UserUniversityAndMajorDTO request,
-            HttpServletResponse response
-    ) {
-        // 서비스 계층에 이메일과 DTO를 전달하여 최종 회원가입 진행
+    public ResponseEntity<?> completeSignup(@RequestHeader("Authorization") String token,
+                                            @RequestBody UserRequestDTO.UserUniversityAndMajorDTO request,
+                                            HttpServletResponse response) {
+        // 1. JWT에서 이메일 추출
+        String email = jwtUtil.getEmailFromToken(token.replace("Bearer ", ""));
+
+        // 2. 서비스 계층 호출해서 회원가입 완료 처리
+
         String finalJwt = completeSignupService.completeSignup(email, request);
+
+        // 3. 새 JWT를 헤더에 추가한다.
         response.setHeader("Authorization", finalJwt);
+
         return ResponseEntity.ok(ResponseDto.of(true,200,"회원가입이 완료되었습니다."));
     }
 }

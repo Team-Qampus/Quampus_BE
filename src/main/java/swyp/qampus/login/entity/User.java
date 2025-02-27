@@ -1,5 +1,10 @@
 package swyp.qampus.login.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.*;
 import swyp.qampus.answer.domain.Answer;
@@ -43,9 +48,15 @@ public class User  {
     private String nickname;
 
     @Column(nullable = false)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(nullable = false)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
     private LocalDateTime modifiedDate = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user")
@@ -65,14 +76,16 @@ public class User  {
     private University university;
 
     @Builder(toBuilder = true)
-    public User(Long userId, String name, String email, String password, String major,String nickname){
+    public User(Long userId, String name, String email, String password, String major,String nickname, University university) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
         this.major = major;
         this.nickname=nickname;
+        this.university = university;
     }
+
     public void addQuestion(Question question){
         this.questions.add(question);
     }
