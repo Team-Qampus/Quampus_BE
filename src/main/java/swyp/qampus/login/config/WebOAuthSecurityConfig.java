@@ -1,8 +1,12 @@
 package swyp.qampus.login.config;
 
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.login.util.JWTFilter;
@@ -58,9 +62,9 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
         config.setAllowCredentials(true); // 인증 정보 포함 허용
         config.setAllowedOrigins(List.of("http://localhost:3000","http://127.0.0.1:3000")); // 허용할 프론트엔드 도메인
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type")); // 허용할 요청 헤더 명시(수정)
-        config.setExposedHeaders(List.of("Authorization"));// 추가
-        config.setMaxAge(3600L);
+        config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
+        config.setMaxAge(3600L); // 모든 Origin 허용
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -99,4 +103,5 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
         // 보안 설정 완료 후 반환
         return http.build();
     }
+
 }

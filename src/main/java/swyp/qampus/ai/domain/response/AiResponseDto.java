@@ -14,11 +14,11 @@ import java.time.format.DateTimeFormatter;
 @Builder
 @Schema(name = "AI답변 Dto")
 public class AiResponseDto {
-    @Schema(name = "ai아이디")
+    @Schema(description = "ai아이디")
     private  Long ai_id;
-    @Schema(name = "생성 날짜")
+    @Schema(description = "생성 날짜")
     private String created_date;
-    @Schema(name = "답변 내용")
+    @Schema(description = "답변 내용")
     private String content;
 
     public static AiResponseDto of(Ai ai){

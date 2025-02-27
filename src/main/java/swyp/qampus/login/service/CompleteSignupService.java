@@ -19,6 +19,7 @@ import swyp.qampus.university.repository.UniversityRepository;
 public class CompleteSignupService {
 
     private final UserRepository userRepository;
+    private final UniversityRepository universityRepository;
     private final RedisCustomServiceImpl redisCustomService;
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();

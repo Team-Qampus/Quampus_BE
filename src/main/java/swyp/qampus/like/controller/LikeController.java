@@ -1,6 +1,7 @@
 package swyp.qampus.like.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,7 +37,13 @@ public class LikeController {
             }
     )
     @PostMapping
-    public ResponseEntity<?> insertLike(@RequestParam("answer")Long answerId, @RequestHeader("Authorization")String token){
+    public ResponseEntity<?> insertLike(
+            @Parameter(description = "좋아요를 할 답변 ID")
+            @RequestParam("answer")Long answerId,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ){
         likeService.insert(token,answerId);
         return ResponseEntity.ok().body(ResponseDto.of(true,200,"좋아요 성공"));
     }
@@ -58,7 +65,13 @@ public class LikeController {
             }
     )
     @DeleteMapping
-    public ResponseEntity<?> deleteLike(@RequestParam("answer")Long answerId,@RequestHeader("Authorization")String token){
+    public ResponseEntity<?> deleteLike(
+            @Parameter(description = "좋아요를 취소할 답변 ID")
+            @RequestParam("answer")Long answerId,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ){
         likeService.delete(token,answerId);
         return ResponseEntity.ok().body(ResponseDto.of(true,200,"좋아요 취소 성공"));
     }

@@ -1,12 +1,14 @@
 package swyp.qampus.answer.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
@@ -47,9 +49,13 @@ public class AnswerController {
             }
     )
     @PostMapping
-    public ResponseEntity<?> createAnswer(@RequestPart(value = "requestDto", required = true) AnswerRequestDto requestDto,
-                                          @RequestPart(value = "images", required = false) List<MultipartFile> images,
-                                          @RequestHeader("Authorization")String token) {
+    public ResponseEntity<?> createAnswer(
+            @RequestPart(value = "requestDto") AnswerRequestDto requestDto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ) {
         answerService.createAnswer(requestDto, images,token);
         return ResponseEntity.ok().body(ResponseDto.of(true, 200, "답변 생성 성공"));
     }
@@ -70,9 +76,15 @@ public class AnswerController {
 
     )
     @PutMapping("/{answer_id}")
-    public ResponseEntity<?> updateAnswer(@PathVariable(name = "answer_id") Long answer_id,
-                                          @RequestBody AnswerUpdateRequestDto requestDto,
-                                          @RequestHeader("Authorization")String token) {
+    public ResponseEntity<?> updateAnswer(
+            @Parameter(description = "수정할 답변 ID")
+            @PathVariable(name = "answer_id") Long answer_id,
+
+            @RequestBody AnswerUpdateRequestDto requestDto,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ) {
         answerService.updateAnswer(answer_id, requestDto,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 수정 성공"));
     }
@@ -93,8 +105,13 @@ public class AnswerController {
 
     )
     @DeleteMapping("/{answer_id}")
-    public ResponseEntity<?> deleteAnswer(@PathVariable(name = "answer_id") Long answer_id,
-                                          @RequestHeader("Authorization")String token) {
+    public ResponseEntity<?> deleteAnswer(
+            @Parameter(description = "삭제할 답변 ID")
+            @PathVariable(name = "answer_id") Long answer_id,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token
+    ) {
         answerService.deleteAnswer(answer_id,token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 삭제 성공"));
     }
@@ -131,13 +148,18 @@ public class AnswerController {
 
     )
     @PutMapping("/choice")
-    public ResponseEntity<?> choice(@RequestHeader("Authorization") String token, @RequestBody ChoiceRequestDto requestDto) {
+    public ResponseEntity<?> choice(
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization") String token,
+
+            @RequestBody ChoiceRequestDto requestDto
+    ) {
         answerService.choice(requestDto, token);
         return ResponseEntity.ok().body(ResponseDto.of(true, 200, "채택 또는 취소 성공"));
     }
 
     @Operation(
-            summary = "질문 리스트 API입니다.-[담당자:김도연]",
+            summary = "질문 리스트 API입니다.-[담당자:박재하]",
             description = "기본 sort=최신 게시물 순서입니다. size:한 페이지당 최대 항목 수 page:조회할 페이지 번호(0부터 시작)",
             responses = {
                     @ApiResponse(responseCode = "200",
@@ -152,13 +174,24 @@ public class AnswerController {
             }
 
     )
-    @GetMapping
+    @GetMapping("/{category_id}")
     public ResponseEntity<List<QuestionListResponseDto>> getQuestions(
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization") String token,
-            @PathVariable(value = "category_id") Long categoryId,
-            @RequestParam(defaultValue = "latest") String sort,
-            Pageable pageable) {
 
+            @Parameter(description = "조회할 질문 카테고리 ID")
+            @PathVariable(value = "category_id") Long categoryId,
+
+            @Parameter(description = "조회할 정렬 방법")
+            @RequestParam(defaultValue = "latest") String sort,
+
+            @Parameter(description = "조회할 페이지 번호 (0부터 시작)")
+            @RequestParam(defaultValue = "0", required = false) int page,
+
+            @Parameter(description = "한 페이지당 조회할 항목 수")
+            @RequestParam(defaultValue = "10", required = false) int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(answerService.getQuestions(categoryId, sort, pageable,token));
     }
 
@@ -179,8 +212,13 @@ public class AnswerController {
 
     )
     @GetMapping("/{question_id}")
-    public ResponseEntity<QuestionDetailResponseDto> getQuestionDetail(@PathVariable Long question_id,
-                                                                       @RequestHeader("Authorization") String token) {
+    public ResponseEntity<QuestionDetailResponseDto> getQuestionDetail(
+            @Parameter(description = "상세한 정보를 조회할 질문 ID")
+            @PathVariable(value = "question_id") Long question_id,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization") String token
+    ) {
         return ResponseEntity.ok(answerService.getQuestionDetail(question_id, token));
     }
 
@@ -202,11 +240,22 @@ public class AnswerController {
     )
     @GetMapping("/search")
     public ResponseEntity<List<QuestionResponseDto>> searchQuestions(
+            @Parameter(description = "검색한 값")
             @RequestParam String value,
-            @RequestParam(defaultValue = "latest") String sort,
-            @RequestHeader("Authorization") String token,
-            Pageable pageable) {
 
+            @Parameter(description = "조회할 정렬 방법")
+            @RequestParam(defaultValue = "latest") String sort,
+
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization") String token,
+
+            @Parameter(description = "조회할 페이지 번호 (0부터 시작)")
+            @RequestParam(defaultValue = "0", required = false) int page,
+
+            @Parameter(description = "한 페이지당 조회할 항목 수")
+            @RequestParam(defaultValue = "10", required = false) int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
         List<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, pageable,token);
         return ResponseEntity.ok(questions);
     }
