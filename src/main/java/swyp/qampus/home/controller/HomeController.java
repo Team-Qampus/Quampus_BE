@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import swyp.qampus.common.ResponseDto;
+import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.ErrorCode;
+import swyp.qampus.exception.RestApiException;
 import swyp.qampus.home.dto.HomeResponseDto;
 import swyp.qampus.home.exception.HomeErrorCode;
 import swyp.qampus.home.service.HomeService;
+import swyp.qampus.login.util.JWTUtil;
 
 @RestController
 @RequestMapping("/home")
@@ -25,6 +28,7 @@ import swyp.qampus.home.service.HomeService;
 @Tag(name = "홈화면", description = "홈화면 API")
 public class HomeController {
     private final HomeService homeService;
+    private final JWTUtil jwtUtil;
 
     @Operation(
             summary = "홈화면 API입니다.-[담당자 : 박재하]",
@@ -83,11 +87,13 @@ public class HomeController {
                             )),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorCode.class))),
+                                    schema = @Schema(implementation = CommonErrorCode.class))),
                     @ApiResponse(responseCode = "404", description = "금주의 인기 질문 또는 답변을 찾을 수 없습니다.",
                             content = @Content(mediaType = "application/jason",
-                                    schema = @Schema(implementation = HomeErrorCode.class))
-                    )
+                                    schema = @Schema(implementation = HomeErrorCode.class))),
+                    @ApiResponse(responseCode = "401", description = "유효하지 않거나 만료된 토큰입니다.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = CommonErrorCode.class)))
             }
     )
     @GetMapping
@@ -95,7 +101,11 @@ public class HomeController {
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader(value = "Authorization", required = false) String token
     ) {
+
         if (token != null && !token.isEmpty()) {
+            if (!jwtUtil.validateToken(token)) {
+                throw new RestApiException(CommonErrorCode.INVALID_TOKEN);
+            }
             return ResponseEntity.ok(homeService.getUserHomeContent(token));
         } else {
             return ResponseEntity.ok(homeService.getGuestHomeContent());
