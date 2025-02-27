@@ -23,7 +23,6 @@ public class CompleteSignupService {
     private final RedisCustomServiceImpl redisCustomService;
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final UniversityRepository universityRepository;
 
     public String completeSignup(String email, UserRequestDTO.UserUniversityAndMajorDTO request) {
         String key = "tempUser:" + email;
