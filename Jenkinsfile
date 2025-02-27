@@ -39,8 +39,11 @@ pipeline {
                 if lsof -i :6380; then
                     echo "Port 6380 is in use. Killing the process..."
                     sudo kill -9 \$(lsof -ti :6380)
+                if lsof -i :6379; then
+                     echo "Port 6379 is in use. Killing the process..."
+                     sudo kill -9 \$(lsof -ti :6379)
                 else
-                    echo "Port 6380 is free."
+                    echo "Port 6380,6379 is free."
                 fi
                 """
             }

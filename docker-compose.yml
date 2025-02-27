@@ -1,4 +1,3 @@
-version: "3.8"
 
 services:
   mysql:
@@ -12,7 +11,7 @@ services:
     networks:
       - springboot-mysql
     ports:
-      - "3307:3306"
+      - "3306:3306"
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -47,7 +46,7 @@ services:
     networks:
       - springboot-mysql
     ports:
-      - "6380:6379"
+      - "6379:6379"
     restart: always
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
