@@ -1,9 +1,11 @@
-package swyp.qampus.curious.repository;
+package java.swyp.qampus.curious.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import swyp.qampus.curious.domain.Curious;
+import swyp.qampus.curious.repository.CuriousCustomRepository;
+
 import java.util.Optional;
 import static swyp.qampus.curious.domain.QCurious.*;
 import static swyp.qampus.login.entity.QUser.user;

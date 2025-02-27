@@ -7,13 +7,14 @@ import org.springframework.stereotype.Repository;
 import swyp.qampus.answer.domain.QAnswer;
 import swyp.qampus.like.domain.Like;
 import swyp.qampus.like.domain.QLike;
+import swyp.qampus.login.entity.QUser;
 
 
 import java.util.Optional;
 
-import static swyp.qampus.answer.domain.QAnswer.*;
+import static swyp.qampus.answer.domain.QAnswer.answer;
 import static swyp.qampus.like.domain.QLike.*;
-import static swyp.qampus.login.entity.QUser.user;
+import static swyp.qampus.login.entity.QUser.*;
 
 
 @Repository
@@ -27,7 +28,7 @@ public class LikeRepositoryCustomImpl implements LikeRepositoryCustom{
         return  Optional.ofNullable(
                 queryFactory.select(like)
                         .from(like)
-                        .join(like.user,user)
+                        .join(like.user, user)
                         .join(like.answer, answer)
                         .where(userAndAnswerIdEq(userId,answerId))
                         .fetchOne()
