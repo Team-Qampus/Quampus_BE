@@ -79,6 +79,6 @@ public class HomeController {
     )
     @GetMapping
     public ResponseEntity<HomeResponseDto> getWeeklyPopularContent() {
-        return ResponseEntity.ok(homeService.getWeeklyPopularQna());
+
     }
 }
