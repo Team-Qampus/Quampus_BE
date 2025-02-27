@@ -1,6 +1,7 @@
 package swyp.qampus.ai.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,6 +26,7 @@ public class AiController {
     private final AiService aiService;
     @Operation(
             summary = "GPT AI 답변 API입니다.-[담당자:김도연]",
+            description = "날짜 형식 예시입니다. 2022-02-22",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공",
                             content = @Content(mediaType = "application/json",
@@ -42,8 +44,13 @@ public class AiController {
     )
 
     @GetMapping("/{question_id}/ai")
-    public ResponseEntity<AiResponseDto> getAiAnswer(@RequestHeader("Authorization")String token,
-                                                     @PathVariable("question_id")Long question_id) throws IOException {
+    public ResponseEntity<AiResponseDto> getAiAnswer(
+            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
+            @RequestHeader("Authorization")String token,
+
+            @Parameter(description = "질문 ID")
+            @PathVariable("question_id")Long question_id
+    ) throws IOException {
         return ResponseEntity.ok().body(aiService.getAiAnswer(token,question_id));
     }
 }

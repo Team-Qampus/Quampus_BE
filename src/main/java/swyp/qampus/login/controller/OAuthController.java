@@ -2,6 +2,7 @@ package swyp.qampus.login.controller;
 
 import com.amazonaws.Response;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,9 +50,12 @@ public class OAuthController {
             }
     )
     @GetMapping("/login/kakao")
-    public ResponseEntity<UserResponseDTO.JoinResultDTO> kakaoLogin(@RequestParam("code") String code
-            , HttpServletResponse httpServletResponse) {
+    public ResponseEntity<UserResponseDTO.JoinResultDTO> kakaoLogin(
+            @Parameter(description = "카카오 로그인 후 받은 인가 코드")
+            @RequestParam("code") String code,
 
+            HttpServletResponse httpServletResponse
+    ) {
         // 카카오 OAuth 로그인 처리
         User user = oauthService.oAuthLogin(code, httpServletResponse);
 
@@ -76,7 +80,10 @@ public class OAuthController {
             }
     )
     @PostMapping("/logout/kakao")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<?> logout(
+            @Parameter(description = "클라이언트가 제공한 카카오 액세스 토큰 (`Authorization` 헤더에서 가져옴)")
+            @RequestHeader("Authorization") String accessToken
+    ) {
         try {
             // 1. "Bearer " 접두어 제거 후, 실제 액세스 토큰만 추출
             oauthService.kakaoLogout(accessToken.replace("Bearer ", "")); // 토큰에서 "Bearer " 제거 후 전달
@@ -115,6 +122,7 @@ public class OAuthController {
         String email = jwtUtil.getEmailFromToken(token.replace("Bearer ", ""));
 
         // 2. 서비스 계층 호출해서 회원가입 완료 처리
+
         String finalJwt = completeSignupService.completeSignup(email, request);
 
         // 3. 새 JWT를 헤더에 추가한다.

@@ -10,8 +10,9 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-@Schema(name = "홈화면 인기 질문/답변 Dto")
 public class HomeResponseDto {
+    @Schema(description = "주별 인기 질문")
     private List<QuestionWeeklyResponseDto> weekly_questions;
+    @Schema(description = "주별 인기 답변")
     private List<AnswerWeeklyResponseDto> popular_answers;
 }

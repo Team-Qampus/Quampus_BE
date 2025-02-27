@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import swyp.qampus.login.entity.User;
 import swyp.qampus.question.domain.Question;
 
 import java.util.List;
@@ -54,10 +55,10 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     }
 
     @Override
-    public List<Question> findMyQuestions(Long userId, Long categoryId, String sort, Pageable pageable) {
+    public List<Question> findMyQuestions(User user, Long categoryId, String sort, Pageable pageable) {
         return queryFactory
                 .selectFrom(question)
-                .where(userIdEq(userId), categoryFilter(categoryId))
+                .where(userIdEq(user), categoryFilter(categoryId))
                 .orderBy(getSortOrder(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -82,8 +83,8 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
                 .or(question.content.containsIgnoreCase(value));
     }
 
-    private BooleanExpression userIdEq(Long userId) {
-        return userId != null ? question.user.userId.eq(userId) : null;
+    private BooleanExpression userIdEq(User user) {
+        return user != null ? question.user.eq(user) : null;
     }
 
     private BooleanExpression categoryFilter(Long categoryId) {
