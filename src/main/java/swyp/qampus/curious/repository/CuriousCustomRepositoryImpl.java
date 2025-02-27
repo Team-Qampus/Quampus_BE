@@ -1,4 +1,4 @@
-package java.swyp.qampus.curious.repository;
+package swyp.qampus.curious.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
