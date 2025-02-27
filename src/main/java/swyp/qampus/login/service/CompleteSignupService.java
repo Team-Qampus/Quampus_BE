@@ -23,6 +23,7 @@ public class CompleteSignupService {
     private final RedisCustomServiceImpl redisCustomService;
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final UniversityRepository universityRepository;
 
     public String completeSignup(String email, UserRequestDTO.UserUniversityAndMajorDTO request) {
         String key = "tempUser:" + email;
@@ -40,9 +41,17 @@ public class CompleteSignupService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "임시로 저장된 사용자 정보를 파싱하는 중 오류가 발생되었습니다.");
         }
 
-        // 추가 정보 병합 (DTO의 필드를 User의 필드에 매핑)
+
+        // 1. universityName을 이용하여 University 조회
+        University university = universityRepository.findByUniversityName(request.getUniversityName())
+                .orElseGet(() -> universityRepository.save(University.builder()
+                        .universityName(request.getUniversityName())
+                        .build()));
+
+        // 2. User 업데이트 (University 객체 설정)
         User updateUser = tempUser.toBuilder()
                 .major(request.getMajor())
+                .university(university)  // University 엔티티 연결
                 .build();
 
         // 최종적으로 DB에 저장
