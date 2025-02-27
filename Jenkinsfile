@@ -52,10 +52,10 @@ pipeline {
         sh '''
         JENKINS_CONTAINER=$(docker ps -aqf "name=jenkins")
         
-        # 모든 컨테이너 ID 가져오기
+        
         ALL_CONTAINERS=$(docker ps -aq)
 
-        # Jenkins 컨테이너 제외하고 정지 및 삭제
+       
         for CONTAINER in $ALL_CONTAINERS; do
             if [ "$CONTAINER" != "$JENKINS_CONTAINER" ]; then
                 docker stop $CONTAINER || true
