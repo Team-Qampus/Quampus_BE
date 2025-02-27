@@ -81,8 +81,29 @@ pipeline {
                   sh 'docker-compose up -d --build'
             }
             post {
-                success { sh 'echo "Successfully Built and Started Containers"' }
-                failure { sh 'echo "Failed to Deploy Containers"' }
+                success { sh 'echo "Successfully Built and Started Containers"'
+                        withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
+                        discordSend description: """
+                        제목 : ${currentBuild.displayName}
+                        결과 : ${currentBuild.result}
+                        실행 시간 : ${currentBuild.duration / 1000}s
+                        """,
+                        link: env.BUILD_URL, result: currentBuild.currentResult, 
+                        title: "${env.JOB_NAME} : ${currentBuild.displayName} 성공", 
+                        webhookURL: "$DISCORD"
+                        }
+                    }
+                failure { sh 'echo "Failed to Deploy Containers"' 
+                        withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
+                        discordSend description: """
+                        제목 : ${currentBuild.displayName}
+                        결과 : ${currentBuild.result}
+                        실행 시간 : ${currentBuild.duration / 1000}s
+                        """,
+                        link: env.BUILD_URL, result: currentBuild.currentResult, 
+                        title: "${env.JOB_NAME} : ${currentBuild.displayName} 실패", 
+                        webhookURL: "$DISCORD"
+                        }
             }
         }
     }
