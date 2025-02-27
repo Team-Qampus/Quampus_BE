@@ -1,3 +1,4 @@
+
 package swyp.qampus.login.controller;
 
 import com.amazonaws.Response;
@@ -35,12 +36,14 @@ public class OAuthController {
     private final CompleteSignupService completeSignupService;
     private final JWTUtil jwtUtil;
 
-    /**
+
+/**
      * 카카오 로그인 요청을 처리하는 API 엔드포인트
      * @param code 카카오 로그인 후 받은 인가 코드
      * @param httpServletResponse JWT 토큰을 응답 헤더에 추가하기 위한 객체
      * @return UserResponseDTO.JoinResultDTO (로그인된 사용자 정보 반환)
      */
+
     @Operation(
             summary = "카카오 로그인 API입니다.-[담당자 : 홍기문]",
             responses = {
@@ -131,3 +134,4 @@ public class OAuthController {
         return ResponseEntity.ok(ResponseDto.of(true,200,"회원가입이 완료되었습니다."));
     }
 }
+
