@@ -1,4 +1,4 @@
-package swyp.qampus.university;
+package swyp.qampus.common.kafka;
 
 import lombok.RequiredArgsConstructor;
 

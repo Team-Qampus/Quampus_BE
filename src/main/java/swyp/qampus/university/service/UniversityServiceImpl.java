@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.util.JWTUtil;
-import swyp.qampus.question.domain.Question;
-import swyp.qampus.university.RecentUniversityActivityType;
+import swyp.qampus.common.kafka.RecentUniversityActivityType;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.domain.response.RecentActivityResponseDto;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
@@ -91,7 +90,7 @@ public class UniversityServiceImpl implements UniversityService {
 
             //동시성 제어
             synchronized (recentActivities){
-                if(recentActivities.size()>=5){
+                if(recentActivities.size()>=4){
                     recentActivities.poll();
                 }
                 recentActivities.offer(hashMap);

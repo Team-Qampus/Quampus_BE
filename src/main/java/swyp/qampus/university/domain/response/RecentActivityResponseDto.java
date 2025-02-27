@@ -2,9 +2,8 @@ package swyp.qampus.university.domain.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
-import swyp.qampus.university.RecentUniversityActivityType;
+import swyp.qampus.common.kafka.RecentUniversityActivityType;
 
 @Getter
 @Schema(name = "최근 활동 Dto")

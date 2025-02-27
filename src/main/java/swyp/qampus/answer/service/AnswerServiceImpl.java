@@ -1,5 +1,6 @@
 package swyp.qampus.answer.service;
 
+import com.amazonaws.services.ec2.model.ActivityStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,8 @@ import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.common.ResponseDto;
+import swyp.qampus.common.kafka.RecentUniversityActivityType;
+import swyp.qampus.common.kafka.service.KafkaProducerService;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
@@ -44,6 +47,7 @@ public class AnswerServiceImpl implements AnswerService {
     private final ImageRepository imageRepository;
     private final JWTUtil jwtUtil;
     private final UniversityRepository universityRepository;
+    private final KafkaProducerService kafkaProducerService;
 
     @Transactional
     @Override
@@ -61,7 +65,7 @@ public class AnswerServiceImpl implements AnswerService {
                 .content(requestDto.getContent())
                 .build();
 
-        answerRepository.save(answer);
+        answer=answerRepository.save(answer);
 
         question.incrementUnreadAnswerCount();
         question.incrementAnswerCount();
@@ -79,6 +83,10 @@ public class AnswerServiceImpl implements AnswerService {
                 imageRepository.save(newImage);
             }
         }
+
+        kafkaProducerService.send(answer.getAnswerId(),user.getUniversity().getUniversityName(),
+                    user.getMajor(), RecentUniversityActivityType.ANSWER
+        );
     }
 
     @Transactional
@@ -118,7 +126,9 @@ public class AnswerServiceImpl implements AnswerService {
         //TODO:JWT로 교체
         Long userId=jwtUtil.getUserIdFromToken(token);
         //유저 찾기
-
+        User findUser=userRepository.findById(userId).orElseThrow(
+                ()->new RestApiException(CommonErrorCode.USER_NOT_FOUND)
+        );
         Answer answer=answerRepository.findById(choiceRequestDto.getAnswer_id()).orElseThrow(
                 ()-> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
         Question question=questionRepository.findById(choiceRequestDto.getQuestion_id()).orElseThrow(
@@ -129,12 +139,12 @@ public class AnswerServiceImpl implements AnswerService {
         if (!userId.equals(question.getUser().getUserId())) {
             throw new RestApiException(CommonErrorCode.FORBIDDEN);
         }
-        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(), answer, type);
+        validateAndSetChoiceSet(choiceRequestDto.getQuestion_id(), answer, type,findUser);
 
         answerRepository.save(answer);
     }
 
-    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
+    private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type,User user) {
         //채택하는 경우
         if(type){
             //해당 질문에서 이미 채택한 답변이 존재하는 경우
@@ -151,6 +161,10 @@ public class AnswerServiceImpl implements AnswerService {
                     new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
             university.increaseChoiceCnt();
             universityRepository.save(university);
+
+            kafkaProducerService.send(answer.getAnswerId(),user.getUniversity().getUniversityName(),
+                    user.getMajor(),RecentUniversityActivityType.CHOICE
+            );
         }
         //채택 취소하는 경우
         else{
@@ -158,7 +172,7 @@ public class AnswerServiceImpl implements AnswerService {
             if(!answer.getIsChosen()){
                 throw new RestApiException(AnswerErrorCode.DUPLICATED_NO_CHOSEN);
             }
-            //채택하는 경우
+
             University university=universityRepository.findById(answer.getUser().getUniversity().getUniversityId()).orElseThrow(()->
                     new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
             university.decreaseChoiceCnt();
