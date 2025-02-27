@@ -1,4 +1,4 @@
-package swyp.qampus.common.config;
+package swyp.qampus.common.kafka;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -26,8 +26,8 @@ public class KafkaConsumerConfig {
         //Broker 3개 설정
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,BROKER_URL);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG,"group_1");
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG,"university-group");
 
         //오프셋 없을 때 가장 최신 메시지부터 읽기
         config.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG,"latest");

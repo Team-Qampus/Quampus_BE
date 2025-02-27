@@ -1,4 +1,4 @@
-package swyp.qampus.common.config;
+package swyp.qampus.common.kafka;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -18,12 +18,31 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String BROKER_URL;
 
+    @Value("${spring.kafka.producer.retries}")
+    private Integer retry;
+    /*
+    * ack:all
+    * ack신호는 성능은 떨어지지만 event produce를 보장 가능
+    * */
+    @Value("${spring.kafka.producer.acks}")
+    private String acksConfig;
+
+    @Value("${spring.kafka.producer.enable-idempotence}")
+    private Boolean enableIdempotence;
+
+    @Value("${spring.kafka.producer.max-in-flight-requests-per-connection}")
+    private Integer maxInFlightRequestsPerConnection;
+
     @Bean
     public ProducerFactory<String,Object> producerFactory(){
         Map<String,Object> config=new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,BROKER_URL);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,StringSerializer.class);
+        config.put(ProducerConfig.RETRIES_CONFIG,retry);
+        config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG,enableIdempotence);
+        config.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION,maxInFlightRequestsPerConnection);
+
         return new DefaultKafkaProducerFactory<>(config);
     }
 
