@@ -140,30 +140,5 @@ public class OAuthController {
         return ResponseEntity.ok(ResponseDto.of(true,200,"회원가입이 완료되었습니다."));
     }
 
-    @Operation(
-            summary = "테스트용 프리패스 토큰 발급 API입니다. -[담당자 : 박재하]",
-            description = "테스트 환경에서 인증 없이 API를 테스트할 수 있도록 프리패스 토큰을 발급합니다.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "테스트용 프리패스 토큰 발급 성공",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = TokenResponseDto.class),
-                                    examples = @ExampleObject(value = """
-                                        {
-                                          "success": true,
-                                          "code": 200,
-                                          "message": "테스트용 프리패스 토큰 발급 성공",
-                                          "token": "eyJhbGciOiJIUzI1NiJ9..."
-                                        }
-                                        """))),
-                    @ApiResponse(responseCode = "500", description = "서버 내부 오류",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorCode.class)))
-            }
-    )
-    @GetMapping("/token")
-    public ResponseEntity<?> getFreePassToken() {
 
-        String token = jwtUtil.createFreePassToken();
-        return ResponseEntity.ok(TokenResponseDto.of(true, 200, "테스트용 프리패스 토큰 발급 성공", token));
-    }
 }
