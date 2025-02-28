@@ -153,7 +153,7 @@ public class OAuthController {
                                         """))),
                     @ApiResponse(responseCode = "500", description = "서버 내부 오류",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseDto.class)))
+                                    schema = @Schema(implementation = ErrorCode.class)))
             }
     )
     @GetMapping("/token")
