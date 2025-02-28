@@ -9,6 +9,7 @@ import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.common.ResponseDto;
+import swyp.qampus.curious.repository.CuriousRepository;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
@@ -44,6 +45,7 @@ public class AnswerServiceImpl implements AnswerService {
     private final ImageRepository imageRepository;
     private final JWTUtil jwtUtil;
     private final UniversityRepository universityRepository;
+    private final CuriousRepository curiousRepository;
 
     @Transactional
     @Override
@@ -192,14 +194,14 @@ public class AnswerServiceImpl implements AnswerService {
 
         question.increseViewCount();    //조회수 증가
 
-
-
         List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
                 .stream()
                 .map(AnswerResponseDto::of)
                 .collect(Collectors.toList());
 
-        return QuestionDetailResponseDto.of(question, answers);
+        boolean isCurious = curiousRepository.existsByUserIdAndQuestionId(userId, questionId);
+
+        return QuestionDetailResponseDto.of(question, isCurious, answers);
     }
 
     @Override

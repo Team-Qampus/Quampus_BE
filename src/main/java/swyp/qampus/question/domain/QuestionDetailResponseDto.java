@@ -16,11 +16,12 @@ public class QuestionDetailResponseDto {
     private final LocalDateTime createdDate;
     private final int viewCnt;
     private final int curiousCount;
+    private final boolean isCurious;
     private final List<AnswerResponseDto> answers;
 
     @Builder
     private QuestionDetailResponseDto(Long questionId, String title, String content, String universityName,
-                                      LocalDateTime createdDate, int viewCnt, int curiousCount, List<AnswerResponseDto> answers) {
+                                      LocalDateTime createdDate, int viewCnt, int curiousCount, boolean isCurious, List<AnswerResponseDto> answers) {
         this.questionId = questionId;
         this.title = title;
         this.content = content;
@@ -28,10 +29,11 @@ public class QuestionDetailResponseDto {
         this.createdDate = createdDate;
         this.viewCnt = viewCnt;
         this.curiousCount = curiousCount;
+        this.isCurious = isCurious;
         this.answers = answers;
     }
 
-    public static QuestionDetailResponseDto of(Question question, List<AnswerResponseDto> answers) {
+    public static QuestionDetailResponseDto of(Question question, boolean isCurious, List<AnswerResponseDto> answers) {
         return QuestionDetailResponseDto.builder()
                 .questionId(question.getQuestionId())
                 .title(question.getTitle())
@@ -40,6 +42,7 @@ public class QuestionDetailResponseDto {
                 .createdDate(question.getCreateDate())
                 .viewCnt(question.getViewCnt())
                 .curiousCount(question.getCuriousCount())
+                .isCurious(isCurious)
                 .answers(answers)
                 .build();
     }
