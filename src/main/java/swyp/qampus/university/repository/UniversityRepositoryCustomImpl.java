@@ -155,7 +155,21 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
     }
 
     @Override
-    public Long getThisMonthRankOfSchool(String universityName, int month) {
-        return null;
+    public int getThisMonthRankOfSchool(String universityName) {
+        //Native Query
+        String query = """
+                select ranking from (
+                    select
+                        u.university_name,
+                        dense_rank() over (order by u.monthly_choice_cnt desc) as ranking
+                    from University as u
+                ) as ranked
+                where ranked.university_name = :universityName
+                """;
+        Object result = em.createNativeQuery(query)
+                .setParameter("universityName", universityName)
+                .getSingleResult();
+
+        return result != null ? ((Number) result).intValue() : 0;
     }
 }

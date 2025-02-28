@@ -63,4 +63,13 @@ public class University extends BaseEntity {
             monthlyChoiceCnt--;
         }
     }
+
+//    Test을 위해 임시적 setter 사용
+    public void setMonthlyChoiceCnt(Long choiceCnt){
+        this.monthlyChoiceCnt=choiceCnt;
+    }
+
+    public void setLastMonthChoiceCnt(Long choiceCnt){
+        this.lastMonthChoiceCnt=choiceCnt;
+    }
 }
