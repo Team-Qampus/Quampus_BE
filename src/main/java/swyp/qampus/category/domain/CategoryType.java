@@ -10,7 +10,8 @@ public enum CategoryType {
     NATURAL_SCIENCES("자연계"),
     HUMANITIES("인문계"),
     ARTS_AND_SPORTS("예체능"),
-    PRACTICAL("실무");
+    PRACTICAL("실무"),
+    OTHERS("기타");
 
     private final String categoryName;
 }
