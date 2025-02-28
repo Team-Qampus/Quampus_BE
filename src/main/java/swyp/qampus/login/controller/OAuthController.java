@@ -128,12 +128,11 @@ public class OAuthController {
                                             @RequestBody UserRequestDTO.UserUniversityAndMajorDTO request,
                                             HttpServletResponse response) {
         // 1. JWT에서 이메일 추출
-        String existingToken = token.replace("Bearer ", "");
-        String email = jwtUtil.getEmailFromToken(token.replace("Bearer ", ""));
+        String email = jwtUtil.getEmailFromToken(token);
 
         // 2. 서비스 계층 호출해서 회원가입 완료 처리
 
-        String finalJwt = completeSignupService.completeSignup(email, request, existingToken);
+        String finalJwt = completeSignupService.completeSignup(email, request, token);
 
         // 3. 새 JWT를 헤더에 추가한다.
         response.setHeader("Authorization", finalJwt);
