@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UniversityServiceImpl implements UniversityService {
     private final UniversityRepository universityRepository;
+    private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
 
     @Override
@@ -46,6 +48,22 @@ public class UniversityServiceImpl implements UniversityService {
     public void resetWeekly() {
         universityRepository.resetWeeklyChoiceCnt();
         log.info("weeklyChoice 초기화");
+    }
+
+    @Override
+    @Transactional
+    @Scheduled(cron = "1 0 0 1 * * ")
+    public void userResetMonthly() {
+        userRepository.resetMonthlyChoiceCnt();
+        log.info("유저 monthlyChoice 초기화");
+    }
+
+    @Override
+    @Transactional
+    @Scheduled(cron = "59 59 23 * * 7")
+    public void userResetWeekly() {
+        userRepository.resetWeeklyChoiceCnt();
+        log.info("유저 weeklyChoice 초기화");
     }
 
 }
