@@ -4,15 +4,21 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.repository.UniversityRepository;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * JWT(JSON Web Token) 생성 및 검증을 담당하는 유틸리티 클래스
@@ -28,6 +34,8 @@ public class JWTUtil {
     private long validityInMilliseconds;
 
     private static final String FREE_PASS_ROLE = "ROLE_TEST";
+    private final UserRepository userRepository;
+    private final UniversityRepository universityRepository;
 
     // 의존성 주입이 끝난 후 실행되는 초기화 메서드
     // secretKey를 Base64 인코딩하여 보안 강화
@@ -79,6 +87,8 @@ public class JWTUtil {
         claims.put("userId", 99999L);
         claims.put("role", FREE_PASS_ROLE);
 
+        saveTestUserIfNotExists();
+
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
@@ -88,6 +98,30 @@ public class JWTUtil {
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
+    }
+
+    private void saveTestUserIfNotExists() {
+        Optional<User> existingUser = userRepository.findByEmail("testuser@example.com");
+        if (existingUser.isEmpty()) {
+            University testUniversity = universityRepository.findByUniversityName("테스트 대학교")
+                    .orElseGet(() -> {
+                        University newUniversity = University.builder()
+                                .universityName("테스트 대학교")
+                                .build();
+                        return universityRepository.save(newUniversity);
+                    });
+
+            User testUser = User.builder()
+                    .name("테스트 유저")
+                    .email("testuser@example.com") // email로 찾기
+                    .password("testpassword")
+                    .major("테스트 학과")
+                    .nickname("테스터")
+                    .university(testUniversity)
+                    .build();
+
+            userRepository.save(testUser);
+        }
     }
 
 
