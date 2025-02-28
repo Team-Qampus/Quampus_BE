@@ -172,4 +172,23 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
 
         return result != null ? ((Number) result).intValue() : 0;
     }
+
+    @Override
+    public int getLastMonthRankOfSchool(String universityName) {
+        //Native Query
+        String query = """
+                select ranking from (
+                    select
+                        u.university_name,
+                        dense_rank() over (order by u.last_month_choice_cnt desc) as ranking
+                    from University as u
+                ) as ranked
+                where ranked.university_name = :universityName
+                """;
+        Object result = em.createNativeQuery(query)
+                .setParameter("universityName", universityName)
+                .getSingleResult();
+
+        return result != null ? ((Number) result).intValue() : 0;
+    }
 }
