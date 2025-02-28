@@ -8,6 +8,7 @@ services:
       MYSQL_USER: myuser
       MYSQL_PASSWORD: rlaehdus00
       MYSQL_ROOT_PASSWORD: rlaehdus00
+      TZ: Asia/Seoul
     networks:
       - springboot-mysql
     ports:
@@ -18,7 +19,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
+    command: ["mysqld","--default-time-zone=Asia/Seoul"]
   quampus-be:
     build:
       context: .
