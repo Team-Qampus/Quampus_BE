@@ -13,6 +13,8 @@ import swyp.qampus.question.domain.MyQuestionResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.repository.UniversityRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
+    private final UniversityRepository universityRepository;
     private final JWTUtil jwtUtil;
 
     @Override
@@ -38,5 +41,25 @@ public class UserServiceImpl implements UserService {
         return questions.stream()
                 .map(MyQuestionResponseDto::of)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String testUser(String userName,String universityName,String major){
+        University university=University
+                .builder()
+                .universityName(universityName)
+                .build();
+        universityRepository.save(university);
+
+        User user=User.builder()
+                .nickname("test")
+                .email("email"+userName+"@naver.com")
+                .name(userName)
+                .password("12345@sa")
+                .university(university)
+                .major(major)
+                .build();
+        user=userRepository.save(user);
+        return jwtUtil.createAccessToken("email"+userName+"@naver.com",user.getUserId());
     }
 }

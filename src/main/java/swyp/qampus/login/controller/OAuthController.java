@@ -162,6 +162,7 @@ public class OAuthController {
     )
     @GetMapping("/token")
     public ResponseEntity<?> getFreePassToken() {
+
         String token = jwtUtil.createFreePassToken();
         return ResponseEntity.ok(TokenResponseDto.of(true, 200, "테스트용 프리패스 토큰 발급 성공", token));
     }

@@ -78,51 +78,7 @@ public class JWTUtil {
                 .compact();  // 최종적으로 JWT 토큰을 문자열로 반환
     }
 
-    /**
-     * 테스트용 프리패스 토큰 발급 메서드
-     * @return 프리패스 토큰
-     */
-    public String createFreePassToken() {
-        Claims claims = Jwts.claims().setSubject("testUser");
-        claims.put("userId", 99999L);
-        claims.put("role", FREE_PASS_ROLE);
 
-        saveTestUserIfNotExists();
-
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
-                .compact();
-    }
-
-    private void saveTestUserIfNotExists() {
-        Optional<User> existingUser = userRepository.findByEmail("testuser@example.com");
-        if (existingUser.isEmpty()) {
-            University testUniversity = universityRepository.findByUniversityName("테스트 대학교")
-                    .orElseGet(() -> {
-                        University newUniversity = University.builder()
-                                .universityName("테스트 대학교")
-                                .build();
-                        return universityRepository.save(newUniversity);
-                    });
-
-            User testUser = User.builder()
-                    .name("테스트 유저")
-                    .email("testuser@example.com") // email로 찾기
-                    .password("testpassword")
-                    .major("테스트 학과")
-                    .nickname("테스터")
-                    .university(testUniversity)
-                    .build();
-
-            userRepository.save(testUser);
-        }
-    }
 
 
     /**
