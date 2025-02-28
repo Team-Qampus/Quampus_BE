@@ -29,6 +29,9 @@ public class University extends BaseEntity {
     @Column(name = "monthly_choice_cnt")
     private Long monthlyChoiceCnt;
 
+    @Column(name = "last_month_choice_cnt")
+    private Long lastMonthChoiceCnt;
+
     //유저랑 양방향관계
     @OneToMany(mappedBy = "university")
     private List<User> users=new ArrayList<>();
@@ -37,6 +40,7 @@ public class University extends BaseEntity {
     public University(String universityName){
         this.weeklyChoiceCnt=0L;
         this.monthlyChoiceCnt=0L;
+        this.lastMonthChoiceCnt=0L;
         this.universityName=universityName;
     }
 
