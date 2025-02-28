@@ -5,4 +5,5 @@ import swyp.qampus.curious.domain.Curious;
 
 
 public interface CuriousRepository extends JpaRepository<Curious,Long>,CuriousCustomRepository {
+    boolean existsByUserIdAndQuestionId(Long userId, Long questionId);
 }
