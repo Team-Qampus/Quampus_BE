@@ -2,6 +2,7 @@ package swyp.qampus.login.converter;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import swyp.qampus.login.entity.User;
+import swyp.qampus.university.domain.University;
 
 // OAuth 로그인 시, 카카오 프로필 정보를 User 엔티티로 변환하는 컨버터 클래스
 public class OAuthConverter {
@@ -22,4 +23,27 @@ public class OAuthConverter {
                 .password(passwordEncoder.encode(password))
                 .build();
     }
+
+    public static User toUser(Long userId,String email, String name, String nickname, String password, PasswordEncoder passwordEncoder, String profileImageUrl) {
+        return User.builder()
+                .userId(userId)
+                .email(email)
+                .name(name)
+                .nickname(nickname)
+                .password(passwordEncoder.encode(password))
+                .build();
+    }
+    public static User toUser(Long userId, String email, String name, String nickname, String password,
+                              PasswordEncoder passwordEncoder, String profileImageUrl,
+                              University university, String major) {
+        return User.builder()
+                .userId(userId)
+                .email(email)
+                .name(name)
+                .nickname(nickname)
+                .password(passwordEncoder.encode(password))
+                .major(major)
+                .build();
+    }
+
 }
