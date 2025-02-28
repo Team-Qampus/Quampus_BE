@@ -50,20 +50,5 @@ public class UniversityServiceImpl implements UniversityService {
         log.info("weeklyChoice 초기화");
     }
 
-    @Override
-    @Transactional
-    @Scheduled(cron = "1 0 0 1 * * ")
-    public void userResetMonthly() {
-        userRepository.resetMonthlyChoiceCnt();
-        log.info("유저 monthlyChoice 초기화");
-    }
-
-    @Override
-    @Transactional
-    @Scheduled(cron = "59 59 23 * * 7")
-    public void userResetWeekly() {
-        userRepository.resetWeeklyChoiceCnt();
-        log.info("유저 weeklyChoice 초기화");
-    }
 
 }
