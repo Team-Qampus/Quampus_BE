@@ -40,16 +40,11 @@ public class JWTFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         // 요청 헤더에서 Authorization 헤더 추출
-        String authorizationHeader = request.getHeader("Authorization");
+        String token = request.getHeader("Authorization");
 
         String email = null;
-        String token = null;
+        email = jwtUtil.getEmailFromToken(token); // 토큰에서 이메일 정보 추출
 
-        // Bearer 토큰인지 확인 후 추출
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7); // "Bearer " 이후의 문자열이 실제 JWT 토큰
-            email = jwtUtil.getEmailFromToken(token); // 토큰에서 이메일 정보 추출
-        }
 
         // 이메일이 존재하고 현재 SecurityContextHolder에 인증 정보가 없는 경우
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
