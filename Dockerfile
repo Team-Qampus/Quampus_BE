@@ -4,8 +4,9 @@ ARG JAR_FILE=build/libs/qampus-0.0.1-SNAPSHOT.jar
 
 COPY ${JAR_FILE} app.jar
 
-RUN apk add --no-cache tzdata \
-    && ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime \
-    && echo "Asia/Seoul" > /etc/timezone
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime \
+    && echo "Asia/Seoul" > /etc/timezone \
+    && dpkg-reconfigure -f noninteractive tzdata
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "/app.jar"]
