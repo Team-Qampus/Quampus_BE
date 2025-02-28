@@ -63,7 +63,6 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
         config.setAllowedOrigins(List.of("http://localhost:3000","http://127.0.0.1:3000")); // 허용할 프론트엔드 도메인
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
         config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
-        config.setAllowCredentials(true);
         config.setMaxAge(3600L); // 모든 Origin 허용
 
 
@@ -90,7 +89,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
                 // 요청별 접근 설정
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/**","/auth/**", "/oauth2/**").permitAll() // 해당 URL은 인증 없이 접근 가능
+                        .requestMatchers("**").permitAll() // 해당 URL은 인증 없이 접근 가능
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
                 )
 
