@@ -63,6 +63,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
         config.setAllowedOrigins(List.of("http://localhost:3000","http://127.0.0.1:3000")); // 허용할 프론트엔드 도메인
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
         config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
+        config.setAllowCredentials(true);
         config.setMaxAge(3600L); // 모든 Origin 허용
 
 
