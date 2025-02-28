@@ -1,6 +1,7 @@
 package swyp.qampus.question.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
@@ -38,9 +40,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     @Override
     public void createQuestion( QuestionRequestDto requestDto, List<MultipartFile> images,String token) {
+        log.info("질문!!!"+token);
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
-
+        log.info("EMAIL!!"+user.getEmail());
         Category category = categoryRepository.findById(requestDto.getCategory_id())
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.CATEGORY_NOT_FOUND));
 
