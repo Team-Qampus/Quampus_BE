@@ -84,5 +84,52 @@ class UniversityRepositoryCustomImplTest {
 
     }
 
+    @Test
+    @DisplayName("대학교명으로 저번 달 랭킹을 조회합니다.")
+    void getLastMonthRankOfSchool() {
+        //given
+        University university1 = University
+                .builder()
+                .universityName("대학교1")
+                .build();
+
+        University university2 = University
+                .builder()
+                .universityName("대학교2")
+                .build();
+
+        University university3 = University
+                .builder()
+                .universityName("대학교3")
+                .build();
+
+        University university4 = University
+                .builder()
+                .universityName("대학교4")
+                .build();
+
+        university1.setLastMonthChoiceCnt(29L);
+        university2.setLastMonthChoiceCnt(39L);
+        university3.setLastMonthChoiceCnt(10L);
+        university4.setLastMonthChoiceCnt(2L);
+
+        universityRepository.saveAll(List.of(university1, university2, university3, university4));
+        universityRepository.flush();
+
+        /*
+         * 저번 달 랭킹 예상 - 1:대학2  2:대학1   3:대학3  4:대학4
+         * */
+        //when&then
+        assertThat(universityRepository
+                .getLastMonthRankOfSchool(university1.getUniversityName())).isEqualTo(2);
+        assertThat(universityRepository
+                .getLastMonthRankOfSchool(university2.getUniversityName())).isEqualTo(1);
+        assertThat(universityRepository
+                .getLastMonthRankOfSchool(university3.getUniversityName())).isEqualTo(3);
+        assertThat(universityRepository
+                .getLastMonthRankOfSchool(university4.getUniversityName())).isEqualTo(4);
+
+
+    }
 
 }
