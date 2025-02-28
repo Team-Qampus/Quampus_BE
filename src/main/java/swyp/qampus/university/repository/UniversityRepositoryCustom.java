@@ -18,6 +18,6 @@ public interface UniversityRepositoryCustom {
     //매주 일요일 23시 59분 59초 채택 수 초기화
     void resetWeeklyChoiceCnt();
     //월별 학교 순위 조회-날짜 입력
-    Long getThisMonthRankOfSchool(String universityName, int month);
+    int getThisMonthRankOfSchool(String universityName);
 
 }
