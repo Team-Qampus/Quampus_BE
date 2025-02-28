@@ -14,7 +14,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "category_id")
-    private long categoryId;
+    private Long categoryId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true, length = 50)

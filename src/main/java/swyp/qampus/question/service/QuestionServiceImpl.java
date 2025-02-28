@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import swyp.qampus.common.kafka.RecentUniversityActivityType;
+import swyp.qampus.common.kafka.service.KafkaProducerService;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
@@ -34,6 +36,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final ImageService imageService;
     private final ImageRepository imageRepository;
     private final JWTUtil jwtUtil;
+    private final KafkaProducerService kafkaProducerService;
 
     @Transactional
     @Override
@@ -67,6 +70,11 @@ public class QuestionServiceImpl implements QuestionService {
                 imageRepository.save(newImage);
             }
         }
+
+        //Kafka Producer send
+        kafkaProducerService.send(savedQuestion.getQuestionId(),user.getUniversity().getUniversityName(),
+                    user.getMajor(), RecentUniversityActivityType.QUESTION
+        );
     }
 
     @Transactional

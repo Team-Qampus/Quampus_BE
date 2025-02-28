@@ -17,13 +17,7 @@ public class KafkaProducerServiceImpl implements KafkaProducerService{
     private static final String TOPIC_NAME="university_";
     private final KafkaTemplate<String,String> kafkaTemplate;
     private final ObjectMapper objectMapper=new ObjectMapper();
-    /**
-     * Producer 메서드
-     *  @parm 질문 혹은 답변의 Id
-     *  @param universityName 학교 이름
-     *  @param deptName 힉과
-     *  @param type 질문 작성/답변 작성/질문 나도 궁금해요/답변 좋아요/답변 채택
-     */
+
     @Override
     public void send(Long id,String universityName, String deptName, RecentUniversityActivityType type){
         HashMap<String,Object> hashMap=new HashMap<>();

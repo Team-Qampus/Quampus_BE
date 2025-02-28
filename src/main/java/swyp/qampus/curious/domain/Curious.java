@@ -13,7 +13,7 @@ import swyp.qampus.login.entity.User;
 @NoArgsConstructor
 public class Curious extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false,name = "curious_id")
+    @Column(name = "curious_id")
     private Long curiousId;
 
     @ManyToOne(fetch = FetchType.LAZY)

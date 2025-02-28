@@ -32,7 +32,7 @@ public class CuriousServiceImpl implements CuriousService{
         Long userId= jwtUtil.getUserIdFromToken(token);
 
         //이미 궁금해요 눌러져 있으면 에러 반환
-        if(curiousRepository.findCuriousByQuestionAndUser(questionId,userId).isPresent()){
+        if(curiousRepository.find_CuriousCustomByQuestionAndUser(questionId,userId).isPresent()){
             throw new RestApiException(CuriousErrorCode.DUPLICATED_CURIOUS_REQUEST);
         }
 
@@ -54,7 +54,7 @@ public class CuriousServiceImpl implements CuriousService{
          */
         Result result=getResult(token,questionId);
 
-        Curious curious=curiousRepository.findCuriousByQuestionAndUser(questionId,result.user().getUserId()).orElseThrow(
+        Curious curious=curiousRepository.find_CuriousCustomByQuestionAndUser(questionId,result.user().getUserId()).orElseThrow(
                 ()->new RestApiException(CuriousErrorCode.DUPLICATED_CURIOUS_REQUEST)
         );
 

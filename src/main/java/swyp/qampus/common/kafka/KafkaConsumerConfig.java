@@ -30,7 +30,7 @@ public class KafkaConsumerConfig {
         config.put(ConsumerConfig.GROUP_ID_CONFIG,"university-group");
 
         //오프셋 없을 때 가장 최신 메시지부터 읽기
-        config.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG,"latest");
+        config.put(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG,false);
 
         //수동 커밋 설정
         config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,false);

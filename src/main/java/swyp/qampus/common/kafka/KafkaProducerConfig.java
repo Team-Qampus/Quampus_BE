@@ -34,7 +34,7 @@ public class KafkaProducerConfig {
     private Integer maxInFlightRequestsPerConnection;
 
     @Bean
-    public ProducerFactory<String,Object> producerFactory(){
+    public ProducerFactory<String,String> producerFactory(){
         Map<String,Object> config=new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,BROKER_URL);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -48,7 +48,7 @@ public class KafkaProducerConfig {
 
     //KafkaTemplate 생성하여 Kafka 프로듀서를 사용하여 메시지를 보냄
     @Bean
-    public KafkaTemplate<String,Object>kafkaTemplate(){
+    public KafkaTemplate<String,String>kafkaTemplate(){
         return new KafkaTemplate<>(producerFactory());
     }
 }
