@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import swyp.qampus.login.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +34,8 @@ public class UserResponseDTO {
         private String profileImageUrl; // 카카오 이미지
         private LocalDateTime createAt; // 계정 생성 시간
     }
+
+
 
     /**
      * 단일 사용자 정보 응답 DTO (미리보기 용)

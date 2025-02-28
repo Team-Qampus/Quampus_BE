@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.server.ResponseStatusException;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.exception.ErrorCode;
@@ -56,11 +57,14 @@ public class OAuthController {
     public ResponseEntity<UserResponseDTO.JoinResultDTO> kakaoLogin(
             @Parameter(description = "카카오 로그인 후 받은 인가 코드")
             @RequestParam("code") String code,
-
-            HttpServletResponse httpServletResponse
-    ) {
+            HttpServletResponse httpServletResponse,
+            HttpServletRequest httpServletRequest
+    ) throws JsonProcessingException {
         // 카카오 OAuth 로그인 처리
-        User user = oauthService.oAuthLogin(code, httpServletResponse);
+        User user = oauthService.oAuthLogin(code, httpServletResponse, httpServletRequest);
+
+        // 클라이언트가 JWT를 받을 수 있도록 로그 출력 (디버깅 목적)
+        System.out.println("JWT 토큰: " + httpServletResponse.getHeader("Authorization"));
 
         // User 엔티티를 DTO로 변환하여 응답
         return ResponseEntity.ok(UserConverter.toJoinResultDTO(user));
@@ -122,11 +126,12 @@ public class OAuthController {
                                             @RequestBody UserRequestDTO.UserUniversityAndMajorDTO request,
                                             HttpServletResponse response) {
         // 1. JWT에서 이메일 추출
+        String existingToken = token.replace("Bearer ", "");
         String email = jwtUtil.getEmailFromToken(token.replace("Bearer ", ""));
 
         // 2. 서비스 계층 호출해서 회원가입 완료 처리
 
-        String finalJwt = completeSignupService.completeSignup(email, request);
+        String finalJwt = completeSignupService.completeSignup(email, request, existingToken);
 
         // 3. 새 JWT를 헤더에 추가한다.
         response.setHeader("Authorization", finalJwt);
