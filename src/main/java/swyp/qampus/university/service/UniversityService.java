@@ -14,8 +14,5 @@ public interface UniversityService {
     void resetMonthly();
     //매주 채택 수 초기화 스케쥴링
     void resetWeekly();
-    //매달 유저 채택 수 초기화 스케쥴링
-    void userResetMonthly();
-    //매주 유저 채택 수 초기화 스케쥴링
-    void userResetWeekly();
+
 }
