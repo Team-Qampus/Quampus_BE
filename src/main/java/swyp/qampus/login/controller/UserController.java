@@ -78,7 +78,7 @@ public class UserController {
     public ResponseEntity<?>createUser(@RequestParam("userName")String userName,
                                        @RequestParam("universityName")String universityName,
                                        @RequestParam("major")String major){
-        return ResponseEntity.ok().body(userService.testUser(userName,universityName,major));
+        return ResponseEntity.ok(userService.testUser(userName,universityName,major));
     }
 
 }
