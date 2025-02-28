@@ -18,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Replace Properties){
+        stage('Replace Properties'){
               steps{
                   script{
                       withCredentials([file(credentialsId: 'SECRETFILE', variable: 'secretFile')]){
