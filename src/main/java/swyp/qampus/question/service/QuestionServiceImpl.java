@@ -39,11 +39,10 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public void createQuestion( QuestionRequestDto requestDto, List<MultipartFile> images,String token) {
-        log.info("질문!!!"+token);
+    public Long createQuestion( QuestionRequestDto requestDto, List<MultipartFile> images,String token) {
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
-        log.info("EMAIL!!"+user.getEmail());
+
         Category category = categoryRepository.findById(requestDto.getCategory_id())
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.CATEGORY_NOT_FOUND));
 
@@ -70,6 +69,7 @@ public class QuestionServiceImpl implements QuestionService {
                 imageRepository.save(newImage);
             }
         }
+        return savedQuestion.getQuestionId();
     }
 
     @Transactional
