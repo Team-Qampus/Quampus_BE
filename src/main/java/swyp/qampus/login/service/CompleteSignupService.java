@@ -60,7 +60,7 @@ public class CompleteSignupService {
                 .build();
 
         // 최종적으로 DB에 저장
-        userRepository.save(updateUser);
+        updateUser=userRepository.save(updateUser);
         log.info("[completeSignup] User 정보 업데이트 완료 (userId: {})", updateUser.getUserId());
 
         // Redis에 저장된 임시 데이터 삭제

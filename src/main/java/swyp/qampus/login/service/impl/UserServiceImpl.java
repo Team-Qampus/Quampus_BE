@@ -14,6 +14,8 @@ import swyp.qampus.question.domain.MyQuestionResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.repository.UniversityRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
+    private final UniversityRepository universityRepository;
     private final JWTUtil jwtUtil;
 
     @Override

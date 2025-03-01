@@ -76,8 +76,6 @@ public class UniversityController {
     )
     @GetMapping("/university/rank")
     public ResponseEntity<?>getRanking(
-            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
-            @RequestHeader("Authorization")String token,
 
             @Parameter(description = "조회할 최대 학교 개수")
             @RequestParam(value = "limit",required = false)Integer limit,
@@ -86,7 +84,7 @@ public class UniversityController {
             @RequestParam(value = "period")String period
     ){
         Optional<List<UniversityRankResponseDto>>results=universityService
-                .getUniversityRanking(token,limit,period);
+                .getUniversityRanking(limit,period);
 
         HashMap<String, List<UniversityRankResponseDto>> response=new HashMap<>();
         response.put("ranking",results.orElse(null));
@@ -108,13 +106,10 @@ public class UniversityController {
     )
     @GetMapping("/university/detail")
     public ResponseEntity<?>getUniversityName(
-            @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
-            @RequestHeader("Authorization")String token,
-
             @Parameter(description = "대학교 이름")
             @RequestParam("name")String universityName
     ){
 
-        return ResponseEntity.ok(universityService.getUniversityDetail(token,universityName));
+        return ResponseEntity.ok(universityService.getUniversityDetail(universityName));
     }
 }
