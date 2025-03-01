@@ -4,15 +4,21 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.repository.UniversityRepository;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * JWT(JSON Web Token) 생성 및 검증을 담당하는 유틸리티 클래스
@@ -28,6 +34,8 @@ public class JWTUtil {
     private long validityInMilliseconds;
 
     private static final String FREE_PASS_ROLE = "ROLE_TEST";
+    private final UserRepository userRepository;
+    private final UniversityRepository universityRepository;
 
     // 의존성 주입이 끝난 후 실행되는 초기화 메서드
     // secretKey를 Base64 인코딩하여 보안 강화
@@ -70,25 +78,7 @@ public class JWTUtil {
                 .compact();  // 최종적으로 JWT 토큰을 문자열로 반환
     }
 
-    /**
-     * 테스트용 프리패스 토큰 발급 메서드
-     * @return 프리패스 토큰
-     */
-    public String createFreePassToken() {
-        Claims claims = Jwts.claims().setSubject("testUser");
-        claims.put("userId", 99999L);
-        claims.put("role", FREE_PASS_ROLE);
 
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
-                .compact();
-    }
 
 
     /**

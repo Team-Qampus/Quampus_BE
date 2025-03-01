@@ -40,7 +40,6 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
         // 요청 헤더에서 Authorization 헤더 추출
         String authorizationHeader = request.getHeader("Authorization");
 
