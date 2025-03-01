@@ -40,7 +40,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public void createQuestion( QuestionRequestDto requestDto, List<MultipartFile> images,String token) {
+    public Long createQuestion( QuestionRequestDto requestDto, List<MultipartFile> images,String token) {
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
@@ -75,6 +75,7 @@ public class QuestionServiceImpl implements QuestionService {
         kafkaProducerService.send(savedQuestion.getQuestionId(),user.getUniversity().getUniversityName(),
                     user.getMajor(), RecentUniversityActivityType.QUESTION
         );
+        return savedQuestion.getQuestionId();
     }
 
     @Transactional

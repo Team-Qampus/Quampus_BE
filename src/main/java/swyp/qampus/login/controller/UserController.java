@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,10 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import swyp.qampus.common.ResponseDto;
 import swyp.qampus.exception.ErrorCode;
+import swyp.qampus.login.dto.MyPageResponseDto;
 import swyp.qampus.login.service.UserService;
-import swyp.qampus.question.domain.MyQuestionResponseDto;
 
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공",
                             content = @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = MyQuestionResponseDto.class)))),
+                                    array = @ArraySchema(schema = @Schema(implementation = MyPageResponseDto.class)))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorCode.class))),
@@ -39,7 +39,7 @@ public class UserController {
             }
     )
     @GetMapping("/questions/{category_id}")
-    public ResponseEntity<List<MyQuestionResponseDto>> getMyQuestions(
+    public ResponseEntity<MyPageResponseDto> getMyPage(
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization")String token,
 
@@ -49,8 +49,28 @@ public class UserController {
             @Parameter(description = "조회할 정렬 방법")
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
             Pageable pageable) {
-        List<MyQuestionResponseDto> questions = userService.getMyQuestions(token, categoryId, sort, pageable);
-        return ResponseEntity.ok(questions);
+        MyPageResponseDto response = userService.getMyPageData(token, categoryId, sort, pageable);
+        return ResponseEntity.ok(response);
+    }
+    @Operation(
+            summary = "테스트용 프리패스 토큰 발급 API입니다. -[담당자 : 박재하]",
+            description = "테스트 환경에서 인증 없이 API를 테스트할 수 있도록 프리패스 토큰을 발급합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "테스트용 프리패스 토큰 발급 성공",
+                            content = @Content(
+                                    examples = @ExampleObject(value = """
+                                        eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbWFpbO2FjOyKpO2KuDJAbmF2ZXIuY29tIiwidXNlcklkIjo1NSwiaWF0IjoxNzQwODIyMDY1LCJleHAiOjE3NDA5MDg0NjV9.TP2EzzzhgAiy79O-NNY3125eCtwfPTImheo2izRRlsI
+                                        """))),
+                    @ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorCode.class)))
+            }
+    )
+    @PostMapping("/test/user")
+    public ResponseEntity<?>createUser(@RequestParam("userName")String userName,
+                                       @RequestParam("universityName")String universityName,
+                                       @RequestParam("major")String major){
+        return ResponseEntity.ok(userService.testUser(userName,universityName,major));
     }
 
 }

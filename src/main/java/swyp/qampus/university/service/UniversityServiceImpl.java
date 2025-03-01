@@ -18,6 +18,9 @@ import swyp.qampus.university.domain.response.UniversityRankResponseDto;
 import swyp.qampus.university.exception.UniversityErrorCode;
 import swyp.qampus.university.repository.UniversityRepository;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.*;
 
 @Service
@@ -34,13 +37,16 @@ public class UniversityServiceImpl implements UniversityService {
     private final Queue<HashMap<String,Object>> recentActivities=new LinkedList<>();
 
     @Override
-    public Optional<List<UniversityRankResponseDto>> getUniversityRanking(String token, Integer limit, String period) {
+    public Optional<List<UniversityRankResponseDto>> getUniversityRanking( Integer limit, String period) {
         /**/
         return universityRepository.getUniversityRanking(limit, period);
     }
 
     @Override
-    public Optional<UniversityDetailResponseDto> getUniversityDetail(String token, String universityName) {
+    public Optional<UniversityDetailResponseDto> getUniversityDetail( String universityName) {
+        if(universityRepository.findByUniversityName(universityName).isEmpty()){
+            throw new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY);
+        }
         return universityRepository.getUniversityDetail(universityName);
     }
 

@@ -16,7 +16,7 @@ public class Ai extends BaseEntity {
     private Long aiId;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = true,columnDefinition = "LONGTEXT")
     private String content;
 
     @Builder

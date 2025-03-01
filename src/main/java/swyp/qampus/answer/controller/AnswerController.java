@@ -211,7 +211,7 @@ public class AnswerController {
             }
 
     )
-    @GetMapping("/{question_id}")
+    @GetMapping("/detail/{question_id}")
     public ResponseEntity<QuestionDetailResponseDto> getQuestionDetail(
             @Parameter(description = "상세한 정보를 조회할 질문 ID")
             @PathVariable(value = "question_id") Long question_id,

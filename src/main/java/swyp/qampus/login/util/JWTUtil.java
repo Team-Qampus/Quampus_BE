@@ -4,15 +4,21 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import swyp.qampus.login.entity.User;
+import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.repository.UniversityRepository;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * JWT(JSON Web Token) 생성 및 검증을 담당하는 유틸리티 클래스
@@ -27,6 +33,9 @@ public class JWTUtil {
     @Value("${jwt.expiration}")
     private long validityInMilliseconds;
 
+    private static final String FREE_PASS_ROLE = "ROLE_TEST";
+    private final UserRepository userRepository;
+    private final UniversityRepository universityRepository;
 
     // 의존성 주입이 끝난 후 실행되는 초기화 메서드
     // secretKey를 Base64 인코딩하여 보안 강화
@@ -70,6 +79,8 @@ public class JWTUtil {
     }
 
 
+
+
     /**
      * JWT에서 이메일(subject) 추출
      * @param token JWT 토큰
@@ -96,6 +107,10 @@ public class JWTUtil {
                     .setSigningKey(secretKey.getBytes()) // 서명 검증을 위해 secretKey 사용
                     .parseClaimsJws(token) // 토큰을 파싱하여 클레임 추출
                     .getBody();
+
+            if (FREE_PASS_ROLE.equals(claims.get("role"))) {
+                return true;
+            }
 
             // 현재 시간과 만료 시간 비교하여 유효성 체크
             return !claims.getExpiration().before(new Date());

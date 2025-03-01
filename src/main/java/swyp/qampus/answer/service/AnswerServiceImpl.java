@@ -1,6 +1,5 @@
 package swyp.qampus.answer.service;
 
-import com.amazonaws.services.ec2.model.ActivityStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.common.ResponseDto;
+import swyp.qampus.curious.repository.CuriousRepository;
 import swyp.qampus.common.kafka.RecentUniversityActivityType;
 import swyp.qampus.common.kafka.service.KafkaProducerService;
 import swyp.qampus.exception.CommonErrorCode;
@@ -47,6 +47,7 @@ public class AnswerServiceImpl implements AnswerService {
     private final ImageRepository imageRepository;
     private final JWTUtil jwtUtil;
     private final UniversityRepository universityRepository;
+    private final CuriousRepository curiousRepository;
     private final KafkaProducerService kafkaProducerService;
 
     @Transactional
@@ -206,14 +207,14 @@ public class AnswerServiceImpl implements AnswerService {
 
         question.increseViewCount();    //조회수 증가
 
-
-
         List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
                 .stream()
                 .map(AnswerResponseDto::of)
                 .collect(Collectors.toList());
 
-        return QuestionDetailResponseDto.of(question, answers);
+        boolean isCurious = curiousRepository.existsByUserUserIdAndQuestionQuestionId(userId, questionId);
+
+        return QuestionDetailResponseDto.of(question, isCurious, answers);
     }
 
     @Override
