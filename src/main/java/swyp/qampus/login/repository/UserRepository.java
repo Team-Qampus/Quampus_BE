@@ -8,7 +8,7 @@ import swyp.qampus.university.repository.UniversityRepositoryCustom;
 
 import java.util.Optional;
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
     @EntityGraph(attributePaths = {"university"})
     Optional<User> findByEmail(String email);
 }
