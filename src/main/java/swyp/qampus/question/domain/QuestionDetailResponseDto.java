@@ -35,6 +35,7 @@ public class QuestionDetailResponseDto {
         this.answers = answers;
     }
 
+
     public static QuestionDetailResponseDto of(Question question, boolean isCurious, List<AnswerResponseDto> answers) {
         return QuestionDetailResponseDto.builder()
                 .questionId(question.getQuestionId())
