@@ -16,6 +16,8 @@ import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.QuestionWeeklyResponseDto;
 import swyp.qampus.question.repository.QuestionRepository;
+import swyp.qampus.university.domain.University;
+import swyp.qampus.university.repository.UniversityRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ public class HomeServiceImpl implements HomeService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final UserRepository userRepository;
+    private final UniversityRepository universityRepository;
     private final JWTUtil jwtUtil;
     private HomeResponseDto userCachedResponse;
     private HomeResponseDto guestCachedResponse;
@@ -54,10 +57,35 @@ public class HomeServiceImpl implements HomeService {
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
+        //유저 학교명
+        String universityName=user.getUniversity().getUniversityName();
+        //유저 학과명
+        String userMajor=user.getMajor();
+        //이번 달 학과 랭킹
+        int thisMonthMajorRanking= userRepository.getThisMonthRankOfMajor(userMajor);
+        //저번 달 학과 랭킹
+        int lastMonthMajorRanking=userRepository.getLastMonthRankOfMajor(userMajor);
+        //이번 달 학교 랭킹
+        int thisMonthUniversityRanking= universityRepository.getThisMonthRankOfSchool(universityName);
+        //저번 달 학교 랭킹
+        int lastMonthUniversityRanking= universityRepository.getLastMonthRankOfSchool(universityName);
+
         if (userCachedResponse == null) {
             updateWeeklyPopularQna();
         }
-        return HomeResponseDto.of(UserHomeDto.of(user),
+
+        UserHomeDto userHomeDto=UserHomeDto
+                .builder()
+                .major(user.getMajor())
+                .name(user.getName())
+                .university_name(universityName)
+                .this_month_ranking(thisMonthUniversityRanking)
+                .last_month_ranking(lastMonthUniversityRanking)
+                .this_month_major_ranking(thisMonthMajorRanking)
+                .last_month_major_ranking(lastMonthMajorRanking)
+                .build();
+
+        return HomeResponseDto.of(userHomeDto,
                 userCachedResponse.getWeeklyQuestions(),
                 userCachedResponse.getWeeklyAnswers());
     }
