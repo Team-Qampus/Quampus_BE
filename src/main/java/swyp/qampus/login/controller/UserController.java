@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.login.dto.MyPageResponseDto;
 import swyp.qampus.login.service.UserService;
-import swyp.qampus.question.domain.MyQuestionResponseDto;
 
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공",
                             content = @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = MyQuestionResponseDto.class)))),
+                                    array = @ArraySchema(schema = @Schema(implementation = MyPageResponseDto.class)))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorCode.class))),
@@ -39,7 +38,7 @@ public class UserController {
             }
     )
     @GetMapping("/questions/{category_id}")
-    public ResponseEntity<MyPageResponseDto> getMyQuestions(
+    public ResponseEntity<MyPageResponseDto> getMyPage(
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization")String token,
 
