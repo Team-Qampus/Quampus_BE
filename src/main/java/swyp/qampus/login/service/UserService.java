@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface UserService {
     MyPageResponseDto getMyPageData(String token, Long categoryId, String sort, Pageable pageable);
+    String testUser(String userName,String universityName,String major);
 }
