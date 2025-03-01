@@ -12,11 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import swyp.qampus.common.ResponseDto;
 import swyp.qampus.exception.ErrorCode;
-import swyp.qampus.login.dto.TokenResponseDto;
+import swyp.qampus.login.dto.MyPageResponseDto;
 import swyp.qampus.login.service.UserService;
-import swyp.qampus.question.domain.MyQuestionResponseDto;
 
 
 import java.util.List;
@@ -31,7 +29,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공",
                             content = @Content(mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = MyQuestionResponseDto.class)))),
+                                    array = @ArraySchema(schema = @Schema(implementation = MyPageResponseDto.class)))),
                     @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorCode.class))),
@@ -41,7 +39,7 @@ public class UserController {
             }
     )
     @GetMapping("/questions/{category_id}")
-    public ResponseEntity<List<MyQuestionResponseDto>> getMyQuestions(
+    public ResponseEntity<MyPageResponseDto> getMyPage(
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization")String token,
 
@@ -51,8 +49,8 @@ public class UserController {
             @Parameter(description = "조회할 정렬 방법")
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
             Pageable pageable) {
-        List<MyQuestionResponseDto> questions = userService.getMyQuestions(token, categoryId, sort, pageable);
-        return ResponseEntity.ok(questions);
+        MyPageResponseDto response = userService.getMyPageData(token, categoryId, sort, pageable);
+        return ResponseEntity.ok(response);
     }
     @Operation(
             summary = "테스트용 프리패스 토큰 발급 API입니다. -[담당자 : 박재하]",
