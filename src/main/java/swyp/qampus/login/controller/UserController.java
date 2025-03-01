@@ -47,7 +47,7 @@ public class UserController {
             @RequestParam(name = "category_id", defaultValue = "1", required = false) Long categoryId,
 
             @Parameter(description = "조회할 정렬 방법")
-            @RequestParam(value = "sort", defaultValue = "latest") String sort,
+            @RequestParam(name = "sort", defaultValue = "latest") String sort,
             Pageable pageable) {
         MyPageResponseDto response = userService.getMyPageData(token, categoryId, sort, pageable);
         return ResponseEntity.ok(response);
