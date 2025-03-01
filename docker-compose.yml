@@ -21,6 +21,7 @@ services:
       retries: 5
     command: ["mysqld","--default-time-zone=Asia/Seoul"]
     volumes:
+      - mysql-data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/conf.d/my.cnf
   quampus-be:
     build:
