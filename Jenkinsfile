@@ -18,6 +18,16 @@ pipeline {
             }
         }
 
+        stage('Replace Properties'){
+              steps{
+                  script{
+                      withCredentials([file(credentialsId: 'SECRETFILE', variable: 'secretFile')]){
+                          sh 'cp $secretFile ./src/main/resources/application.properties'
+                      }
+                  }
+              }
+        }
+
         stage('Build Gradle Test') {
             steps {
                 sh 'echo "Build Gradle Test Start"'
@@ -77,7 +87,7 @@ pipeline {
         done
         
         # Docker-compose 사용하여 제거 (Jenkins 영향 없음)
-        docker-compose down --rmi all --volumes --remove-orphans || true
+        docker-compose down --rmi all --remove-orphans || true
         '''
     }
     post {
@@ -90,7 +100,7 @@ pipeline {
         stage('Build and Deploy with Docker Compose') {
             steps {
                   sh 'echo "Building and Deploying Containers with Docker Compose"'
-                  sh 'docker system prune -af'
+                  sh 'docker system prune -a -f'
                   sh 'docker-compose up -d --build'
             }
             post {
