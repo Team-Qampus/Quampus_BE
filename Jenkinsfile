@@ -33,18 +33,31 @@ pipeline {
         }
 
         stage('Check and Free Up Ports') {
-            steps {
-                sh 'echo "Checking and Freeing Up Ports (6380 for Redis)"'
-                sh """
-                if lsof -i :6380; then
-                    echo "Port 6380 is in use. Killing the process..."
-                    sudo kill -9 \$(lsof -ti :6380)
-                else
-                    echo "Port 6380 is free."
-                fi
-                """
-            }
-        }
+    steps {
+        sh 'echo "Checking and Freeing Up Ports (6380, 6379 for Redis, 3306 for MySQL)"'
+        sh """
+        # Redis
+        if lsof -i :6380; then
+            echo "Port 6380 is in use. Killing the process..."
+            sudo kill -9 \$(lsof -ti :6380)
+        fi
+        
+        if lsof -i :6379; then
+            echo "Port 6379 is in use. Killing the process..."
+            sudo kill -9 \$(lsof -ti :6379)
+        fi
+
+        # MySQL
+        if lsof -i :3306; then
+            echo "Port 3306 (MySQL) is in use. Killing the process..."
+            sudo kill -9 \$(lsof -ti :3306)
+        fi
+
+        echo "Port cleanup complete."
+        """
+    }
+    }
+
 
        stage('Remove Existing Docker Containers') {
     steps {

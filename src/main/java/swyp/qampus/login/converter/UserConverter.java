@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import swyp.qampus.login.dto.UserRequestDTO;
 import swyp.qampus.login.dto.UserResponseDTO;
 import swyp.qampus.login.entity.User;
+import swyp.qampus.university.domain.University;
 
 /**
  * User 엔티티와 DTO 간의 변환을 담당하는 변환기 클래스
@@ -33,9 +34,12 @@ public class UserConverter {
     @Schema(name = "회원가입 결과 응답 Dto")
     public static UserResponseDTO.JoinResultDTO toJoinResultDTO(User user) {
         return UserResponseDTO.JoinResultDTO.builder()
+                .userId(user.getUserId())
                 .email(user.getEmail())// 사용자 ID 설정
                 .name(user.getName())
                 .nickname(user.getNickname())
+                .major(user.getMajor())
+                .universityName(user.getUniversity() != null ? user.getUniversity().getUniversityName() : "미등록")
                 .createAt(user.getCreatedDate()) // 계정 생성 날짜 설정
                 .build();
     }

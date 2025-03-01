@@ -27,6 +27,7 @@ public class JWTUtil {
     @Value("${jwt.expiration}")
     private long validityInMilliseconds;
 
+    private static final String FREE_PASS_ROLE = "ROLE_TEST";
 
     // 의존성 주입이 끝난 후 실행되는 초기화 메서드
     // secretKey를 Base64 인코딩하여 보안 강화
@@ -69,6 +70,26 @@ public class JWTUtil {
                 .compact();  // 최종적으로 JWT 토큰을 문자열로 반환
     }
 
+    /**
+     * 테스트용 프리패스 토큰 발급 메서드
+     * @return 프리패스 토큰
+     */
+    public String createFreePassToken() {
+        Claims claims = Jwts.claims().setSubject("testUser");
+        claims.put("userId", 99999L);
+        claims.put("role", FREE_PASS_ROLE);
+
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + validityInMilliseconds);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+                .compact();
+    }
+
 
     /**
      * JWT에서 이메일(subject) 추출
@@ -96,6 +117,10 @@ public class JWTUtil {
                     .setSigningKey(secretKey.getBytes()) // 서명 검증을 위해 secretKey 사용
                     .parseClaimsJws(token) // 토큰을 파싱하여 클레임 추출
                     .getBody();
+
+            if (FREE_PASS_ROLE.equals(claims.get("role"))) {
+                return true;
+            }
 
             // 현재 시간과 만료 시간 비교하여 유효성 체크
             return !claims.getExpiration().before(new Date());
