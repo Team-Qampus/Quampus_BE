@@ -13,7 +13,7 @@ services:
     networks:
       - springboot-mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -22,12 +22,14 @@ services:
       retries: 5
     command: ["mysqld","--default-time-zone=Asia/Seoul"]
     volumes:
+      - .:/app
       - mysql-data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/conf.d/my.cnf
   quampus-be:
     build:
       context: .
       dockerfile: Dockerfile
+    image: quampus-be:latest
     command: ["java", "-Xmx2g", "-jar", "/app.jar"]
     container_name: quampus-be
     depends_on:

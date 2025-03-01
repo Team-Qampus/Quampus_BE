@@ -80,7 +80,6 @@ public class JWTUtil {
 
 
 
-
     /**
      * JWT에서 이메일(subject) 추출
      * @param token JWT 토큰

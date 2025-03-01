@@ -1,4 +1,4 @@
-package swyp.qampus.common.kafka;
+package swyp.qampus.data.kafka;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

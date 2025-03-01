@@ -1,6 +1,6 @@
-package swyp.qampus.common.kafka.service;
+package swyp.qampus.data.kafka.service;
 
-import swyp.qampus.common.kafka.RecentUniversityActivityType;
+import swyp.qampus.data.kafka.RecentUniversityActivityType;
 
 
 

@@ -8,10 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
-import swyp.qampus.common.ResponseDto;
 import swyp.qampus.curious.repository.CuriousRepository;
-import swyp.qampus.common.kafka.RecentUniversityActivityType;
-import swyp.qampus.common.kafka.service.KafkaProducerService;
+import swyp.qampus.data.kafka.RecentUniversityActivityType;
+import swyp.qampus.data.kafka.service.KafkaProducerService;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
@@ -29,8 +28,6 @@ import swyp.qampus.university.domain.University;
 import swyp.qampus.university.exception.UniversityErrorCode;
 import swyp.qampus.university.repository.UniversityRepository;
 
-import swyp.qampus.exception.CustomException;
-import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 
 

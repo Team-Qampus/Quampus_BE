@@ -30,7 +30,6 @@ import static swyp.qampus.question.domain.QQuestion.*;
 import static swyp.qampus.university.domain.QUniversity.*;
 
 
-
 @Repository
 public class UniversityRepositoryCustomImpl implements UniversityRepositoryCustom {
     private final JPAQueryFactory queryFactory;
@@ -132,9 +131,8 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
         return Optional.ofNullable(result);
     }
 
-    /*
-    *   벌크 연산 쿼리
-    * */
+
+
     @Override
     @Transactional
     @Modifying(clearAutomatically = true)

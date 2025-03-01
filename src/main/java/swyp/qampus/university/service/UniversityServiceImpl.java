@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.util.JWTUtil;
-import swyp.qampus.common.kafka.RecentUniversityActivityType;
+import swyp.qampus.data.kafka.RecentUniversityActivityType;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.domain.response.RecentActivityResponseDto;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
@@ -18,7 +18,6 @@ import swyp.qampus.university.domain.response.UniversityRankResponseDto;
 import swyp.qampus.university.exception.UniversityErrorCode;
 import swyp.qampus.university.repository.UniversityRepository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.*;
@@ -31,7 +30,7 @@ public class UniversityServiceImpl implements UniversityService {
     private final UniversityRepository universityRepository;
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper;
-    private static final String TOPIC_NAME="university_*";
+    private static final String TOPIC_NAME="university-.*";
 
     //최신 5개 메시지만 저장
     private final Queue<HashMap<String,Object>> recentActivities=new LinkedList<>();
@@ -47,7 +46,7 @@ public class UniversityServiceImpl implements UniversityService {
         if(universityRepository.findByUniversityName(universityName).isEmpty()){
             throw new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY);
         }
-        return universityRepository.getUniversityDetail(universityName);
+       return universityRepository.getUniversityDetail(universityName);
     }
 
     @Override
@@ -89,7 +88,7 @@ public class UniversityServiceImpl implements UniversityService {
     }
 
     //Kafka 메시지 중 해당 대학교와 일치 값 추출
-    @KafkaListener(topics = TOPIC_NAME,groupId = "university-group")
+    @KafkaListener(topicPattern = TOPIC_NAME,groupId = "university-group")
     private void extractCorrectUniversityName(String message) {
         try {
             HashMap<String,Object> hashMap = objectMapper.readValue(message, HashMap.class);
