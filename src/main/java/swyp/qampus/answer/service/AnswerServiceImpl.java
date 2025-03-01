@@ -199,7 +199,7 @@ public class AnswerServiceImpl implements AnswerService {
                 .map(AnswerResponseDto::of)
                 .collect(Collectors.toList());
 
-        boolean isCurious = curiousRepository.existsByUserIdAndQuestionId(userId, questionId);
+        boolean isCurious = curiousRepository.existsByUserUserIdAndQuestionQuestionId(userId, questionId);
 
         return QuestionDetailResponseDto.of(question, isCurious, answers);
     }
