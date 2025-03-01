@@ -1,8 +1,11 @@
 package swyp.qampus.login.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.entity.User;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
@@ -44,6 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public String testUser(String userName,String universityName,String major){
         University university=University
                 .builder()
@@ -61,5 +66,19 @@ public class UserServiceImpl implements UserService {
                 .build();
         user=userRepository.save(user);
         return jwtUtil.createAccessToken("email"+userName+"@naver.com",user.getUserId());
+
+    @Transactional
+    @Scheduled(cron = "1 0 0 1 * * ")
+    public void userResetMonthly() {
+        userRepository.resetMonthlyChoiceCnt();
+        log.info("유저 monthlyChoice 초기화");
+    }
+
+    @Override
+    @Transactional
+    @Scheduled(cron = "59 59 23 * * 7")
+    public void userResetWeekly() {
+        userRepository.resetWeeklyChoiceCnt();
+        log.info("유저 weeklyChoice 초기화");
     }
 }

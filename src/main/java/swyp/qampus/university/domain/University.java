@@ -29,6 +29,9 @@ public class University extends BaseEntity {
     @Column(name = "monthly_choice_cnt")
     private Long monthlyChoiceCnt;
 
+    @Column(name = "last_month_choice_cnt")
+    private Long lastMonthChoiceCnt;
+
     //유저랑 양방향관계
     @OneToMany(mappedBy = "university")
     private List<User> users=new ArrayList<>();
@@ -37,6 +40,7 @@ public class University extends BaseEntity {
     public University(String universityName){
         this.weeklyChoiceCnt=0L;
         this.monthlyChoiceCnt=0L;
+        this.lastMonthChoiceCnt=0L;
         this.universityName=universityName;
     }
 
@@ -58,5 +62,14 @@ public class University extends BaseEntity {
         if(monthlyChoiceCnt>0){
             monthlyChoiceCnt--;
         }
+    }
+
+//    Test을 위해 임시적 setter 사용
+    public void setMonthlyChoiceCnt(Long choiceCnt){
+        this.monthlyChoiceCnt=choiceCnt;
+    }
+
+    public void setLastMonthChoiceCnt(Long choiceCnt){
+        this.lastMonthChoiceCnt=choiceCnt;
     }
 }
