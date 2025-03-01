@@ -3,6 +3,7 @@ package swyp.qampus.university.repository;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +17,9 @@ public interface UniversityRepositoryCustom {
     void resetMonthlyChoiceCnt();
     //매주 일요일 23시 59분 59초 채택 수 초기화
     void resetWeeklyChoiceCnt();
+    //이번 달 학교 순위 조회-날짜 입력
+    int getThisMonthRankOfSchool(String universityName);
+    //저번 달 학교 순위 조회-날짜 입력
+    int getLastMonthRankOfSchool(String universityName);
+
 }
