@@ -32,6 +32,8 @@ import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -176,7 +178,7 @@ public class AnswerServiceImpl implements AnswerService {
         List<Question> questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
 
         if (questions.isEmpty()) {
-            throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
+            return new ArrayList<>();
         }
 
         return questions.stream()
@@ -208,6 +210,10 @@ public class AnswerServiceImpl implements AnswerService {
     @Transactional(readOnly = true)
     public List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable,String token) {
         List<Question> questions = questionRepository.searchByKeyword(value, sort, pageable);
+
+        if(questions.isEmpty()){
+            return Collections.emptyList();
+        }
 
         return questions.stream()
                 .map(QuestionResponseDto::of)
