@@ -109,7 +109,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                 .from(university)
                 .fetchOne();
 
-        UniversityDetailResponseDto result =null;
+        UniversityDetailResponseDto result =
                 queryFactory.select(new QUniversityDetailResponseDto(
                                 university.universityId,
                                 university.universityName,
@@ -127,7 +127,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                         .leftJoin(user.questions, question)
                         .leftJoin(user.answers, answer)
                         .where(university.universityName.contains(universityName))
-                        .fetchOne();
+                        .fetchFirst();
 
         return Optional.ofNullable(result);
     }
