@@ -19,10 +19,11 @@ public class QuestionListResponseDto {
     private String universityName;
     private LocalDateTime createdDate;
     private int viewCnt;
+    private int answerCount;
 
     @Builder
-    public QuestionListResponseDto(Long questionId, String title, CategoryType category,
-                                   String content, String universityName, LocalDateTime createdDate, int viewCnt) {
+    public QuestionListResponseDto(Long questionId, String title, CategoryType category, String content,
+                                   String universityName, LocalDateTime createdDate, int viewCnt, int answerCount) {
         this.question_id = questionId;
         this.title = title;
         this.category = category;
@@ -30,6 +31,7 @@ public class QuestionListResponseDto {
         this.universityName = universityName;
         this.createdDate = createdDate;
         this.viewCnt = viewCnt;
+        this.answerCount = answerCount;
     }
 
     public static QuestionListResponseDto of(Question question) {
@@ -40,7 +42,8 @@ public class QuestionListResponseDto {
                 question.getContent(),
                 question.getUser().getUniversity().getUniversityName(),
                 question.getCreateDate(),
-                question.getViewCnt()
+                question.getViewCnt(),
+                question.getAnswerCount()
         );
     }
 }
