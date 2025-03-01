@@ -192,14 +192,12 @@ public class AnswerServiceImpl implements AnswerService {
 
         question.increseViewCount();    //조회수 증가
 
-
-
         List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
                 .stream()
-                .map(AnswerResponseDto::of)
+                .map(answer -> AnswerResponseDto.of(answer, answer.getImageList()))
                 .collect(Collectors.toList());
 
-        return QuestionDetailResponseDto.of(question, answers);
+        return QuestionDetailResponseDto.of(question, answers, question.getImageList());
     }
 
     @Override
