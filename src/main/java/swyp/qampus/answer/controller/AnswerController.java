@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -175,7 +176,7 @@ public class AnswerController {
 
     )
     @GetMapping
-    public ResponseEntity<List<QuestionListResponseDto>> getQuestions(
+    public ResponseEntity<Page<QuestionListResponseDto>> getQuestions(
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization") String token,
 
@@ -239,7 +240,7 @@ public class AnswerController {
 
     )
     @GetMapping("/search")
-    public ResponseEntity<List<QuestionResponseDto>> searchQuestions(
+    public ResponseEntity<Page<QuestionResponseDto>> searchQuestions(
             @Parameter(description = "검색한 값")
             @RequestParam String value,
 
@@ -256,7 +257,7 @@ public class AnswerController {
             @RequestParam(defaultValue = "10", required = false) int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        List<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, pageable,token);
+        Page<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, pageable,token);
         return ResponseEntity.ok(questions);
     }
 }

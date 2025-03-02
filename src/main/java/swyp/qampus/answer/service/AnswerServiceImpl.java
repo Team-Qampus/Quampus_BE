@@ -1,6 +1,7 @@
 package swyp.qampus.answer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -172,19 +173,13 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable,String token) {
+    public Page<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable,String token) {
         userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
-        List<Question> questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
+        Page<Question> questionPage = questionRepository.findByCategoryId(categoryId, pageable, sort);
 
-        if (questions.isEmpty()) {
-            throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
-        }
-
-        return questions.stream()
-                .map(QuestionListResponseDto::of)
-                .collect(Collectors.toList());
+        return questionPage.map(QuestionListResponseDto::of);
     }
 
     @Override
@@ -209,11 +204,9 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable,String token) {
-        List<Question> questions = questionRepository.searchByKeyword(value, sort, pageable);
+    public Page<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable,String token) {
+        Page<Question> questionPage = questionRepository.searchByKeyword(value, sort, pageable);
 
-        return questions.stream()
-                .map(QuestionResponseDto::of)
-                .collect(Collectors.toList());
+        return questionPage.map(QuestionResponseDto::of);
     }
 }
