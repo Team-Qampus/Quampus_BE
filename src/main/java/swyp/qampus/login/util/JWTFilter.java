@@ -44,7 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
 
         String email = null;
-        String token = null;
+        String token = authorizationHeader;
 
         log.info("TOKEN!!!!!!"+authorizationHeader);
         // Bearer 토큰인지 확인 후 추출
