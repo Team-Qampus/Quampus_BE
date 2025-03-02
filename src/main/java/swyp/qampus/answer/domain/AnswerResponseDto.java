@@ -11,22 +11,26 @@ import java.util.stream.Collectors;
 @Getter
 public class AnswerResponseDto {
     private final Long answerId;
+    private final Long userId;
     private final String content;
     private final String userName;
     private final LocalDateTime createdDate;
     private final int likeCnt;
     private final Boolean isChosen;
+    private String universityName;
     private final List<String> imageUrls;
 
     @Builder
-    private AnswerResponseDto(Long answerId, String content, String userName, LocalDateTime createdDate,
-                              int likeCnt, Boolean isChosen, List<String> imageUrls) {
+    private AnswerResponseDto(Long answerId, Long userId, String content, String userName, LocalDateTime createdDate,
+                              int likeCnt, Boolean isChosen, String universityName, List<String> imageUrls) {
         this.answerId = answerId;
+        this.userId = userId;
         this.content = content;
         this.userName = userName;
         this.createdDate = createdDate;
         this.likeCnt = likeCnt;
         this.isChosen = isChosen;
+        this.universityName = universityName;
         this.imageUrls = imageUrls;
     }
 
@@ -42,6 +46,7 @@ public class AnswerResponseDto {
                 .createdDate(answer.getCreateDate())
                 .likeCnt(answer.getLikeCnt())
                 .isChosen(answer.getIsChosen())
+                .universityName(answer.getUser().getUniversity().getUniversityName())
                 .imageUrls(imageUrls)
                 .build();
     }
