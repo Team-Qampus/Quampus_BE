@@ -1,6 +1,7 @@
 package swyp.qampus.login.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import swyp.qampus.exception.CommonErrorCode;
@@ -33,11 +34,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
-        List<Question> questions = questionRepository.findMyQuestions(user, categoryId, sort, pageable);
+        Page<Question> questionPage = questionRepository.findMyQuestions(user, categoryId, sort, pageable);
 
-        List<MyQuestionResponseDto> questionDtos = questions.stream()
-                .map(MyQuestionResponseDto::of)
-                .collect(Collectors.toList());
+        Page<MyQuestionResponseDto> questionDtos = questionPage.map(MyQuestionResponseDto::of);
 
         return MyPageResponseDto.of(user, questionDtos);
     }
