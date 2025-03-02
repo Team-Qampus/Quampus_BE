@@ -9,6 +9,7 @@ import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
 import swyp.qampus.common.ResponseDto;
+import swyp.qampus.curious.repository.CuriousRepository;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
@@ -31,6 +32,8 @@ import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +47,7 @@ public class AnswerServiceImpl implements AnswerService {
     private final ImageRepository imageRepository;
     private final JWTUtil jwtUtil;
     private final UniversityRepository universityRepository;
+    private final CuriousRepository curiousRepository;
 
     @Transactional
     @Override
@@ -179,7 +183,7 @@ public class AnswerServiceImpl implements AnswerService {
         List<Question> questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
 
         if (questions.isEmpty()) {
-            throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
+            return new ArrayList<>();
         }
 
         return questions.stream()
@@ -202,13 +206,21 @@ public class AnswerServiceImpl implements AnswerService {
                 .map(answer -> AnswerResponseDto.of(answer, answer.getImageList()))
                 .collect(Collectors.toList());
 
-        return QuestionDetailResponseDto.of(question, answers, question.getImageList());
+
+        boolean isCurious = curiousRepository.existsByUserUserIdAndQuestionQuestionId(userId, questionId);
+
+        return QuestionDetailResponseDto.of(question, isCurious, answers);
+
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable,String token) {
         List<Question> questions = questionRepository.searchByKeyword(value, sort, pageable);
+
+        if(questions.isEmpty()){
+            return Collections.emptyList();
+        }
 
         return questions.stream()
                 .map(QuestionResponseDto::of)
