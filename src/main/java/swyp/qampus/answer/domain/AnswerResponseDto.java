@@ -2,8 +2,11 @@ package swyp.qampus.answer.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import swyp.qampus.image.domain.Image;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class AnswerResponseDto {
@@ -17,7 +20,7 @@ public class AnswerResponseDto {
     private final List<String> imageUrls;
 
     @Builder
-    private AnswerResponseDto(Long answerId, String content, String userName, LocalDateTime createdDate,
+    private AnswerResponseDto(Long answerId, Long userId, String content, String userName, LocalDateTime createdDate,
                               int likeCnt, Boolean isChosen, List<String> imageUrls) {
         this.answerId = answerId;
         this.userId = userId;
