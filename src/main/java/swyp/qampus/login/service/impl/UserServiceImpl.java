@@ -48,23 +48,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
 
-    public String testUser(String userName,String universityName,String major){
-        University university=University
+    public String testUser(String userName,String universityName,String major) {
+        University university = University
                 .builder()
                 .universityName(universityName)
                 .build();
         universityRepository.save(university);
 
-        User user=User.builder()
+        User user = User.builder()
                 .nickname("test")
-                .email("email"+userName+"@naver.com")
+                .email("email" + userName + "@naver.com")
                 .name(userName)
                 .password("12345@sa")
                 .university(university)
                 .major(major)
                 .build();
-        user=userRepository.save(user);
-        return jwtUtil.createAccessToken("email"+userName+"@naver.com",user.getUserId());
+        user = userRepository.save(user);
+        return jwtUtil.createAccessToken("email" + userName + "@naver.com", user.getUserId());
+    }
 
     @Transactional
     @Scheduled(cron = "1 0 0 1 * * ")
