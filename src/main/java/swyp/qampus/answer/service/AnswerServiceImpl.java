@@ -1,6 +1,7 @@
 package swyp.qampus.answer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,8 +33,6 @@ import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -179,19 +178,13 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable,String token) {
+    public Page<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable, String token) {
         userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
-        List<Question> questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
+        Page<Question> questionPage = questionRepository.findByCategoryId(categoryId, pageable, sort);
 
-        if (questions.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        return questions.stream()
-                .map(QuestionListResponseDto::of)
-                .collect(Collectors.toList());
+        return questionPage.map(QuestionListResponseDto::of);
     }
 
     @Override
@@ -209,7 +202,6 @@ public class AnswerServiceImpl implements AnswerService {
                 .map(answer -> AnswerResponseDto.of(answer, answer.getImageList()))
                 .collect(Collectors.toList());
 
-
         boolean isCurious = curiousRepository.existsByUserUserIdAndQuestionQuestionId(userId, questionId);
 
         return QuestionDetailResponseDto.of(question, isCurious, answers, question.getImageList());
@@ -218,15 +210,9 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable,String token) {
-        List<Question> questions = questionRepository.searchByKeyword(value, sort, pageable);
+    public Page<QuestionResponseDto> searchQuestions(String value, String sort, Pageable pageable,String token) {
+        Page<Question> questionPage = questionRepository.searchByKeyword(value, sort, pageable);
 
-        if(questions.isEmpty()){
-            return Collections.emptyList();
-        }
-
-        return questions.stream()
-                .map(QuestionResponseDto::of)
-                .collect(Collectors.toList());
+        return questionPage.map(QuestionResponseDto::of);
     }
 }
