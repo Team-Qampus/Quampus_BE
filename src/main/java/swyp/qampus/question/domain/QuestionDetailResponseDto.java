@@ -25,7 +25,7 @@ public class QuestionDetailResponseDto {
 
     @Builder
     private QuestionDetailResponseDto(Long questionId, Long userId, String title, String content, String universityName,
-                                      LocalDateTime createdDate, int viewCnt, int curiousCount, boolean isCurious, List<AnswerResponseDto> answers, List<String> imageUrls) {
+                                      LocalDateTime createdDate, int viewCnt, int curiousCount, boolean isCurious, List<AnswerResponseDto> answers,List<String> imageUrls) {
 
         this.questionId = questionId;
         this.userId = userId;
@@ -38,11 +38,10 @@ public class QuestionDetailResponseDto {
         this.isCurious = isCurious;
         this.answers = answers;
         this.imageUrls = imageUrls;
-
     }
 
 
-    public static QuestionDetailResponseDto of(Question question, boolean isCurious, List<AnswerResponseDto> answers, List<Image> images) {
+    public static QuestionDetailResponseDto of(Question question, boolean isCurious, List<AnswerResponseDto> answers,List<Image> images) {
 
         List<String> imageUrls = images.stream()
                 .map(Image::getPictureUrl)

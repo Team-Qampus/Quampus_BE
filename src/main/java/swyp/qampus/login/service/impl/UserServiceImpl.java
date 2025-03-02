@@ -47,16 +47,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
 
-    public String testUser(String userName, String universityName, String major) {
+    public String testUser(String userName,String universityName,String major) {
         University university = University
                 .builder()
                 .universityName(universityName)
                 .build();
         universityRepository.save(university);
 
-        User user = User.builder()
+        User user=User.builder()
                 .nickname("test")
-                .email("email" + userName + "@naver.com")
+                .email("email"+userName+"@naver.com")
                 .name(userName)
                 .password("12345@sa")
                 .university(university)
@@ -64,12 +64,11 @@ public class UserServiceImpl implements UserService {
                 .build();
         user = userRepository.save(user);
         return jwtUtil.createAccessToken("email" + userName + "@naver.com", user.getUserId());
-
     }
 
     @Transactional
     @Scheduled(cron = "1 0 0 1 * * ")
-    public void userResetMonthly () {
+    public void userResetMonthly() {
         userRepository.resetMonthlyChoiceCnt();
         log.info("유저 monthlyChoice 초기화");
     }
@@ -77,7 +76,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Scheduled(cron = "59 59 23 * * 7")
-    public void userResetWeekly () {
+    public void userResetWeekly() {
         userRepository.resetWeeklyChoiceCnt();
         log.info("유저 weeklyChoice 초기화");
     }

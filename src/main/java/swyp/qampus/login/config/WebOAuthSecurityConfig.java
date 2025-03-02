@@ -34,6 +34,12 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
     private final JWTUtil jwtUtil;
     private final JWTFilter jwtFilter;
 
+    private static String[] WHITE_LIST={
+            "/auth/signup/complete","/auth/login/kakao","/home","/university/rank",
+            "/university/detail","/answers","/answers/search","/university/rank",
+            "/university/detail","/answers/detail/*"
+    };
+
     /**
      * 정적 자원(css, js, img 등)에 대한 보안 설정 비활성화
      * - 해당 경로의 요청은 Spring Security 필터를 거치지 않음
@@ -91,7 +97,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
                 // 요청별 접근 설정
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
-                        .requestMatchers("**").permitAll() // 해당 URL은 인증 없이 접근 가능
+                        .requestMatchers(WHITE_LIST).permitAll() // 해당 URL은 인증 없이 접근 가능
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
                 )
 
