@@ -162,7 +162,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                     select
                         u.university_name,
                         dense_rank() over (order by u.monthly_choice_cnt desc) as ranking
-                    from University as u
+                    from university as u
                 ) as ranked
                 where ranked.university_name = :universityName
                 LIMIT 1
@@ -182,7 +182,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                     select
                         u.university_name,
                         dense_rank() over (order by u.last_month_choice_cnt desc) as ranking
-                    from University as u
+                    from university as u
                 ) as ranked
                 where ranked.university_name = :universityName
                 LIMIT 1
