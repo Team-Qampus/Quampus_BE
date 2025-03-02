@@ -20,6 +20,7 @@ import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +29,6 @@ import static swyp.qampus.answer.domain.QAnswer.*;
 import static swyp.qampus.login.entity.QUser.*;
 import static swyp.qampus.question.domain.QQuestion.*;
 import static swyp.qampus.university.domain.QUniversity.*;
-
 
 
 @Repository
@@ -109,38 +109,39 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                 .from(university)
                 .fetchOne();
 
-        UniversityDetailResponseDto result =null;
-                queryFactory.select(new QUniversityDetailResponseDto(
-                                university.universityId,
-                                university.universityName,
-                                new CaseBuilder()
-                                        .when(university.monthlyChoiceCnt.eq(0L))
-                                        .then(0)
-                                        .otherwise(university.weeklyChoiceCnt.multiply(100).divide(totalWeeklyChoiceCnt).intValue()),
-                                user.countDistinct(),
-                                question.countDistinct(),
-                                answer.countDistinct(),
-                                university.weeklyChoiceCnt
-                        ))
-                        .from(university)
-                        .leftJoin(university.users, user)
-                        .leftJoin(user.questions, question)
-                        .leftJoin(user.answers, answer)
-                        .where(university.universityName.contains(universityName))
-                        .fetchOne();
+        UniversityDetailResponseDto result = null;
+        queryFactory.select(new QUniversityDetailResponseDto(
+                        university.universityId,
+                        university.universityName,
+                        new CaseBuilder()
+                                .when(university.monthlyChoiceCnt.eq(0L))
+                                .then(0)
+                                .otherwise(university.weeklyChoiceCnt.multiply(100).divide(totalWeeklyChoiceCnt).intValue()),
+                        user.countDistinct(),
+                        question.countDistinct(),
+                        answer.countDistinct(),
+                        university.weeklyChoiceCnt
+                ))
+                .from(university)
+                .leftJoin(university.users, user)
+                .leftJoin(user.questions, question)
+                .leftJoin(user.answers, answer)
+                .where(university.universityName.contains(universityName))
+                .fetchOne();
 
         return Optional.ofNullable(result);
     }
 
     /*
-    *   벌크 연산 쿼리
-    * */
+     *   벌크 연산 쿼리
+     * */
     @Override
     @Transactional
     @Modifying(clearAutomatically = true)
     public void resetMonthlyChoiceCnt() {
         queryFactory.update(university)
-                .set(university.monthlyChoiceCnt,0L)
+                .set(university.lastMonthChoiceCnt, university.monthlyChoiceCnt)
+                .set(university.monthlyChoiceCnt, 0L)
                 .execute();
     }
 
@@ -149,7 +150,45 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
     @Modifying(clearAutomatically = true)
     public void resetWeeklyChoiceCnt() {
         queryFactory.update(university)
-                .set(university.weeklyChoiceCnt,0L)
+                .set(university.weeklyChoiceCnt, 0L)
                 .execute();
+    }
+
+    @Override
+    public int getThisMonthRankOfSchool(String universityName) {
+        //Native Query
+        String query = """
+                select ranking from (
+                    select
+                        u.university_name,
+                        dense_rank() over (order by u.monthly_choice_cnt desc) as ranking
+                    from University as u
+                ) as ranked
+                where ranked.university_name = :universityName
+                """;
+        Object result = em.createNativeQuery(query)
+                .setParameter("universityName", universityName)
+                .getSingleResult();
+
+        return result != null ? ((Number) result).intValue() : 0;
+    }
+
+    @Override
+    public int getLastMonthRankOfSchool(String universityName) {
+        //Native Query
+        String query = """
+                select ranking from (
+                    select
+                        u.university_name,
+                        dense_rank() over (order by u.last_month_choice_cnt desc) as ranking
+                    from University as u
+                ) as ranked
+                where ranked.university_name = :universityName
+                """;
+        Object result = em.createNativeQuery(query)
+                .setParameter("universityName", universityName)
+                .getSingleResult();
+
+        return result != null ? ((Number) result).intValue() : 0;
     }
 }

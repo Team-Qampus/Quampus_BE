@@ -57,6 +57,7 @@ public class AnswerController {
             @RequestHeader("Authorization")String token
     ) {
         answerService.createAnswer(requestDto, images,token);
+
         return ResponseEntity.ok().body(ResponseDto.of(true, 200, "답변 생성 성공"));
     }
 
