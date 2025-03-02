@@ -165,6 +165,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                     from University as u
                 ) as ranked
                 where ranked.university_name = :universityName
+                LIMIT 1
                 """;
         Object result = em.createNativeQuery(query)
                 .setParameter("universityName", universityName)
@@ -184,6 +185,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                     from University as u
                 ) as ranked
                 where ranked.university_name = :universityName
+                LIMIT 1
                 """;
         Object result = em.createNativeQuery(query)
                 .setParameter("universityName", universityName)
