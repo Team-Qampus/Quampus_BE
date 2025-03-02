@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.exception.RestApiException;
+import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UniversityServiceImpl implements UniversityService {
     private final UniversityRepository universityRepository;
+    private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
 
     @Override
@@ -53,5 +55,6 @@ public class UniversityServiceImpl implements UniversityService {
         universityRepository.resetWeeklyChoiceCnt();
         log.info("weeklyChoice 초기화");
     }
+
 
 }

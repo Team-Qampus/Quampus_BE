@@ -1,7 +1,6 @@
 package swyp.qampus.answer.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -138,6 +137,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
+        User user = answer.getUser();
         //채택하는 경우
         if(type){
             //해당 질문에서 이미 채택한 답변이 존재하는 경우
@@ -153,7 +153,9 @@ public class AnswerServiceImpl implements AnswerService {
             University university=universityRepository.findById(answer.getUser().getUniversity().getUniversityId()).orElseThrow(()->
                     new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
             university.increaseChoiceCnt();
+            user.increaseChoiceCnt();
             universityRepository.save(university);
+            userRepository.save(user);
         }
         //채택 취소하는 경우
         else{
@@ -165,7 +167,9 @@ public class AnswerServiceImpl implements AnswerService {
             University university=universityRepository.findById(answer.getUser().getUniversity().getUniversityId()).orElseThrow(()->
                     new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
             university.decreaseChoiceCnt();
+            user.decreaseChoiceCnt();
             universityRepository.save(university);
+            userRepository.save(user);
         }
         answer.setIsChosen(type);
     }
@@ -194,12 +198,13 @@ public class AnswerServiceImpl implements AnswerService {
 
         List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
                 .stream()
-                .map(AnswerResponseDto::of)
+                .map(answer -> AnswerResponseDto.of(answer, answer.getImageList()))
                 .collect(Collectors.toList());
 
         boolean isCurious = curiousRepository.existsByUserUserIdAndQuestionQuestionId(userId, questionId);
 
-        return QuestionDetailResponseDto.of(question, isCurious, answers);
+        return QuestionDetailResponseDto.of(question, isCurious, answers, question.getImageList());
+
     }
 
     @Override

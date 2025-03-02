@@ -3,9 +3,11 @@ package swyp.qampus.question.domain;
 import lombok.Builder;
 import lombok.Getter;
 import swyp.qampus.answer.domain.AnswerResponseDto;
+import swyp.qampus.image.domain.Image;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class QuestionDetailResponseDto {
@@ -19,10 +21,12 @@ public class QuestionDetailResponseDto {
     private final int curiousCount;
     private final boolean isCurious;
     private final List<AnswerResponseDto> answers;
+    private final List<String> imageUrls;
 
     @Builder
     private QuestionDetailResponseDto(Long questionId, Long userId, String title, String content, String universityName,
-                                      LocalDateTime createdDate, int viewCnt, int curiousCount, boolean isCurious, List<AnswerResponseDto> answers) {
+                                      LocalDateTime createdDate, int viewCnt, int curiousCount, boolean isCurious, List<AnswerResponseDto> answers, List<String> imageUrls) {
+
         this.questionId = questionId;
         this.userId = userId;
         this.title = title;
@@ -33,9 +37,17 @@ public class QuestionDetailResponseDto {
         this.curiousCount = curiousCount;
         this.isCurious = isCurious;
         this.answers = answers;
+        this.imageUrls = imageUrls;
+
     }
 
-    public static QuestionDetailResponseDto of(Question question, boolean isCurious, List<AnswerResponseDto> answers) {
+
+    public static QuestionDetailResponseDto of(Question question, boolean isCurious, List<AnswerResponseDto> answers, List<Image> images) {
+
+        List<String> imageUrls = images.stream()
+                .map(Image::getPictureUrl)
+                .collect(Collectors.toList());
+
         return QuestionDetailResponseDto.builder()
                 .questionId(question.getQuestionId())
                 .userId(question.getUser().getUserId())
@@ -47,6 +59,7 @@ public class QuestionDetailResponseDto {
                 .curiousCount(question.getCuriousCount())
                 .isCurious(isCurious)
                 .answers(answers)
+                .imageUrls(imageUrls)
                 .build();
     }
 }

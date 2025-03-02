@@ -30,11 +30,15 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath email = createString("email");
 
+    public final NumberPath<Long> lastMonthChoiceCnt = createNumber("lastMonthChoiceCnt", Long.class);
+
     public final ListPath<swyp.qampus.like.domain.Like, swyp.qampus.like.domain.QLike> likeList = this.<swyp.qampus.like.domain.Like, swyp.qampus.like.domain.QLike>createList("likeList", swyp.qampus.like.domain.Like.class, swyp.qampus.like.domain.QLike.class, PathInits.DIRECT2);
 
     public final StringPath major = createString("major");
 
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = createDateTime("modifiedDate", java.time.LocalDateTime.class);
+
+    public final NumberPath<Long> monthlyChoiceCnt = createNumber("monthlyChoiceCnt", Long.class);
 
     public final StringPath name = createString("name");
 
@@ -47,6 +51,8 @@ public class QUser extends EntityPathBase<User> {
     public final swyp.qampus.university.domain.QUniversity university;
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
+
+    public final NumberPath<Long> weeklyChoiceCnt = createNumber("weeklyChoiceCnt", Long.class);
 
     public QUser(String variable) {
         this(User.class, forVariable(variable), INITS);
