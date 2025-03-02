@@ -55,9 +55,9 @@ public class UserServiceImpl implements UserService {
                 .build();
         universityRepository.save(university);
 
-        User user = User.builder()
+        User user=User.builder()
                 .nickname("test")
-                .email("email" + userName + "@naver.com")
+                .email("email"+userName+"@naver.com")
                 .name(userName)
                 .password("12345@sa")
                 .university(university)
