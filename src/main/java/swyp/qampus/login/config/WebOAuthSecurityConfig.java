@@ -37,7 +37,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
     private static String[] WHITE_LIST={
             "/auth/signup/complete","/auth/login/kakao","/home","/university/rank",
             "/university/detail","/answers","/answers/search","/university/rank",
-            "/university/detail","/answers/detail/*"
+            "/university/detail","/answers/detail/*","https://kapi.kakao.com/"
     };
 
     /**

@@ -18,6 +18,7 @@ import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
 
 import java.security.Key;
+import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
@@ -69,18 +70,19 @@ public class JWTUtil {
      */
     public String createAccessToken(String email, Long userId) {
         // 토큰에 담을 클레임(Claims) 설정 (이메일을 subject로 저장)
-        Claims claims = Jwts.claims().setSubject(email);
+        Claims claims = Jwts.claims();
         claims.put("userId", userId);
+        claims.put("email",email);
 
         // 현재 시간과 만료 시간 설정
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        ZonedDateTime now=ZonedDateTime.now();
+        ZonedDateTime tokenValidity=now.plusSeconds(validityInMilliseconds);
 
         // JWT 생성 및 반환
         return Jwts.builder()
                 .setClaims(claims) // 사용자 정보(Claims) 설정
-                .setIssuedAt(now) // 토큰 발급 시간
-                .setExpiration(validity) // 토큰 만료 시간
+                .setIssuedAt(Date.from(now.toInstant())) // 토큰 발급 시간
+                .setExpiration(Date.from(tokenValidity.toInstant())) // 토큰 만료 시간
                 .signWith(key ,SignatureAlgorithm.HS256) // secretKey를 바이트 배열로 변환
                 .compact();  // 최종적으로 JWT 토큰을 문자열로 반환
     }
@@ -94,11 +96,7 @@ public class JWTUtil {
      * @return 추출된 이메일
      */
     public String getEmailFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey.getBytes())// 서명 검증을 위해 secretKey 사용
-                .parseClaimsJws(token) // 토큰을 파싱하여 클레임 추출
-                .getBody()
-                .getSubject(); // subject (이메일) 반환
+        return parseClaims(token).get("email", String.class);
     }
 
 
