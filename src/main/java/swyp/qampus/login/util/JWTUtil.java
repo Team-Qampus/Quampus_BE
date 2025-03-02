@@ -1,9 +1,6 @@
 package swyp.qampus.login.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -59,7 +56,6 @@ public class JWTUtil {
                 throw new IllegalArgumentException("JWT Secret Key must be at least 256 bits (32 bytes) for HS256.");
             }
 
-            secretKey = new String(decodedKey);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid Base64 encoding for JWT Secret Key. Please check application.properties.", e);
         }
@@ -85,7 +81,7 @@ public class JWTUtil {
                 .setClaims(claims) // 사용자 정보(Claims) 설정
                 .setIssuedAt(now) // 토큰 발급 시간
                 .setExpiration(validity) // 토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) // secretKey를 바이트 배열로 변환
+                .signWith(key ,SignatureAlgorithm.HS256) // secretKey를 바이트 배열로 변환
                 .compact();  // 최종적으로 JWT 토큰을 문자열로 반환
     }
 
@@ -113,21 +109,18 @@ public class JWTUtil {
      */
     public boolean validateToken(String token) {
         try {
-            // JWT 토큰을 파싱하여 클레임 추출
-            Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
-                    .parseClaimsJws(token) // 토큰을 파싱하여 클레임 추출
-                    .getBody();
-
-            if (FREE_PASS_ROLE.equals(claims.get("role"))) {
-                return true;
-            }
-
-            // 현재 시간과 만료 시간 비교하여 유효성 체크
-            return !claims.getExpiration().before(new Date());
-        } catch (Exception e) {
-            // 만료되었거나, 변조된 경우 false 반환
-            return false;
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
+            log.info("Invalid JWT Token",e);
+        }catch (ExpiredJwtException e){
+            log.info("Expired JWT Token",e);
+        }catch (UnsupportedJwtException e){
+            log.info("Unsupported  JWT token",e);
+        }catch (IllegalArgumentException e){
+            log.info("JWT claims string is empty",e);
         }
+        return false;
     }
 
     /**
