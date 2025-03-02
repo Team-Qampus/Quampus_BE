@@ -100,7 +100,7 @@ public class KakaoUtil {
         ResponseEntity<String> response2 = restTemplate2.exchange(
                 // 카카오 사용자 정보 요청 URL
                 "https://kapi.kakao.com/v2/user/me"
-                , HttpMethod.GET
+                , HttpMethod.POST
                 , kakaoProfileRequest
                 , String.class);
 
