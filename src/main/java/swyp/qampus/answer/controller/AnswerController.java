@@ -243,19 +243,19 @@ public class AnswerController {
     @GetMapping("/search")
     public ResponseEntity<Page<QuestionResponseDto>> searchQuestions(
             @Parameter(description = "검색한 값")
-            @RequestParam String value,
+            @RequestParam(name = "value") String value,
 
             @Parameter(description = "조회할 정렬 방법")
-            @RequestParam(defaultValue = "latest") String sort,
+            @RequestParam(name = "sort", defaultValue = "latest") String sort,
 
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization") String token,
 
             @Parameter(description = "조회할 페이지 번호 (0부터 시작)")
-            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
 
             @Parameter(description = "한 페이지당 조회할 항목 수")
-            @RequestParam(defaultValue = "10", required = false) int size
+            @RequestParam(name = "size", defaultValue = "10", required = false) int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<QuestionResponseDto> questions = answerService.searchQuestions(value, sort, pageable,token);
