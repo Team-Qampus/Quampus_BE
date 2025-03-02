@@ -47,7 +47,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom{
                 select
                     u.major,
                     dense_rank() over (order by sum(u.monthly_choice_cnt) desc) as ranking
-                from Users as u
+                from users as u
                 group by u.major
             ) as ranked
             where ranked.major = :major
@@ -68,7 +68,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom{
                 select
                     u.major,
                     dense_rank() over (order by sum(u.last_month_choice_cnt) desc) as ranking
-                from Users as u
+                from users as u
                 group by u.major
             ) as ranked
             where ranked.major = :major
