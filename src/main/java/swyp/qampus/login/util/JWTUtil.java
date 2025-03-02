@@ -1,11 +1,15 @@
 package swyp.qampus.login.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySources;
@@ -16,15 +20,18 @@ import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
 
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * JWT(JSON Web Token) 생성 및 검증을 담당하는 유틸리티 클래스
  */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JWTUtil {
 
     @Value("${jwt.secret}")
@@ -32,7 +39,7 @@ public class JWTUtil {
 
     @Value("${jwt.expiration}")
     private long validityInMilliseconds;
-
+    private  Key key;
     private static final String FREE_PASS_ROLE = "ROLE_TEST";
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
@@ -41,8 +48,12 @@ public class JWTUtil {
     // secretKey를 Base64 인코딩하여 보안 강화
     @PostConstruct
     protected void init() {
+        if(secretKey==null || secretKey.isBlank()){
+            log.error("secretKey is NULL!!!!");
+        }
         try {
-            byte[] decodedKey = Base64.getUrlDecoder().decode(secretKey); // URL-safe Base64 디코딩
+            byte[] decodedKey = Decoders.BASE64URL.decode(secretKey); // URL-safe Base64 디코딩
+            this.key= Keys.hmacShaKeyFor(decodedKey);
 
             if (decodedKey.length < 32) {
                 throw new IllegalArgumentException("JWT Secret Key must be at least 256 bits (32 bytes) for HS256.");
@@ -103,8 +114,7 @@ public class JWTUtil {
     public boolean validateToken(String token) {
         try {
             // JWT 토큰을 파싱하여 클레임 추출
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey.getBytes()) // 서명 검증을 위해 secretKey 사용
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
                     .parseClaimsJws(token) // 토큰을 파싱하여 클레임 추출
                     .getBody();
 
@@ -127,11 +137,22 @@ public class JWTUtil {
      * @return
      */
     public Long getUserIdFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey.getBytes())
-                .parseClaimsJws(token)
-                .getBody();
 
-        return claims.get("userId", Long.class);
+        return parseClaims(token).get("userId", Long.class);
+    }
+    private Claims parseClaims(String token) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        }catch (ExpiredJwtException e){
+            return e.getClaims();
+        }
+    }
+    private <T> T getClaimFromToken(final String token, final Function<Claims,T>claimsTFunction){
+        if(Boolean.FALSE.equals(validateToken(token))){
+            return null;
+        }
+        final Claims claims=parseClaims(token);
+
+        return claimsTFunction.apply(claims);
     }
 }
