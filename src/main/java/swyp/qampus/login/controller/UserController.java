@@ -38,20 +38,21 @@ public class UserController {
                                     schema = @Schema(implementation = ErrorCode.class)))
             }
     )
-    @GetMapping("/questions/{category_id}")
+    @GetMapping("/mypage")
     public ResponseEntity<MyPageResponseDto> getMyPage(
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization")String token,
 
             @Parameter(description = "조회할 질문 카테고리 ID")
-            @PathVariable(value = "category_id", required = false) Long categoryId,
+            @RequestParam(name = "category_id", defaultValue = "1", required = false) Long categoryId,
 
             @Parameter(description = "조회할 정렬 방법")
-            @RequestParam(value = "sort", defaultValue = "latest") String sort,
+            @RequestParam(name = "sort", defaultValue = "latest") String sort,
             Pageable pageable) {
         MyPageResponseDto response = userService.getMyPageData(token, categoryId, sort, pageable);
         return ResponseEntity.ok(response);
     }
+
     @Operation(
             summary = "테스트용 프리패스 토큰 발급 API입니다. -[담당자 : 박재하]",
             description = "테스트 환경에서 인증 없이 API를 테스트할 수 있도록 프리패스 토큰을 발급합니다.",
