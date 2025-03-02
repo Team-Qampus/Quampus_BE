@@ -17,11 +17,12 @@ public class AnswerResponseDto {
     private final LocalDateTime createdDate;
     private final int likeCnt;
     private final Boolean isChosen;
+    private String universityName;
     private final List<String> imageUrls;
 
     @Builder
     private AnswerResponseDto(Long answerId, Long userId, String content, String userName, LocalDateTime createdDate,
-                              int likeCnt, Boolean isChosen, List<String> imageUrls) {
+                              int likeCnt, Boolean isChosen, String universityName, List<String> imageUrls) {
         this.answerId = answerId;
         this.userId = userId;
         this.content = content;
@@ -29,6 +30,7 @@ public class AnswerResponseDto {
         this.createdDate = createdDate;
         this.likeCnt = likeCnt;
         this.isChosen = isChosen;
+        this.universityName = universityName;
         this.imageUrls = imageUrls;
     }
 
@@ -44,6 +46,7 @@ public class AnswerResponseDto {
                 .createdDate(answer.getCreateDate())
                 .likeCnt(answer.getLikeCnt())
                 .isChosen(answer.getIsChosen())
+                .universityName(answer.getUser().getUniversity().getUniversityName())
                 .imageUrls(imageUrls)
                 .build();
     }
