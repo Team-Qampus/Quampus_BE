@@ -48,6 +48,12 @@ public class QUser extends EntityPathBase<User> {
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
+    public final NumberPath<Long> lastMonthChoiceCnt = createNumber("lastMonthChoiceCnt", Long.class);
+
+    public final NumberPath<Long> monthlyChoiceCnt = createNumber("monthlyChoiceCnt", Long.class);
+
+    public final NumberPath<Long> weeklyChoiceCnt = createNumber("weeklyChoiceCnt", Long.class);
+
     public QUser(String variable) {
         this(User.class, forVariable(variable), INITS);
     }

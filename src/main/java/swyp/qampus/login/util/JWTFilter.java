@@ -1,5 +1,6 @@
 package swyp.qampus.login.util;
 
+import lombok.extern.slf4j.Slf4j;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -22,6 +23,7 @@ import java.util.Optional;
  */
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -44,6 +46,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String email = null;
         String token = null;
 
+        log.info("TOKEN!!!!!!"+authorizationHeader);
         // Bearer 토큰인지 확인 후 추출
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7); // "Bearer " 이후의 문자열이 실제 JWT 토큰
