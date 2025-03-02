@@ -18,7 +18,16 @@ pipeline {
             }
         }
 
-        
+        stage('Replace Properties'){
+              steps{
+                  script{
+                      withCredentials([file(credentialsId: 'SECRETFILE', variable: 'secretFile')]){
+                          sh 'cp $secretFile ./src/main/resources/application.properties'
+                      }
+                  }
+              }
+        }
+
 
         stage('Build Gradle Test') {
             steps {
