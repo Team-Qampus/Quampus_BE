@@ -212,7 +212,7 @@ public class AnswerServiceImpl implements AnswerService {
 
         boolean isCurious = curiousRepository.existsByUserUserIdAndQuestionQuestionId(userId, questionId);
 
-        return QuestionDetailResponseDto.of(question, isCurious, answers);
+        return QuestionDetailResponseDto.of(question, isCurious, answers, question.getImageList());
 
     }
 
