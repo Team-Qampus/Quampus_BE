@@ -1,12 +1,11 @@
 package swyp.qampus.login.util;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySources;
@@ -17,18 +16,15 @@ import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
 
-import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * JWT(JSON Web Token) 생성 및 검증을 담당하는 유틸리티 클래스
  */
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class JWTUtil {
 
     @Value("${jwt.secret}")
@@ -36,7 +32,7 @@ public class JWTUtil {
 
     @Value("${jwt.expiration}")
     private long validityInMilliseconds;
-    private  Key key;
+
     private static final String FREE_PASS_ROLE = "ROLE_TEST";
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
@@ -45,17 +41,14 @@ public class JWTUtil {
     // secretKey를 Base64 인코딩하여 보안 강화
     @PostConstruct
     protected void init() {
-        if(secretKey==null || secretKey.isBlank()){
-            log.error("secretKey is NULL!!!!");
-        }
         try {
-            byte[] decodedKey = Decoders.BASE64URL.decode(secretKey); // URL-safe Base64 디코딩
-            this.key= Keys.hmacShaKeyFor(decodedKey);
+            byte[] decodedKey = Base64.getUrlDecoder().decode(secretKey); // URL-safe Base64 디코딩
 
             if (decodedKey.length < 32) {
                 throw new IllegalArgumentException("JWT Secret Key must be at least 256 bits (32 bytes) for HS256.");
             }
 
+            secretKey = new String(decodedKey);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid Base64 encoding for JWT Secret Key. Please check application.properties.", e);
         }
@@ -81,7 +74,7 @@ public class JWTUtil {
                 .setClaims(claims) // 사용자 정보(Claims) 설정
                 .setIssuedAt(now) // 토큰 발급 시간
                 .setExpiration(validity) // 토큰 만료 시간
-                .signWith(key ,SignatureAlgorithm.HS256) // secretKey를 바이트 배열로 변환
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes()) // secretKey를 바이트 배열로 변환
                 .compact();  // 최종적으로 JWT 토큰을 문자열로 반환
     }
 
@@ -109,18 +102,22 @@ public class JWTUtil {
      */
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
-            log.info("Invalid JWT Token",e);
-        }catch (ExpiredJwtException e){
-            log.info("Expired JWT Token",e);
-        }catch (UnsupportedJwtException e){
-            log.info("Unsupported  JWT token",e);
-        }catch (IllegalArgumentException e){
-            log.info("JWT claims string is empty",e);
+            // JWT 토큰을 파싱하여 클레임 추출
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey.getBytes()) // 서명 검증을 위해 secretKey 사용
+                    .parseClaimsJws(token) // 토큰을 파싱하여 클레임 추출
+                    .getBody();
+
+            if (FREE_PASS_ROLE.equals(claims.get("role"))) {
+                return true;
+            }
+
+            // 현재 시간과 만료 시간 비교하여 유효성 체크
+            return !claims.getExpiration().before(new Date());
+        } catch (Exception e) {
+            // 만료되었거나, 변조된 경우 false 반환
+            return false;
         }
-        return false;
     }
 
     /**
@@ -130,22 +127,11 @@ public class JWTUtil {
      * @return
      */
     public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(token)
+                .getBody();
 
-        return parseClaims(token).get("userId", Long.class);
-    }
-    private Claims parseClaims(String token) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        }catch (ExpiredJwtException e){
-            return e.getClaims();
-        }
-    }
-    private <T> T getClaimFromToken(final String token, final Function<Claims,T>claimsTFunction){
-        if(Boolean.FALSE.equals(validateToken(token))){
-            return null;
-        }
-        final Claims claims=parseClaims(token);
-
-        return claimsTFunction.apply(claims);
+        return claims.get("userId", Long.class);
     }
 }
