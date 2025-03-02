@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.exception.ErrorCode;
+import swyp.qampus.question.domain.CreateQuestionResponseDto;
 import swyp.qampus.question.domain.QuestionRequestDto;
 import swyp.qampus.question.domain.QuestionUpdateRequestDto;
 import swyp.qampus.question.service.QuestionService;
@@ -32,7 +33,7 @@ public class QuestionController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "질문 생성 성공",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ResponseDto.class))),
+                                    schema = @Schema(implementation = CreateQuestionResponseDto.class))),
                     @ApiResponse(responseCode = "404", description = "카테고리를 찾을 수 없습니다.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorCode.class))),
@@ -49,8 +50,8 @@ public class QuestionController {
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization")String token
     ) {
-        questionService.createQuestion(requestDto, images,token);
-        return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 생성 성공"));
+        Long questionId = questionService.createQuestion(requestDto, images,token);
+        return ResponseEntity.ok(CreateQuestionResponseDto.of(true, 200, "질문 생성 성공", questionId));
     }
 
     @Operation(

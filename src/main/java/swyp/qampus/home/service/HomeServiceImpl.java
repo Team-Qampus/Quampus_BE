@@ -44,9 +44,6 @@ public class HomeServiceImpl implements HomeService {
         List<AnswerWeeklyResponseDto> popularAnswers = answerRepository.findWeeklyPopularAnswers()
                 .stream().map(AnswerWeeklyResponseDto::new).collect(Collectors.toList());
 
-        if (popularQuestions.isEmpty() || popularAnswers.isEmpty()) {
-            throw new RestApiException(HomeErrorCode.NOT_FIND_WEEKLY_QNA);
-        }
 
         userCachedResponse = HomeResponseDto.withoutUser(popularQuestions, popularAnswers);
         guestCachedResponse = HomeResponseDto.fromQuestions(popularQuestions);

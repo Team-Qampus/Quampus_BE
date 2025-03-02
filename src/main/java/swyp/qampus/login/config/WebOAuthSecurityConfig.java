@@ -76,6 +76,8 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
      *
      * @param http HttpSecurity 객체 (보안 설정 담당)
      * @return SecurityFilterChain 객체
+     *
+     *
      * @throws Exception 설정 중 예외 발생 가능
      */
     @Bean

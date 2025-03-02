@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
+import swyp.qampus.login.dto.MyPageResponseDto;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.service.UserService;
@@ -32,19 +33,17 @@ public class UserServiceImpl implements UserService {
     private final JWTUtil jwtUtil;
 
     @Override
-    public List<MyQuestionResponseDto> getMyQuestions(String token, Long categoryId, String sort, Pageable pageable) {
+    public MyPageResponseDto getMyPageData(String token, Long categoryId, String sort, Pageable pageable) {
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
         List<Question> questions = questionRepository.findMyQuestions(user, categoryId, sort, pageable);
 
-        if (questions.isEmpty()) {
-            throw new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION);
-        }
-
-        return questions.stream()
+        List<MyQuestionResponseDto> questionDtos = questions.stream()
                 .map(MyQuestionResponseDto::of)
                 .collect(Collectors.toList());
+
+        return MyPageResponseDto.of(user, questionDtos);
     }
 
     @Override
