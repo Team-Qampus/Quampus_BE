@@ -1,11 +1,12 @@
 package swyp.qampus.login.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.dto.MyPageResponseDto;
@@ -37,11 +38,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
-        List<Question> questions = questionRepository.findMyQuestions(user, categoryId, sort, pageable);
+        Page<Question> questionPage = questionRepository.findMyQuestions(user, categoryId, sort, pageable);
 
-        List<MyQuestionResponseDto> questionDtos = questions.stream()
-                .map(MyQuestionResponseDto::of)
-                .collect(Collectors.toList());
+        Page<MyQuestionResponseDto> questionDtos = questionPage.map(MyQuestionResponseDto::of);
 
         return MyPageResponseDto.of(user, questionDtos);
     }
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService {
         return jwtUtil.createAccessToken("email" + userName + "@naver.com", user.getUserId());
 
     }
-    
+
     @Transactional
     @Scheduled(cron = "1 0 0 1 * * ")
     public void userResetMonthly () {

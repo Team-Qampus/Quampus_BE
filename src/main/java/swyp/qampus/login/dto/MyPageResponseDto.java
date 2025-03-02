@@ -4,6 +4,7 @@ package swyp.qampus.login.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.question.domain.MyQuestionResponseDto;
 
@@ -18,9 +19,9 @@ public class MyPageResponseDto {
     private String nickname;
     private String major;
     private String universityName;
-    private List<MyQuestionResponseDto> questions;
+    private Page<MyQuestionResponseDto> questions;
 
-    public static MyPageResponseDto of(User user, List<MyQuestionResponseDto> questions) {
+    public static MyPageResponseDto of(User user, Page<MyQuestionResponseDto> questions) {
         return new MyPageResponseDto(
                 user.getUserId(),
                 user.getName(),
