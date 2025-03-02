@@ -173,6 +173,9 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     @Transactional(readOnly = true)
     public List<QuestionListResponseDto> getQuestions(Long categoryId, String sort , Pageable pageable,String token) {
+        userRepository.findById(jwtUtil.getUserIdFromToken(token))
+                .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
+
         List<Question> questions = questionRepository.findByCategoryId(categoryId, pageable, sort);
 
         if (questions.isEmpty()) {

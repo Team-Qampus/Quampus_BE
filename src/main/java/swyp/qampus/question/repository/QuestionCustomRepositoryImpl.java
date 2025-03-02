@@ -88,6 +88,6 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     }
 
     private BooleanExpression categoryFilter(Long categoryId) {
-        return Objects.equals(categoryId, 0L) ? null : question.category.categoryId.eq(categoryId);
+        return Objects.equals(categoryId, 1L) ? null : question.category.categoryId.eq(categoryId);
     }
 }
