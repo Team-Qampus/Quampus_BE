@@ -75,6 +75,15 @@ public class User  {
     @JoinColumn(name = "university_id")
     private University university;
 
+    @Column(name = "weekly_choice_cnt")
+    private Long weeklyChoiceCnt = 0L;
+
+    @Column(name = "monthly_choice_cnt")
+    private Long monthlyChoiceCnt = 0L;
+
+    @Column(name = "last_month_choice_cnt")
+    private Long lastMonthChoiceCnt = 0L;
+
     @Builder(toBuilder = true)
     public User(Long userId, String name, String email, String password, String major,String nickname, University university) {
         this.userId = userId;
@@ -106,5 +115,21 @@ public class User  {
 
     public void addAnswer(Answer answer){
         this.answers.add(answer);
+    }
+
+    //채택 수 증가
+    public void increaseChoiceCnt(){
+        this.monthlyChoiceCnt++;
+        this.weeklyChoiceCnt++;
+    }
+
+    //채택 수 감소
+    public void decreaseChoiceCnt(){
+        if(weeklyChoiceCnt>0){
+            weeklyChoiceCnt--;
+        }
+        if(monthlyChoiceCnt>0){
+            monthlyChoiceCnt--;
+        }
     }
 }
