@@ -15,10 +15,7 @@ public class OpenAiConfig {
 
     @Bean(name = "openAiRestTemplate")
     public RestTemplate template(){
-        SimpleClientHttpRequestFactory factory=new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(10000);
-        factory.setReadTimeout(5000);
-        RestTemplate restTemplate=new RestTemplate(factory);
+        RestTemplate restTemplate=new RestTemplate();
         restTemplate.getInterceptors().add(((request, body, execution) -> {
             request.getHeaders().add("Authorization","Bearer "+openAiKey);
             return execution.execute(request,body);
