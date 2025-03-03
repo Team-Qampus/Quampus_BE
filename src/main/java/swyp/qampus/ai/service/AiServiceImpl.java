@@ -104,13 +104,13 @@ public class AiServiceImpl implements AiService {
 
     //텍스트만 전송
     private ChatGPTResponse requestText(String requestText) {
-        ChatGPTRequest request = ChatGPTRequest.createTextRequest(apiModel, 500, "user", requestText);
+        ChatGPTRequest request = ChatGPTRequest.createTextRequest(apiModel, 1500, "user", requestText);
         return restTemplate.postForObject(apiUrl, request, ChatGPTResponse.class);
     }
 
     //이미지랑 텍스트 전송
     private ChatGPTResponse requestImageAndText(String imageUrl, String requestText) throws IOException {
-        ChatGPTRequest request = ChatGPTRequest.createImageRequest(apiModel, 500, "user", requestText, imageUrl);
+        ChatGPTRequest request = ChatGPTRequest.createImageRequest(apiModel, 1500, "user", requestText, imageUrl);
         return restTemplate.postForObject(apiUrl, request, ChatGPTResponse.class);
     }
 }
