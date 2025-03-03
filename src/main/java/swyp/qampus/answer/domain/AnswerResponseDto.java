@@ -19,10 +19,12 @@ public class AnswerResponseDto {
     private final Boolean isChosen;
     private String universityName;
     private final List<String> imageUrls;
+    //좋아요 유무 추가
+    private final Boolean isLikeChosen;
 
     @Builder
     private AnswerResponseDto(Long answerId, Long userId, String content, String userName, LocalDateTime createdDate,
-                              int likeCnt, Boolean isChosen, String universityName, List<String> imageUrls) {
+                              int likeCnt, Boolean isChosen, String universityName, List<String> imageUrls,Boolean isLikeChosen) {
         this.answerId = answerId;
         this.userId = userId;
         this.content = content;
@@ -32,6 +34,7 @@ public class AnswerResponseDto {
         this.isChosen = isChosen;
         this.universityName = universityName;
         this.imageUrls = imageUrls;
+        this.isLikeChosen=isLikeChosen;
     }
 
     public static AnswerResponseDto of(Answer answer, List<Image> images) {
@@ -48,6 +51,7 @@ public class AnswerResponseDto {
                 .isChosen(answer.getIsChosen())
                 .universityName(answer.getUser().getUniversity().getUniversityName())
                 .imageUrls(imageUrls)
+                .isLikeChosen(answer.getIsLikeChosen())
                 .build();
     }
 }
