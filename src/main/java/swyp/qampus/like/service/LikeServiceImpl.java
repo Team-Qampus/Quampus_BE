@@ -31,7 +31,7 @@ public class LikeServiceImpl implements LikeService{
         TODO: jwt로 교체 해야함
         */
         Long userId=jwtUtil.getUserIdFromToken(token);
-        Result result = getResult(token, answerId);
+        Result result = getResult(token, answerId,"INSERT");
         //임
         //이미 좋아요가 눌러져있으면 에러 반환
         if(likeRepository.findLikesByAnswerAndUser(answerId,userId ).isPresent()){
@@ -48,7 +48,7 @@ public class LikeServiceImpl implements LikeService{
         /*
         TODO: jwt로 교체 해야함
         */
-        Result result=getResult(token,answerId);
+        Result result=getResult(token,answerId,"DELETE");
 
         Like like=likeRepository.findLikesByAnswerAndUser(answerId, jwtUtil.getUserIdFromToken(token)).orElseThrow(
                 ()->new RestApiException(LikeErrorCode.DUPLICATED_LIKE_REQUEST)
@@ -58,7 +58,7 @@ public class LikeServiceImpl implements LikeService{
         likeRepository.delete(like);
     }
 
-    private Result getResult(String token, Long answerId) {
+    private Result getResult(String token, Long answerId,String type) {
         //유저 예외처리
         Long userId= jwtUtil.getUserIdFromToken(token);
         User user=userRepository.findById(userId)
@@ -66,6 +66,13 @@ public class LikeServiceImpl implements LikeService{
         //답변 예외처리
         Answer answer=answerRepository.findById(answerId)
                 .orElseThrow(()->new RestApiException(LikeErrorCode.NOT_EXISTED_ANSWERED));
+
+        if (type.equals("INSERT")){
+            answer.setIsLikeChosen(true);
+        }else {
+            answer.setIsLikeChosen(false);
+        }
+
         return new Result(user, answer);
 
     }
