@@ -22,10 +22,12 @@ public class QuestionDetailResponseDto {
     private final boolean isCurious;
     private final List<AnswerResponseDto> answers;
     private final List<String> imageUrls;
+    private final String categoryName;
 
     @Builder
     private QuestionDetailResponseDto(Long questionId, Long userId, String title, String content, String universityName,
-                                      LocalDateTime createdDate, int viewCnt, int curiousCount, boolean isCurious, List<AnswerResponseDto> answers,List<String> imageUrls) {
+                                      LocalDateTime createdDate, int viewCnt, int curiousCount, boolean isCurious, List<AnswerResponseDto> answers,List<String> imageUrls,
+                                      String categoryName) {
 
         this.questionId = questionId;
         this.userId = userId;
@@ -38,6 +40,7 @@ public class QuestionDetailResponseDto {
         this.isCurious = isCurious;
         this.answers = answers;
         this.imageUrls = imageUrls;
+        this.categoryName = categoryName;
     }
 
 
@@ -59,6 +62,7 @@ public class QuestionDetailResponseDto {
                 .isCurious(isCurious)
                 .answers(answers)
                 .imageUrls(imageUrls)
+                .categoryName(question.getCategory().getCategoryName().getCategoryName())
                 .build();
     }
 }
