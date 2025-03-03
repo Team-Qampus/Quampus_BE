@@ -1,19 +1,15 @@
 package swyp.qampus.ai.service;
 
-import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.ai.domain.Ai;
 import swyp.qampus.ai.domain.request.ChatGPTRequest;
 import swyp.qampus.ai.domain.response.AiResponseDto;
 import swyp.qampus.ai.domain.response.ChatGPTResponse;
 import swyp.qampus.ai.repository.AiRepository;
-import swyp.qampus.answer.domain.Answer;
-import swyp.qampus.answer.repository.AnswerRepository;
+import swyp.qampus.ai.verification.CheckQuestionVerificationService;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.util.JWTUtil;
@@ -22,9 +18,6 @@ import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 @Service
 public class AiServiceImpl implements AiService {
@@ -39,15 +32,17 @@ public class AiServiceImpl implements AiService {
     private final QuestionRepository questionRepository;
     private final JWTUtil jwtUtil;
 
+    private final CheckQuestionVerificationService checkQuestionVerificationService;
     public AiServiceImpl(
             @Qualifier("openAiRestTemplate") RestTemplate restTemplate,
             AiRepository aiRepository,
             QuestionRepository questionRepository,
-            JWTUtil jwtUtil) {
+            JWTUtil jwtUtil, CheckQuestionVerificationService checkQuestionVerificationService) {
         this.restTemplate = restTemplate;
         this.aiRepository = aiRepository;
         this.questionRepository = questionRepository;
         this.jwtUtil = jwtUtil;
+        this.checkQuestionVerificationService = checkQuestionVerificationService;
     }
 
     @Override
@@ -61,6 +56,13 @@ public class AiServiceImpl implements AiService {
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
         Ai ai = question.getAi();
 
+        //질문이 의미 없는 경우 -> 검증
+        if(!checkQuestionVerificationService.isValidTotal(question.getContent())){
+            return AiResponseDto.of(Ai
+                    .builder()
+                    .content("유효하지 않은 질문입니다.")
+                    .build());
+        }
         //이전에 생성된 AI 답변이 있는 경우
         if (ai != null) {
             return AiResponseDto.of(ai);
