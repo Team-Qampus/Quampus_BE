@@ -46,6 +46,10 @@ public class Answer {
     @Column(name = "is_chosen",nullable = false)
     private Boolean isChosen=false;
 
+    //좋아요 채택
+    @Column(name = "is_like_chose",columnDefinition = "default FALSE")
+    private Boolean isLikeChosen=false;
+
     @OneToMany(mappedBy = "answer",cascade = CascadeType.REMOVE)
     private List<Like> likeList=new ArrayList<>();
 
@@ -75,6 +79,10 @@ public class Answer {
 
     public void setIsChosen(Boolean chosen){
         this.isChosen=chosen;
+    }
+
+    public void setIsLikeChosen(Boolean chosen){
+        this.isLikeChosen=chosen;
     }
 
     @Builder
