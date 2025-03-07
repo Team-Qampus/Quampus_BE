@@ -10,4 +10,5 @@ public interface RedisCustomService {
     boolean hasKey(String key);
     Set<String> getKeysByPattern(String pattern);
     void saveRedisDataForActivity(String keyName, HashMap<String,Object> map,Long limitTime);
+    Long getRedisDataCount(String keyName);
 }
