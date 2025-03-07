@@ -53,4 +53,10 @@ public class RedisCustomServiceImpl implements RedisCustomService {
         redisTemplate.opsForList().rightPush(keyName,map);
         redisTemplate.expire(keyName,limitTime,TimeUnit.HOURS);
     }
+
+    //특정 키값을 가진 레디스 데이터 개수 조회
+    @Override
+    public Long getRedisDataCount(String keyName) {
+        return redisTemplate.opsForList().size(keyName);
+    }
 }
