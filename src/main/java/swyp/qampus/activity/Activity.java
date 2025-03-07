@@ -1,6 +1,7 @@
 package swyp.qampus.activity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import swyp.qampus.common.BaseEntity;
@@ -21,11 +22,14 @@ public class Activity extends BaseEntity {
     @Column(name = "activity_major",nullable = false)
     private String activityMajor;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "university_id")
-    private University university;
 
     @Column(name = "activity_detail_id",nullable = false)
     private Long activityDetailId;
 
+    @Builder
+    public Activity(ActivityType activityType,String activityMajor,Long activityDetailId){
+        this.activityDetailId=activityDetailId;
+        this.activityMajor=activityMajor;
+        this.activityType=activityType;
+    }
 }

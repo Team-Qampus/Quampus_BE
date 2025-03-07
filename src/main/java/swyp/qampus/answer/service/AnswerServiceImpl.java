@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import swyp.qampus.activity.Activity;
+import swyp.qampus.activity.ActivityType;
+import swyp.qampus.activity.repository.ActivityRepository;
 import swyp.qampus.answer.domain.*;
 import swyp.qampus.answer.exception.AnswerErrorCode;
 import swyp.qampus.answer.repository.AnswerRepository;
@@ -16,6 +19,7 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+import swyp.qampus.login.config.data.RedisCustomService;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
@@ -33,6 +37,7 @@ import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +52,10 @@ public class AnswerServiceImpl implements AnswerService {
     private final JWTUtil jwtUtil;
     private final UniversityRepository universityRepository;
     private final CuriousRepository curiousRepository;
+    private final RedisCustomService redisCustomService;
+    private final ActivityRepository activityRepository;
+    private final static String REDIS_PREFIX="activity ";
+    private final static Long REDIS_LIMIT_TIME=12L;
 
     @Transactional
     @Override
@@ -64,7 +73,7 @@ public class AnswerServiceImpl implements AnswerService {
                 .content(requestDto.getContent())
                 .build();
 
-        answerRepository.save(answer);
+        answer=answerRepository.save(answer);
 
         question.incrementUnreadAnswerCount();
         question.incrementAnswerCount();
@@ -82,6 +91,27 @@ public class AnswerServiceImpl implements AnswerService {
                 imageRepository.save(newImage);
             }
         }
+        //레디스에 데이터 저장
+        HashMap<String,Object> map=new HashMap<>();
+        map.put("major",user.getMajor());
+        map.put("type", ActivityType.ANSWER);
+        map.put("id",answer.getAnswerId());
+
+        redisCustomService.saveRedisDataForActivity(REDIS_PREFIX+user
+                .getUniversity()
+                .getUniversityId()
+                ,map
+                ,REDIS_LIMIT_TIME
+        );
+
+        Activity activity=Activity
+                .builder()
+                .activityMajor(user.getMajor())
+                .activityDetailId(answer.getAnswerId())
+                .activityType(ActivityType.ANSWER)
+                .build();
+        activityRepository.save(activity);
+
     }
 
     @Transactional
@@ -139,6 +169,13 @@ public class AnswerServiceImpl implements AnswerService {
 
     private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
         User user = answer.getUser();
+        //레디스에 데이터 저장
+        HashMap<String,Object> map=new HashMap<>();
+        map.put("major",user.getMajor());
+        map.put("id",answer.getAnswerId());
+
+        Activity activity;
+
         //채택하는 경우
         if(type){
             //해당 질문에서 이미 채택한 답변이 존재하는 경우
@@ -157,6 +194,16 @@ public class AnswerServiceImpl implements AnswerService {
             user.increaseChoiceCnt();
             universityRepository.save(university);
             userRepository.save(user);
+
+            activity=Activity
+                    .builder()
+                    .activityMajor(user.getMajor())
+                    .activityDetailId(answer.getAnswerId())
+                    .activityType(ActivityType.CHOICE_SAVE)
+                    .build();
+
+            map.put("type", ActivityType.CHOICE_SAVE);
+
         }
         //채택 취소하는 경우
         else{
@@ -171,7 +218,25 @@ public class AnswerServiceImpl implements AnswerService {
             user.decreaseChoiceCnt();
             universityRepository.save(university);
             userRepository.save(user);
+
+            activity=Activity
+                    .builder()
+                    .activityMajor(user.getMajor())
+                    .activityDetailId(answer.getAnswerId())
+                    .activityType(ActivityType.CHOICE_DELETE)
+                    .build();
+
+            map.put("type",ActivityType.CHOICE_DELETE);
         }
+
+        redisCustomService.saveRedisDataForActivity(REDIS_PREFIX+user
+                        .getUniversity()
+                        .getUniversityId()
+                ,map
+                ,REDIS_LIMIT_TIME
+        );
+
+        activityRepository.save(activity);
         answer.setIsChosen(type);
     }
 

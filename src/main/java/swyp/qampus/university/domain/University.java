@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import swyp.qampus.activity.Activity;
 import swyp.qampus.common.BaseEntity;
 import swyp.qampus.login.entity.User;
 
@@ -35,6 +36,11 @@ public class University extends BaseEntity {
     //유저랑 양방향관계
     @OneToMany(mappedBy = "university")
     private List<User> users=new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "university_id") // Activity 테이블의 외래키
+    private List<Activity> activities = new ArrayList<>();
+
 
     @Builder
     public University(String universityName){
