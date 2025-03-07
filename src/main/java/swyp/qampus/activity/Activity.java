@@ -25,4 +25,7 @@ public class Activity extends BaseEntity {
     @JoinColumn(name = "university_id")
     private University university;
 
+    @Column(name = "activity_detail_id",nullable = false)
+    private Long activityDetailId;
+
 }

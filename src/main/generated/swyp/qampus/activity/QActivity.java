@@ -24,6 +24,8 @@ public class QActivity extends EntityPathBase<Activity> {
 
     public final swyp.qampus.common.QBaseEntity _super = new swyp.qampus.common.QBaseEntity(this);
 
+    public final NumberPath<Long> activityDetailId = createNumber("activityDetailId", Long.class);
+
     public final NumberPath<Long> activityId = createNumber("activityId", Long.class);
 
     public final StringPath activityMajor = createString("activityMajor");
