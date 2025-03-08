@@ -37,8 +37,7 @@ public class University extends BaseEntity {
     @OneToMany(mappedBy = "university")
     private List<User> users=new ArrayList<>();
 
-    @OneToMany
-    @JoinColumn(name = "university_id") // Activity 테이블의 외래키
+    @OneToMany(mappedBy = "university")
     private List<Activity> activities = new ArrayList<>();
 
 

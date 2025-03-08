@@ -26,10 +26,15 @@ public class Activity extends BaseEntity {
     @Column(name = "activity_detail_id",nullable = false)
     private Long activityDetailId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "university_id")
+    private University university;
+
     @Builder
-    public Activity(ActivityType activityType,String activityMajor,Long activityDetailId){
+    public Activity(ActivityType activityType,String activityMajor,Long activityDetailId,University university){
         this.activityDetailId=activityDetailId;
         this.activityMajor=activityMajor;
         this.activityType=activityType;
+        this.university=university;
     }
 }

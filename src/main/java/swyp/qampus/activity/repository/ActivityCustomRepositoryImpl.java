@@ -14,6 +14,7 @@ import swyp.qampus.university.domain.QUniversity;
 import java.util.Collections;
 import java.util.List;
 
+
 import static swyp.qampus.activity.QActivity.*;
 import static swyp.qampus.university.domain.QUniversity.*;
 
@@ -27,6 +28,9 @@ public class ActivityCustomRepositoryImpl implements ActivityCustomRepository{
     //특정 개수만큼 최신 순으로 활동 가져오기
     @Override
     public List<RecentActivityResponseDto> getRecentActivityOrderByRecent(Long activityId, Integer count, Long universityId) {
+        if (activityId==0L){
+            activityId=Long.MAX_VALUE;
+        }
         List<RecentActivityResponseDto> recentActivityResponseDtoList=queryFactory
                 .select(new QRecentActivityResponseDto(
                         activity.activityMajor,
@@ -35,7 +39,7 @@ public class ActivityCustomRepositoryImpl implements ActivityCustomRepository{
                         activity.activityId
                 ))
                 .from(activity)
-                .innerJoin(activity.university, university)
+                .join(activity.university, university)
                 .where(totalCondition(activityId,universityId))
                 .orderBy(activity.activityId.desc())
                 .limit(count)
@@ -44,8 +48,8 @@ public class ActivityCustomRepositoryImpl implements ActivityCustomRepository{
         return recentActivityResponseDtoList.isEmpty() ? Collections.emptyList() : recentActivityResponseDtoList;
     }
 
-    BooleanExpression activityIdGt(Long activityId){
-        return activityId == null ? null : activity.activityId.gt(activityId);
+    BooleanExpression activityIdLt(Long activityId){
+        return activityId == null ? null : activity.activityId.lt(activityId);
     }
 
     BooleanExpression universityIdEq(Long universityId){
@@ -53,7 +57,7 @@ public class ActivityCustomRepositoryImpl implements ActivityCustomRepository{
     }
 
     BooleanExpression totalCondition(Long activityId,Long universityId){
-        BooleanExpression activityIdCondition=activityIdGt(activityId);
+        BooleanExpression activityIdCondition=activityIdLt(activityId);
         BooleanExpression universityIdCondition=universityIdEq(universityId);
 
         if(activityIdCondition==null) return universityIdCondition;

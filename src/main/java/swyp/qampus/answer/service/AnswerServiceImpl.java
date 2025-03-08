@@ -91,24 +91,13 @@ public class AnswerServiceImpl implements AnswerService {
                 imageRepository.save(newImage);
             }
         }
-        //레디스에 데이터 저장
-        HashMap<String,Object> map=new HashMap<>();
-        map.put("major",user.getMajor());
-        map.put("type", ActivityType.ANSWER);
-        map.put("id",answer.getAnswerId());
-
-        redisCustomService.saveRedisDataForActivity(REDIS_PREFIX+user
-                .getUniversity()
-                .getUniversityId()
-                ,map
-                ,REDIS_LIMIT_TIME
-        );
 
         Activity activity=Activity
                 .builder()
                 .activityMajor(user.getMajor())
                 .activityDetailId(answer.getAnswerId())
                 .activityType(ActivityType.ANSWER)
+                .university(user.getUniversity())
                 .build();
         activityRepository.save(activity);
 
@@ -169,11 +158,6 @@ public class AnswerServiceImpl implements AnswerService {
 
     private void validateAndSetChoiceSet(Long questId, Answer answer,Boolean type) {
         User user = answer.getUser();
-        //레디스에 데이터 저장
-        HashMap<String,Object> map=new HashMap<>();
-        map.put("major",user.getMajor());
-        map.put("id",answer.getAnswerId());
-
         Activity activity;
 
         //채택하는 경우
@@ -200,10 +184,8 @@ public class AnswerServiceImpl implements AnswerService {
                     .activityMajor(user.getMajor())
                     .activityDetailId(answer.getAnswerId())
                     .activityType(ActivityType.CHOICE_SAVE)
+                    .university(university)
                     .build();
-
-            map.put("type", ActivityType.CHOICE_SAVE);
-
         }
         //채택 취소하는 경우
         else{
@@ -224,19 +206,13 @@ public class AnswerServiceImpl implements AnswerService {
                     .activityMajor(user.getMajor())
                     .activityDetailId(answer.getAnswerId())
                     .activityType(ActivityType.CHOICE_DELETE)
+                    .university(university)
                     .build();
-
-            map.put("type",ActivityType.CHOICE_DELETE);
         }
 
-        redisCustomService.saveRedisDataForActivity(REDIS_PREFIX+user
-                        .getUniversity()
-                        .getUniversityId()
-                ,map
-                ,REDIS_LIMIT_TIME
-        );
 
-        activityRepository.save(activity);
+        activity=activityRepository.save(activity);
+
         answer.setIsChosen(type);
     }
 

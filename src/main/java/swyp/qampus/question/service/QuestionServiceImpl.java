@@ -85,18 +85,13 @@ public class QuestionServiceImpl implements QuestionService {
         map.put("type", ActivityType.QUESTION);
         map.put("id",savedQuestion.getQuestionId());
 
-        redisCustomService.saveRedisDataForActivity(REDIS_PREFIX+user
-                        .getUniversity()
-                        .getUniversityId()
-                ,map
-                ,REDIS_LIMIT_TIME
-        );
 
         Activity activity=Activity
                 .builder()
                 .activityMajor(user.getMajor())
                 .activityDetailId(question.getQuestionId())
                 .activityType(ActivityType.QUESTION)
+                .university(user.getUniversity())
                 .build();
         activityRepository.save(activity);
 
