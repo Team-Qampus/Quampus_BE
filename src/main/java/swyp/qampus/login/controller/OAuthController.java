@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.MyQuestionResponseDto;
 
+import java.net.URISyntaxException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -126,7 +128,7 @@ public class OAuthController {
     @PostMapping("/signup/complete")
     public ResponseEntity<?> completeSignup(@RequestHeader("Authorization") String token,
                                             @RequestBody UserRequestDTO.UserUniversityAndMajorDTO request,
-                                            HttpServletResponse response) {
+                                            HttpServletResponse response) throws URISyntaxException {
         // 1. JWT에서 이메일 추출
         String email = jwtUtil.getEmailFromToken(token);
 
