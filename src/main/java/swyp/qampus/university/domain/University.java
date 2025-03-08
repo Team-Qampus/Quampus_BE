@@ -49,11 +49,13 @@ public class University extends BaseEntity {
     private Double longitude;
 
     @Builder
-    public University(String universityName){
+    public University(String universityName,Double latitude,Double longitude){
         this.weeklyChoiceCnt=0L;
         this.monthlyChoiceCnt=0L;
         this.lastMonthChoiceCnt=0L;
         this.universityName=universityName;
+        this.latitude=latitude;
+        this.longitude=longitude;
     }
 
     //유저 추가

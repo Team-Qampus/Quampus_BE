@@ -59,29 +59,32 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
         if (period.equals("weekly")) {
             query =
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
-                            " univ.universityId," +
-                            " univ.universityName," +
-                            " cast(rank() over (order by univ.weeklyChoiceCnt desc) as integer) ," +
-                            " cast(size(univ.users) as long) ," +
-                            "case when :choiceCntAll = 0 then 0 else cast((univ.weeklyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
-                            "cast(univ.weeklyChoiceCnt as long)) " +
-                            "from University as univ " +
-                            "order by univ.weeklyChoiceCnt desc ";
+                            "   univ.universityId," +
+                            "   univ.universityName," +
+                            "   cast(rank() over (order by univ.weeklyChoiceCnt desc) as integer)," +
+                            "   cast(size(univ.users) as long)," +
+                            "   case when :choiceCntAll = 0 then 0 else cast((univ.weeklyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
+                            "   cast(univ.weeklyChoiceCnt as long)," +
+                            "   univ.latitude," + // 위도
+                            "   univ.longitude" + // 경도
+                            ") from University as univ " +
+                            "order by univ.weeklyChoiceCnt desc";
 
         }
 
         if (period.equals("monthly")) {
             query =
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
-                            " univ.universityId," +
-                            " univ.universityName," +
-                            " cast(rank() over (order by univ.monthlyChoiceCnt desc) as integer) ," +
-                            " cast( size(univ.users) as long) ," +
-                            " case when :choiceCntAll = 0 then 0 else cast((univ.monthlyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
-                            " univ.monthlyChoiceCnt  " +
-                            ") " +
-                            "from University as univ " +
-                            "order by univ.monthlyChoiceCnt desc ";
+                            "   univ.universityId," +
+                            "   univ.universityName," +
+                            "   cast(rank() over (order by univ.monthlyChoiceCnt desc) as integer)," +
+                            "   cast(size(univ.users) as long)," +
+                            "   case when :choiceCntAll = 0 then 0 else cast((univ.monthlyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
+                            "   cast(univ.monthlyChoiceCnt as long)," +  // 채택 수
+                            "   univ.latitude," + // 위도
+                            "   univ.longitude" + // 경도
+                            ") from University as univ " +
+                            "order by univ.monthlyChoiceCnt desc";
 
         }
 

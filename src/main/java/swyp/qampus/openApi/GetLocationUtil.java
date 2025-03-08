@@ -37,7 +37,10 @@ public class GetLocationUtil {
                 UniversityLocationResponse response = objectMapper.readValue(responseJson, UniversityLocationResponse.class);
 
                 if (response.getData() == null || response.getData().isEmpty()) {
-                    return null;
+                    return LocationDto.builder()
+                            .경도(String.valueOf(0L))
+                            .위도(String.valueOf(0L))
+                            .build();
                 }
 
                 for (LocationDto university : response.getData()) {
@@ -49,7 +52,10 @@ public class GetLocationUtil {
                 page++;
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+                return LocationDto.builder()
+                        .경도(String.valueOf(0L))
+                        .위도(String.valueOf(0L))
+                        .build();
             }
 
         }
