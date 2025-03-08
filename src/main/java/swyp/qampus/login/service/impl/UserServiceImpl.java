@@ -48,11 +48,10 @@ public class UserServiceImpl implements UserService {
     @Override
 
     public String testUser(String userName,String universityName,String major) {
-        University university = University
-                .builder()
-                .universityName(universityName)
-                .build();
-        universityRepository.save(university);
+        University university = universityRepository.findByUniversityName(universityName)
+                .orElseGet(() -> universityRepository.save(University.builder()
+                        .universityName(universityName)
+                        .build()));
 
         User user=User.builder()
                 .nickname("test")
