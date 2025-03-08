@@ -1,8 +1,10 @@
 package swyp.qampus.university.repository;
 
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -112,6 +114,13 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                 .from(university)
                 .fetchOne();
 
+        //랭크 연산 처리
+        QUniversity subUniversity=new QUniversity("subUniversity");
+
+        Expression<Long> rankExpression = JPAExpressions.select(subUniversity.count())
+                .from(subUniversity)
+                .where(subUniversity.weeklyChoiceCnt.gt(university.weeklyChoiceCnt));
+
         UniversityDetailResponseDto result =
         queryFactory.select(new QUniversityDetailResponseDto(
                         university.universityId,
@@ -123,7 +132,8 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                         user.countDistinct(),
                         question.countDistinct(),
                         answer.countDistinct(),
-                        university.weeklyChoiceCnt
+                        university.weeklyChoiceCnt,
+                        rankExpression
                 ))
                 .from(university)
                 .leftJoin(university.users, user)
@@ -133,7 +143,9 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                 .groupBy(university.universityId)
                 .fetchOne();
 
+
         return Optional.ofNullable(result);
+
     }
 
     /*
