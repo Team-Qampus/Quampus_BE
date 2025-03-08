@@ -29,6 +29,10 @@ public class QUniversity extends EntityPathBase<University> {
 
     public final NumberPath<Long> lastMonthChoiceCnt = createNumber("lastMonthChoiceCnt", Long.class);
 
+    public final NumberPath<Double> latitude = createNumber("latitude", Double.class);
+
+    public final NumberPath<Double> longitude = createNumber("longitude", Double.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = _super.modifiedDate;
 

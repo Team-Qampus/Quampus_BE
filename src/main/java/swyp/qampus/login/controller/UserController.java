@@ -18,6 +18,7 @@ import swyp.qampus.login.dto.MyPageResponseDto;
 import swyp.qampus.login.service.UserService;
 
 
+import java.net.URISyntaxException;
 import java.util.List;
 @Tag(name = "마이페이지",description = "마이페이지-내가 작성한 질문 조회API")
 @RestController
@@ -78,7 +79,7 @@ public class UserController {
     @PostMapping("/test/user")
     public ResponseEntity<?>createUser(@RequestParam("userName")String userName,
                                        @RequestParam("universityName")String universityName,
-                                       @RequestParam("major")String major){
+                                       @RequestParam("major")String major) throws URISyntaxException {
         return ResponseEntity.ok(userService.testUser(userName,universityName,major));
     }
 

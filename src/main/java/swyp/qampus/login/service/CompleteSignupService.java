@@ -12,8 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import swyp.qampus.openApi.GetLocationUtil;
+import swyp.qampus.openApi.LocationDto;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
+
+import java.net.URISyntaxException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +28,15 @@ public class CompleteSignupService {
     private final UniversityRepository universityRepository;
     private final RedisCustomServiceImpl redisCustomService;
     private final JWTUtil jwtUtil;
+    private final GetLocationUtil getLocationUtil;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public String completeSignup(String email, UserRequestDTO.UserUniversityAndMajorDTO request, String existingToken) {
+    public String completeSignup(String email, UserRequestDTO.UserUniversityAndMajorDTO request, String existingToken) throws URISyntaxException {
         log.info("[completeSignup] 회원가입 완료 프로세스 시작 (email: {})", email);
         String key = "tempUser:" + email;
         String userJson = redisCustomService.getRedisData(key);
 
-        if(userJson == null) {
+        if (userJson == null) {
             log.warn("[completeSignup] Redis에서 임시 사용자 정보가 존재하지 않음 (key: {})", key);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "임시로 저장된 사용자 정보가 존재하지 않거나 만료되었습니다.");
         }
@@ -46,11 +51,17 @@ public class CompleteSignupService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "임시로 저장된 사용자 정보를 파싱하는 중 오류가 발생되었습니다.");
         }
 
+        String universityName = request.getUniversityName();
+        LocationDto locationDto = getLocationUtil.findLocationByCompanyName(universityName);
+
 
         // 1. universityName을 이용하여 University 조회
         University university = universityRepository.findByUniversityName(request.getUniversityName())
-                .orElseGet(() -> universityRepository.save(University.builder()
+                .orElseGet(() -> universityRepository.save(University
+                        .builder()
                         .universityName(request.getUniversityName())
+                        .latitude(Double.valueOf(locationDto.get위도()))
+                        .longitude(Double.valueOf(locationDto.get경도()))
                         .build()));
 
         // 2. User 업데이트 (University 객체 설정)
@@ -60,7 +71,7 @@ public class CompleteSignupService {
                 .build();
 
         // 최종적으로 DB에 저장
-        updateUser=userRepository.save(updateUser);
+        updateUser = userRepository.save(updateUser);
         log.info("[completeSignup] User 정보 업데이트 완료 (userId: {})", updateUser.getUserId());
 
         // Redis에 저장된 임시 데이터 삭제
