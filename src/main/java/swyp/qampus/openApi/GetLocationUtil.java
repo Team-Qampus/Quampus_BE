@@ -52,10 +52,7 @@ public class GetLocationUtil {
                 page++;
             } catch (Exception e) {
                 e.printStackTrace();
-                return LocationDto.builder()
-                        .경도(String.valueOf(0L))
-                        .위도(String.valueOf(0L))
-                        .build();
+                return null;
             }
 
         }
