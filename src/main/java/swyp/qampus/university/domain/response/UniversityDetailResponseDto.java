@@ -23,9 +23,11 @@ public class UniversityDetailResponseDto {
     private Long answer_cnt;
     //채택 수
     private Long choice_cnt;
+    //랭킹
+    private Long rank;
 
     @QueryProjection
-    public UniversityDetailResponseDto(Long university_id, String university_name, Integer rate, Long participant_count, Long question_cnt, Long answer_cnt, Long choice_cnt) {
+    public UniversityDetailResponseDto(Long university_id, String university_name, Integer rate, Long participant_count, Long question_cnt, Long answer_cnt, Long choice_cnt,Long rank) {
         this.university_id = university_id;
         this.university_name = university_name;
         this.rate = rate;
@@ -33,5 +35,6 @@ public class UniversityDetailResponseDto {
         this.question_cnt = question_cnt;
         this.answer_cnt = answer_cnt;
         this.choice_cnt = choice_cnt;
+        this.rank=rank;
     }
 }
