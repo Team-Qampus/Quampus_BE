@@ -14,6 +14,8 @@ import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.service.UserService;
 import swyp.qampus.login.util.JWTUtil;
+import swyp.qampus.openApi.GetLocationUtil;
+import swyp.qampus.openApi.LocationDto;
 import swyp.qampus.question.domain.MyQuestionResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.exception.QuestionErrorCode;
@@ -21,6 +23,7 @@ import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final QuestionRepository questionRepository;
     private final UniversityRepository universityRepository;
     private final JWTUtil jwtUtil;
+    private final GetLocationUtil getLocationUtil;
 
     @Override
     public MyPageResponseDto getMyPageData(String token, Long categoryId, String sort, Pageable pageable) {
@@ -47,10 +51,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
 
-    public String testUser(String userName,String universityName,String major) {
+    public String testUser(String userName,String universityName,String major) throws URISyntaxException {
+
+        LocationDto locationDto = getLocationUtil.findLocationByCompanyName(universityName);
         University university = universityRepository.findByUniversityName(universityName)
                 .orElseGet(() -> universityRepository.save(University.builder()
                         .universityName(universityName)
+                        .latitude(Double.valueOf(locationDto.get위도()))
+                        .longitude(Double.valueOf(locationDto.get경도()))
                         .build()));
 
         User user=User.builder()
