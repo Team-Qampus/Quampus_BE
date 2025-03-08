@@ -8,12 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
+import swyp.qampus.university.domain.University;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
 import swyp.qampus.university.exception.UniversityErrorCode;
 import swyp.qampus.university.repository.UniversityRepository;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +35,14 @@ public class UniversityServiceImpl implements UniversityService {
     }
 
     @Override
-    public Optional<UniversityDetailResponseDto> getUniversityDetail( String universityName) {
-        if(universityRepository.findByUniversityName(universityName).isEmpty()){
-            throw new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY);
+    public UniversityDetailResponseDto getUniversityDetail( String universityName) {
+        boolean exists=universityRepository.findByUniversityName(universityName).isPresent();
+        if(!exists){
+            return null;
         }
-        return universityRepository.getUniversityDetail(universityName);
+
+        return universityRepository.getUniversityDetail(universityName)
+                .orElse(null);
     }
 
     @Override
