@@ -40,6 +40,13 @@ public class University extends BaseEntity {
     @OneToMany(mappedBy = "university")
     private List<Activity> activities = new ArrayList<>();
 
+    //위도
+    @Column(name = "latitude")
+    private Double latitude;
+
+    //경도
+    @Column(name = "longitude")
+    private Double longitude;
 
     @Builder
     public University(String universityName){

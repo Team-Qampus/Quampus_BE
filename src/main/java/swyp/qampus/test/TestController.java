@@ -4,13 +4,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.openApi.GetLocationUtil;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
+
+import java.net.URISyntaxException;
 
 
 @RestController
@@ -19,7 +20,7 @@ import swyp.qampus.university.repository.UniversityRepository;
 public class TestController {
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
-
+    private final GetLocationUtil getLocationUtil;
     @PostMapping("/signup")
     public ResponseEntity<?>signup(@RequestBody TestDto testDto){
         User user=User.builder()
@@ -41,5 +42,10 @@ public class TestController {
         userRepository.save(user);
         university.addUser(user);
         return ResponseEntity.ok().body("성공");
+    }
+
+    @GetMapping("/location")
+    public ResponseEntity<?>location(@RequestParam("name")String name) throws URISyntaxException {
+        return ResponseEntity.ok(getLocationUtil.findLocationByCompanyName(name));
     }
 }
