@@ -4,25 +4,21 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySources;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
-import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
 
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 /**
  * JWT(JSON Web Token) 생성 및 검증을 담당하는 유틸리티 클래스
  */
+@Log4j2
 @Component
 @RequiredArgsConstructor
 public class JWTUtil {
@@ -78,9 +74,6 @@ public class JWTUtil {
                 .compact();  // 최종적으로 JWT 토큰을 문자열로 반환
     }
 
-
-
-
     /**
      * JWT에서 이메일(subject) 추출
      * @param token JWT 토큰
@@ -133,5 +126,71 @@ public class JWTUtil {
                 .getBody();
 
         return claims.get("userId", Long.class);
+    }
+
+    /**
+     * JWT를 즉시 만료
+     * @param email
+     * @param userId
+     * @return
+     */
+    public String createExpiredToken(String email, Long userId) {
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("userId", userId);
+
+        Date now = new Date();
+        Date expiredTime = new Date(now.getTime()); // 즉시 만료
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiredTime) // 만료 시간을 현재 시간으로 설정
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+                .compact();
+    }
+
+    // 헤더에서 JWT 가져오기
+    public String resolveToken(HttpServletRequest request) {
+        try {
+            String bearerToken = request.getHeader("Authorization");
+
+
+            if (bearerToken == null || bearerToken.trim().isEmpty()) {
+                throw new IllegalArgumentException("Authorization 헤더가 존재하지 않거나 비어 있습니다.");
+            }
+
+            if (!bearerToken.startsWith("Bearer ")) {
+                throw new IllegalArgumentException("Authorization 헤더가 'Bearer '로 시작하지 않습니다.");
+            }
+
+            String token = bearerToken.substring(7).trim(); // "Bearer " 이후의 값만 가져오기
+            if (token.isEmpty()) {
+                throw new IllegalArgumentException("JWT 토큰이 비어 있습니다.");
+            }
+
+            return token;
+
+        } catch (IllegalArgumentException e) {
+            log.error("JWT 토큰 추출 오류 : {} ", e.getMessage());
+            return null;
+        } catch (Exception e) {
+            log.error("예상치 못한 오류로 인해 JWT 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    // Claims 객체에서 데이터 추출
+    public Claims getClaims(String token) {
+        try {
+            if (token == null || token.trim().isEmpty()) {
+                throw new IllegalArgumentException("토큰이 존재하지 않거나 비어 있습니다.");
+            }
+            return Jwts.parser()
+                    .setSigningKey(secretKey.getBytes()) // 서명 검증을 위해 secretKey 사용
+                    .parseClaimsJws(token) // 토큰을 파싱하여 Claims 추출
+                    .getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("토큰이 유효하지 않거나 변조되었습니다.");
+        }
     }
 }
