@@ -57,9 +57,9 @@ public class AnswerController {
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization")String token
     ) {
-        answerService.createAnswer(requestDto, images,token);
+        Long answerId=answerService.createAnswer(requestDto, images,token);
 
-        return ResponseEntity.ok().body(ResponseDto.of(true, 200, "답변 생성 성공"));
+        return ResponseEntity.ok().body(ResponseDto.of(true, 200, answerId.toString()));
     }
 
     @Operation(
