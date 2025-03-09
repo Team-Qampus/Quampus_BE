@@ -7,5 +7,5 @@ import java.util.List;
 
 @Service
 public interface ActivityService {
-    List<RecentActivityResponseDto> getRecentActivities(String token, String universityName);
+    List<RecentActivityResponseDto> getRecentActivities(String universityName);
 }

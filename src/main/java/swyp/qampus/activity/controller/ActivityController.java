@@ -29,10 +29,9 @@ public class ActivityController {
                             schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = RecentActivityResponseDto.class))),
     })
     @GetMapping("/activity/recent")
-    public ResponseEntity<?>recentActivities(@RequestHeader("Authorization")String token,
-                                             @RequestParam("universityName")String universityName){
+    public ResponseEntity<?>recentActivities(@RequestParam("universityName")String universityName){
 
-        return ResponseEntity.ok(activityService.getRecentActivities(token,universityName));
+        return ResponseEntity.ok(activityService.getRecentActivities(universityName));
     }
 
 }
