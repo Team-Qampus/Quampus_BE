@@ -28,7 +28,7 @@ public class ActivityServiceImpl implements ActivityService{
     private final static int LIMIT=5;
     @Override
     @Transactional(readOnly = true)
-    public List<RecentActivityResponseDto> getRecentActivities(String token, String universityName) {
+    public List<RecentActivityResponseDto> getRecentActivities( String universityName) {
         //List<RecentActivityResponseDto> result=new ArrayList<>();
         List<University> universities = universityRepository.findAllByUniversityName(universityName);
         if (universities.isEmpty()) {
