@@ -8,6 +8,4 @@ import swyp.qampus.login.entity.User;
 
 public interface OauthService {
     User oAuthLogin(String code, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) throws JsonProcessingException;
-
-    void kakaoLogout(String accessToken) throws JsonProcessingException;
 }
