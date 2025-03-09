@@ -59,7 +59,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Transactional
     @Override
-    public void createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images,String token) {
+    public Long createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images,String token) {
 
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
@@ -100,7 +100,7 @@ public class AnswerServiceImpl implements AnswerService {
                 .university(user.getUniversity())
                 .build();
         activityRepository.save(activity);
-
+        return answer.getAnswerId();
     }
 
     @Transactional
