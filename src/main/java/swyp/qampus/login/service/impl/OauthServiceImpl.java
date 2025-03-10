@@ -1,6 +1,8 @@
 package swyp.qampus.login.service.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 import swyp.qampus.login.config.data.RedisCustomServiceImpl;
 import swyp.qampus.login.converter.OAuthConverter;
@@ -140,36 +142,5 @@ public class OauthServiceImpl implements OauthService {
         log.info("[oAuthLogin] 새로 발급된 JWT: {}", tempJwt);
         return tempUser;
 
-    }
-
-    @Override
-    public void kakaoLogout(String accessToken) throws JsonProcessingException {
-        // HTTP Header 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest = new HttpEntity<>(headers);
-        String url = "https://kapi.kakao.com/v1/user/logout";
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                kakaoLogoutRequest,
-                String.class
-        );
-
-        // 응답 처리
-        if (response.getStatusCode() == HttpStatus.OK) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(response.getBody());
-
-            Long id = jsonNode.get("id").asLong();
-            log.info("카카오 로그아웃 완료 - 사용자 ID: {}", id);
-        } else {
-            log.error("카카오 로그아웃 실패 - 응답 코드: {}", response.getStatusCode());
-            throw new RuntimeException("카카오 로그아웃 실패");
-        }
     }
 }
