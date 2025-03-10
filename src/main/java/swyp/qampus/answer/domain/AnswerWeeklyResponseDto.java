@@ -1,6 +1,7 @@
 package swyp.qampus.answer.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,12 +27,24 @@ public class AnswerWeeklyResponseDto {
     @Schema(description = "좋아요 수", example = "25")
     private int like_count;
 
-    public AnswerWeeklyResponseDto(Answer answer) {
-        this.question_id = answer.getQuestion().getQuestionId();
-        this.answer_id = answer.getAnswerId();
-        this.title = answer.getQuestion().getTitle();
-        this.university_name = answer.getQuestion().getUser().getUniversity().getUniversityName();
-        this.content = answer.getContent();
-        this.like_count = answer.getLikeCnt();
+    @Builder
+    private AnswerWeeklyResponseDto(Long question_id, Long answer_id, String title, String university_name, String content, int like_count) {
+        this.question_id = question_id;
+        this.answer_id = answer_id;
+        this.title = title;
+        this.university_name = university_name;
+        this.content = content;
+        this.like_count = like_count;
+    }
+
+    public static AnswerWeeklyResponseDto of(Answer answer) {
+        return AnswerWeeklyResponseDto.builder()
+                .question_id(answer.getQuestion().getQuestionId())
+                .answer_id(answer.getAnswerId())
+                .title(answer.getQuestion().getTitle())
+                .university_name(answer.getQuestion().getUser().getUniversity().getUniversityName())
+                .content(answer.getContent())
+                .like_count(answer.getLikeCnt())
+                .build();
     }
 }

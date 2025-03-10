@@ -42,7 +42,7 @@ public class HomeServiceImpl implements HomeService {
                 .stream().map(QuestionWeeklyResponseDto::of).collect(Collectors.toList());
 
         List<AnswerWeeklyResponseDto> popularAnswers = answerRepository.findWeeklyPopularAnswers()
-                .stream().map(AnswerWeeklyResponseDto::new).collect(Collectors.toList());
+                .stream().map(AnswerWeeklyResponseDto::of).collect(Collectors.toList());
 
 
         userCachedResponse = HomeResponseDto.withoutUser(popularQuestions, popularAnswers);
