@@ -28,6 +28,7 @@ import swyp.qampus.login.service.OauthService;
 import swyp.qampus.login.util.JWTUtil;
 import java.net.URISyntaxException;
 
+
 @Log4j2
 @RestController
 @RequiredArgsConstructor
