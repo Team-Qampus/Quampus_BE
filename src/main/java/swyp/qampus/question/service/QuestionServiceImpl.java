@@ -5,11 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import swyp.qampus.activity.Activity;
+import swyp.qampus.activity.ActivityType;
+import swyp.qampus.activity.repository.ActivityRepository;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.image.domain.Image;
 import swyp.qampus.image.repository.ImageRepository;
 import swyp.qampus.image.service.ImageService;
+import swyp.qampus.login.config.data.RedisCustomService;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
@@ -24,6 +28,7 @@ import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.category.repository.CategoryRepository;
 
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -36,6 +41,10 @@ public class QuestionServiceImpl implements QuestionService {
     private final ImageService imageService;
     private final ImageRepository imageRepository;
     private final JWTUtil jwtUtil;
+    private final ActivityRepository activityRepository;
+    private final RedisCustomService redisCustomService;
+    private final static String REDIS_PREFIX="activity ";
+    private final static Long REDIS_LIMIT_TIME=12L;
 
     @Transactional
     @Override
@@ -69,6 +78,23 @@ public class QuestionServiceImpl implements QuestionService {
                 imageRepository.save(newImage);
             }
         }
+
+        //레디스에 데이터 저장
+        HashMap<String,Object> map=new HashMap<>();
+        map.put("major",user.getMajor());
+        map.put("type", ActivityType.QUESTION);
+        map.put("id",savedQuestion.getQuestionId());
+
+
+        Activity activity=Activity
+                .builder()
+                .activityMajor(user.getMajor())
+                .activityDetailId(question.getQuestionId())
+                .activityType(ActivityType.QUESTION)
+                .university(user.getUniversity())
+                .build();
+        activityRepository.save(activity);
+
         return savedQuestion.getQuestionId();
     }
 

@@ -21,10 +21,7 @@ import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
 import swyp.qampus.university.service.UniversityService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,7 +44,11 @@ public class UniversityController {
                                               "ranking": 1,
                                               "participant_count": 12000,
                                               "rate": 50,
-                                              "choice_cnt": 123
+                                              "choice_cnt": 123,
+                                              "location":{
+                                                "latitude":13.22,
+                                                "longitude":1.123
+                                              }
                                             },
                                             {
                                               "university_id": 2,
@@ -55,7 +56,11 @@ public class UniversityController {
                                               "ranking": 2,
                                               "participant_count": 12000,
                                               "rate": 30,
-                                              "choice_cnt": 123
+                                              "choice_cnt": 123,
+                                              "location":{
+                                                "latitude":13.22,
+                                                "longitude":1.123
+                                              }
                                             },
                                             {
                                               "university_id": 13,
@@ -63,7 +68,11 @@ public class UniversityController {
                                               "ranking": 3,
                                               "participant_count": 12000,
                                               "rate": 10,
-                                              "choice_cnt": 123
+                                              "choice_cnt": 123,
+                                              "location":{
+                                                "latitude":13.22,
+                                                "longitude":1.123
+                                              }
                                             }
                                           ]
                                         }
@@ -107,9 +116,12 @@ public class UniversityController {
     @GetMapping("/university/detail")
     public ResponseEntity<?>getUniversityName(
             @Parameter(description = "대학교 이름")
-            @RequestParam("name")String universityName
+            @RequestParam("universityName")String universityName
     ){
-
-        return ResponseEntity.ok(universityService.getUniversityDetail(universityName));
+        UniversityDetailResponseDto universityDetail = universityService.getUniversityDetail(universityName);
+        if(universityDetail==null){
+            return ResponseEntity.ok(Collections.EMPTY_MAP);
+        }
+        return ResponseEntity.ok(universityDetail);
     }
 }

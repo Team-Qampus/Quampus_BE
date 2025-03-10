@@ -44,12 +44,11 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
 
         String email = null;
-        String token = null;
+        String token = authorizationHeader;
 
         log.info("TOKEN!!!!!!"+authorizationHeader);
         // Bearer 토큰인지 확인 후 추출
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7); // "Bearer " 이후의 문자열이 실제 JWT 토큰
+        if (authorizationHeader != null ) {
             email = jwtUtil.getEmailFromToken(token); // 토큰에서 이메일 정보 추출
         }
 

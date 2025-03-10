@@ -1,8 +1,10 @@
 package swyp.qampus.university.repository;
 
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -59,29 +61,32 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
         if (period.equals("weekly")) {
             query =
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
-                            " univ.universityId," +
-                            " univ.universityName," +
-                            " cast(rank() over (order by univ.weeklyChoiceCnt desc) as integer) ," +
-                            " cast(size(univ.users) as long) ," +
-                            "case when :choiceCntAll = 0 then 0 else cast((univ.weeklyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
-                            "cast(univ.weeklyChoiceCnt as long)) " +
-                            "from University as univ " +
-                            "order by univ.weeklyChoiceCnt desc ";
+                            "   univ.universityId," +
+                            "   univ.universityName," +
+                            "   cast(rank() over (order by univ.weeklyChoiceCnt desc) as integer)," +
+                            "   cast(size(univ.users) as long)," +
+                            "   case when :choiceCntAll = 0 then 0 else cast((univ.weeklyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
+                            "   cast(univ.weeklyChoiceCnt as long)," +
+                            "   univ.latitude," + // 위도
+                            "   univ.longitude" + // 경도
+                            ") from University as univ " +
+                            "order by univ.weeklyChoiceCnt desc";
 
         }
 
         if (period.equals("monthly")) {
             query =
                     "select new swyp.qampus.university.domain.response.UniversityRankResponseDto(" +
-                            " univ.universityId," +
-                            " univ.universityName," +
-                            " cast(rank() over (order by univ.monthlyChoiceCnt desc) as integer) ," +
-                            " cast( size(univ.users) as long) ," +
-                            " case when :choiceCntAll = 0 then 0 else cast((univ.monthlyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
-                            " univ.monthlyChoiceCnt  " +
-                            ") " +
-                            "from University as univ " +
-                            "order by univ.monthlyChoiceCnt desc ";
+                            "   univ.universityId," +
+                            "   univ.universityName," +
+                            "   cast(rank() over (order by univ.monthlyChoiceCnt desc) as integer)," +
+                            "   cast(size(univ.users) as long)," +
+                            "   case when :choiceCntAll = 0 then 0 else cast((univ.monthlyChoiceCnt * 100 / :choiceCntAll) as integer) end," +
+                            "   cast(univ.monthlyChoiceCnt as long)," +  // 채택 수
+                            "   univ.latitude," + // 위도
+                            "   univ.longitude" + // 경도
+                            ") from University as univ " +
+                            "order by univ.monthlyChoiceCnt desc";
 
         }
 
@@ -109,7 +114,14 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                 .from(university)
                 .fetchOne();
 
-        UniversityDetailResponseDto result = null;
+        //랭크 연산 처리
+        QUniversity subUniversity=new QUniversity("subUniversity");
+
+        Expression<Long> rankExpression = JPAExpressions.select(subUniversity.count())
+                .from(subUniversity)
+                .where(subUniversity.weeklyChoiceCnt.gt(university.weeklyChoiceCnt));
+
+        UniversityDetailResponseDto result =
         queryFactory.select(new QUniversityDetailResponseDto(
                         university.universityId,
                         university.universityName,
@@ -120,16 +132,20 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                         user.countDistinct(),
                         question.countDistinct(),
                         answer.countDistinct(),
-                        university.weeklyChoiceCnt
+                        university.weeklyChoiceCnt,
+                        rankExpression
                 ))
                 .from(university)
                 .leftJoin(university.users, user)
                 .leftJoin(user.questions, question)
                 .leftJoin(user.answers, answer)
-                .where(university.universityName.contains(universityName))
+                .where(university.universityName.eq(universityName))
+                .groupBy(university.universityId)
                 .fetchOne();
 
+
         return Optional.ofNullable(result);
+
     }
 
     /*
@@ -162,9 +178,10 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                     select
                         u.university_name,
                         dense_rank() over (order by u.monthly_choice_cnt desc) as ranking
-                    from University as u
+                    from university as u
                 ) as ranked
                 where ranked.university_name = :universityName
+                LIMIT 1
                 """;
         Object result = em.createNativeQuery(query)
                 .setParameter("universityName", universityName)
@@ -181,9 +198,10 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
                     select
                         u.university_name,
                         dense_rank() over (order by u.last_month_choice_cnt desc) as ranking
-                    from University as u
+                    from university as u
                 ) as ranked
                 where ranked.university_name = :universityName
+                LIMIT 1
                 """;
         Object result = em.createNativeQuery(query)
                 .setParameter("universityName", universityName)

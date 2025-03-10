@@ -1,11 +1,12 @@
 package swyp.qampus.login.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.exception.CommonErrorCode;
 import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.dto.MyPageResponseDto;
@@ -13,12 +14,15 @@ import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.service.UserService;
 import swyp.qampus.login.util.JWTUtil;
+import swyp.qampus.openApi.GetLocationUtil;
+import swyp.qampus.openApi.LocationDto;
 import swyp.qampus.question.domain.MyQuestionResponseDto;
 import swyp.qampus.question.domain.Question;
 import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,33 +34,35 @@ public class UserServiceImpl implements UserService {
     private final QuestionRepository questionRepository;
     private final UniversityRepository universityRepository;
     private final JWTUtil jwtUtil;
+    private final GetLocationUtil getLocationUtil;
 
     @Override
     public MyPageResponseDto getMyPageData(String token, Long categoryId, String sort, Pageable pageable) {
         User user = userRepository.findById(jwtUtil.getUserIdFromToken(token))
                 .orElseThrow(() -> new RestApiException(CommonErrorCode.USER_NOT_FOUND));
 
-        List<Question> questions = questionRepository.findMyQuestions(user, categoryId, sort, pageable);
+        Page<Question> questionPage = questionRepository.findMyQuestions(user, categoryId, sort, pageable);
 
-        List<MyQuestionResponseDto> questionDtos = questions.stream()
-                .map(MyQuestionResponseDto::of)
-                .collect(Collectors.toList());
+        Page<MyQuestionResponseDto> questionDtos = questionPage.map(MyQuestionResponseDto::of);
 
         return MyPageResponseDto.of(user, questionDtos);
     }
 
     @Override
 
-    public String testUser(String userName, String universityName, String major) {
-        University university = University
-                .builder()
-                .universityName(universityName)
-                .build();
-        universityRepository.save(university);
+    public String testUser(String userName,String universityName,String major) throws URISyntaxException {
 
-        User user = User.builder()
+        LocationDto locationDto = getLocationUtil.findLocationByCompanyName(universityName);
+        University university = universityRepository.findByUniversityName(universityName)
+                .orElseGet(() -> universityRepository.save(University.builder()
+                        .universityName(universityName)
+                        .latitude(Double.valueOf(locationDto.get위도()))
+                        .longitude(Double.valueOf(locationDto.get경도()))
+                        .build()));
+
+        User user=User.builder()
                 .nickname("test")
-                .email("email" + userName + "@naver.com")
+                .email("email"+userName+"@naver.com")
                 .name(userName)
                 .password("12345@sa")
                 .university(university)
@@ -64,12 +70,11 @@ public class UserServiceImpl implements UserService {
                 .build();
         user = userRepository.save(user);
         return jwtUtil.createAccessToken("email" + userName + "@naver.com", user.getUserId());
-
     }
-    
+
     @Transactional
     @Scheduled(cron = "1 0 0 1 * * ")
-    public void userResetMonthly () {
+    public void userResetMonthly() {
         userRepository.resetMonthlyChoiceCnt();
         log.info("유저 monthlyChoice 초기화");
     }
@@ -77,7 +82,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Scheduled(cron = "59 59 23 * * 7")
-    public void userResetWeekly () {
+    public void userResetWeekly() {
         userRepository.resetWeeklyChoiceCnt();
         log.info("유저 weeklyChoice 초기화");
     }

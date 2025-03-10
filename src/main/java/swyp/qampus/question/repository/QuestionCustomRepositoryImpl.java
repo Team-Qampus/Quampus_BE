@@ -4,6 +4,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import swyp.qampus.login.entity.User;
@@ -24,25 +26,39 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     }
 
     @Override
-    public List<Question> findByCategoryId(Long categoryId, Pageable pageable, String sort) {
-        return queryFactory
+    public Page<Question> findByCategoryId(Long categoryId, Pageable pageable, String sort) {
+        List<Question> questions = queryFactory
                 .selectFrom(question)
                 .where(categoryFilter(categoryId))
                 .orderBy(getSortOrder(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        long total = queryFactory
+                .selectFrom(question)
+                .where(categoryFilter(categoryId))
+                .fetchCount();  // 전체 데이터 개수 조회
+
+        return new PageImpl<>(questions, pageable, total);
     }
 
     @Override
-    public List<Question> searchByKeyword(String value, String sort, Pageable pageable) {
-        return queryFactory
+    public Page<Question> searchByKeyword(String value, String sort, Pageable pageable) {
+        List<Question> questions = queryFactory
                 .selectFrom(question)
                 .where(titleOrContentContains(value))
                 .orderBy(getSortOrder(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        long total = queryFactory
+                .selectFrom(question)
+                .where(titleOrContentContains(value))
+                .fetchCount();  // 전체 데이터 개수 조회
+
+        return new PageImpl<>(questions, pageable, total);
     }
 
     @Override
@@ -55,15 +71,23 @@ public class QuestionCustomRepositoryImpl implements QuestionCustomRepository {
     }
 
     @Override
-    public List<Question> findMyQuestions(User user, Long categoryId, String sort, Pageable pageable) {
-        return queryFactory
+    public Page<Question> findMyQuestions(User user, Long categoryId, String sort, Pageable pageable) {
+        List<Question> questions = queryFactory
                 .selectFrom(question)
                 .where(userIdEq(user), categoryFilter(categoryId))
                 .orderBy(getSortOrder(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        long total = queryFactory
+                .selectFrom(question)
+                .where(userIdEq(user), categoryFilter(categoryId))
+                .fetchCount();  // 전체 데이터 개수 조회
+
+        return new PageImpl<>(questions, pageable, total);
     }
+
 
     private OrderSpecifier<?> getSortOrder(String sort) {
         if ("popular".equals(sort)) {

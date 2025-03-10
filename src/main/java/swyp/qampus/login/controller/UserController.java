@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import swyp.qampus.login.dto.MyPageResponseDto;
 import swyp.qampus.login.service.UserService;
 
 
+import java.net.URISyntaxException;
 import java.util.List;
 @Tag(name = "마이페이지",description = "마이페이지-내가 작성한 질문 조회API")
 @RestController
@@ -48,7 +50,14 @@ public class UserController {
 
             @Parameter(description = "조회할 정렬 방법")
             @RequestParam(name = "sort", defaultValue = "latest") String sort,
-            Pageable pageable) {
+
+            @Parameter(description = "조회할 페이지 번호 (0부터 시작)")
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+
+            @Parameter(description = "한 페이지당 조회할 항목 수")
+            @RequestParam(name = "size", defaultValue = "10", required = false) int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
         MyPageResponseDto response = userService.getMyPageData(token, categoryId, sort, pageable);
         return ResponseEntity.ok(response);
     }
@@ -70,7 +79,7 @@ public class UserController {
     @PostMapping("/test/user")
     public ResponseEntity<?>createUser(@RequestParam("userName")String userName,
                                        @RequestParam("universityName")String universityName,
-                                       @RequestParam("major")String major){
+                                       @RequestParam("major")String major) throws URISyntaxException {
         return ResponseEntity.ok(userService.testUser(userName,universityName,major));
     }
 

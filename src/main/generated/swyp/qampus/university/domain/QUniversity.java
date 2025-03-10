@@ -22,10 +22,16 @@ public class QUniversity extends EntityPathBase<University> {
 
     public final swyp.qampus.common.QBaseEntity _super = new swyp.qampus.common.QBaseEntity(this);
 
+    public final ListPath<swyp.qampus.activity.Activity, swyp.qampus.activity.QActivity> activities = this.<swyp.qampus.activity.Activity, swyp.qampus.activity.QActivity>createList("activities", swyp.qampus.activity.Activity.class, swyp.qampus.activity.QActivity.class, PathInits.DIRECT2);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
     public final NumberPath<Long> lastMonthChoiceCnt = createNumber("lastMonthChoiceCnt", Long.class);
+
+    public final NumberPath<Double> latitude = createNumber("latitude", Double.class);
+
+    public final NumberPath<Double> longitude = createNumber("longitude", Double.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifiedDate = _super.modifiedDate;
