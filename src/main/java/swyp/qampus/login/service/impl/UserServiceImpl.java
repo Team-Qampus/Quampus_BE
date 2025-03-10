@@ -15,7 +15,6 @@ import swyp.qampus.login.service.UserService;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.question.domain.MyQuestionResponseDto;
 import swyp.qampus.question.domain.Question;
-import swyp.qampus.question.exception.QuestionErrorCode;
 import swyp.qampus.question.repository.QuestionRepository;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
