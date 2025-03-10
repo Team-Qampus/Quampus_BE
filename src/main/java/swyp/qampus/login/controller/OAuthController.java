@@ -1,35 +1,37 @@
 
 package swyp.qampus.login.controller;
 
-import com.amazonaws.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import swyp.qampus.common.ResponseDto;
-import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.login.converter.UserConverter;
-import swyp.qampus.login.dto.TokenResponseDto;
 import swyp.qampus.login.dto.UserRequestDTO;
 import swyp.qampus.login.dto.UserResponseDTO;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.service.CompleteSignupService;
 import swyp.qampus.login.service.OauthService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import swyp.qampus.login.util.JWTUtil;
-import swyp.qampus.question.domain.MyQuestionResponseDto;
+
+
+@Log4j2
 
 import java.net.URISyntaxException;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -75,35 +77,37 @@ public class OAuthController {
     }
 
     /**
-     * 카카오 로그아웃 API
-     * @param accessToken 클라이언트가 제공한 카카오 액세스 토큰 (`Authorization` 헤더에서 가져옴)
+     * 로그아웃 API
      * @return 로그아웃 성공 또는 실패 응답 메시지
      */
     @Operation(
-            summary = "카카오  로그아웃 API입니다.-[담당자 : 홍기문]",
+            summary = "로그아웃 API입니다.-[담당자 : 홍기문]",
+            description = "클라이언트가 제공한 JWT 토큰을 기반으로 카카오 로그아웃을 수행합니다. " +
+                    "토큰을 만료 처리하여 로그아웃을 완료합니다.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "카카오 로그아웃 성공",
+                    @ApiResponse(responseCode = "200", description = "로그아웃 성공",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ResponseDto.class))),
-                    @ApiResponse(responseCode = "500", description = "카카오 로그아웃 실패: ",
+                    @ApiResponse(responseCode = "500", description = "로그아웃 실패: ",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ResponseEntity.class))),
             }
     )
-    @PostMapping("/logout/kakao")
-    public ResponseEntity<?> logout(
-            @Parameter(description = "클라이언트가 제공한 카카오 액세스 토큰 (`Authorization` 헤더에서 가져옴)")
-            @RequestHeader("Authorization") String accessToken
-    ) {
-        try {
-            // 1. "Bearer " 접두어 제거 후, 실제 액세스 토큰만 추출
-            oauthService.kakaoLogout(accessToken.replace("Bearer ", "")); // 토큰에서 "Bearer " 제거 후 전달
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@Parameter(hidden = true) HttpServletRequest request) {
 
-            // 2. 카카오 로그아웃 성공 시 응답 반환
-            return ResponseEntity.ok(ResponseDto.of(true,200,"카카오 로그아웃 성공"));
-        } catch (JsonProcessingException e) {
-            // 3. JSON 파싱 중 예외 발생 시, 500 에러 반환
-            return ResponseEntity.status(500).body("카카오 로그아웃 실패: " + e.getMessage());
+        String token = jwtUtil.resolveToken(request);
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 없습니다.");
+        }
+
+        try {
+            Claims claims = jwtUtil.getClaims(token);
+            String expiredToken = jwtUtil.createExpiredToken(claims.getSubject(), claims.get("userId", Long.class));
+            return ResponseEntity.ok().body(expiredToken); // 만료된 토큰 반환
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰");
         }
     }
 
@@ -141,6 +145,4 @@ public class OAuthController {
 
         return ResponseEntity.ok(ResponseDto.of(true,200,"회원가입이 완료되었습니다."));
     }
-
-
 }
