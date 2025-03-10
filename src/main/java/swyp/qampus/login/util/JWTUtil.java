@@ -152,18 +152,19 @@ public class JWTUtil {
     // 헤더에서 JWT 가져오기
     public String resolveToken(HttpServletRequest request) {
         try {
-            String bearerToken = request.getHeader("Authorization");
+            String token = request.getHeader("Authorization");
 
-
-            if (bearerToken == null || bearerToken.trim().isEmpty()) {
+            if (token == null || token.trim().isEmpty()) {
                 throw new IllegalArgumentException("Authorization 헤더가 존재하지 않거나 비어 있습니다.");
             }
 
-            if (!bearerToken.startsWith("Bearer ")) {
-                throw new IllegalArgumentException("Authorization 헤더가 'Bearer '로 시작하지 않습니다.");
+            token = token.trim(); // 공백 제거
+
+            // "Bearer "로 시작하면 "Bearer " 제거
+            if (token.toLowerCase().startsWith("bearer ")) { // 대소문자 구분 없이
+                token = token.substring(7).trim(); // "Bearer " 이후 부분
             }
 
-            String token = bearerToken.substring(7).trim(); // "Bearer " 이후의 값만 가져오기
             if (token.isEmpty()) {
                 throw new IllegalArgumentException("JWT 토큰이 비어 있습니다.");
             }
@@ -171,7 +172,7 @@ public class JWTUtil {
             return token;
 
         } catch (IllegalArgumentException e) {
-            log.error("JWT 토큰 추출 오류 : {} ", e.getMessage());
+            log.error("JWT 토큰 추출 오류: {}", e.getMessage());
             return null;
         } catch (Exception e) {
             log.error("예상치 못한 오류로 인해 JWT 추출 실패: {}", e.getMessage());
