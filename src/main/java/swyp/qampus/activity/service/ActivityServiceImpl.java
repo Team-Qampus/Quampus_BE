@@ -32,7 +32,7 @@ public class ActivityServiceImpl implements ActivityService{
         //List<RecentActivityResponseDto> result=new ArrayList<>();
         List<University> universities = universityRepository.findAllByUniversityName(universityName);
         if (universities.isEmpty()) {
-            throw new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY);
+            return Collections.emptyList();
         }
         University university = universities.get(0); // 첫 번째 결과 사용
 
