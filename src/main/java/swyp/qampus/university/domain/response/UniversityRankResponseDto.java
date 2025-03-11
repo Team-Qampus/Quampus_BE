@@ -32,7 +32,7 @@ public class UniversityRankResponseDto {
         this.participant_count = participant_count;
         this.rate = rate;
         this.choice_cnt = choice_cnt;
-        this.location = List.of(latitude, longitude);
+        this.location = List.of(longitude, latitude);
     }
 
 
