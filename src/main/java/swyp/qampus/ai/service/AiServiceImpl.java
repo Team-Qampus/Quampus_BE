@@ -57,7 +57,7 @@ public class AiServiceImpl implements AiService {
         Ai ai = question.getAi();
 
         //질문이 의미 없는 경우 -> 검증
-        if(!checkQuestionVerificationService.isValidTotal(question.getContent())){
+        if(checkQuestionVerificationService.isValidTotal(question.getContent())){
             return AiResponseDto.of(Ai
                     .builder()
                     .content("유효하지 않은 질문입니다.")
