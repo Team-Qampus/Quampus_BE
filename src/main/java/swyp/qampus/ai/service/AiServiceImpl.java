@@ -56,13 +56,7 @@ public class AiServiceImpl implements AiService {
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
         Ai ai = question.getAi();
 
-        //질문이 의미 없는 경우 -> 검증
-        if(checkQuestionVerificationService.isValidTotal(question.getContent())){
-            return AiResponseDto.of(Ai
-                    .builder()
-                    .content("유효하지 않은 질문입니다.")
-                    .build());
-        }
+        
         //이전에 생성된 AI 답변이 있는 경우
         if (ai != null) {
             return AiResponseDto.of(ai);
