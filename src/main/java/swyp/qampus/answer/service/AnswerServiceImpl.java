@@ -241,6 +241,10 @@ public class AnswerServiceImpl implements AnswerService {
             question.increseViewCount();    //조회수 증가
         }
 
+        if (question.getUser().getUserId().equals(userId)) {
+            question.updateLastViewedDate();
+        }
+
         List<AnswerResponseDto> answers = answerRepository.findByQuestionQuestionId(questionId)
                 .stream()
                 .map(answer -> AnswerResponseDto.of(answer, answer.getImageList()))
