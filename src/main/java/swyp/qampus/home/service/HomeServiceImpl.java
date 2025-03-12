@@ -67,11 +67,9 @@ public class HomeServiceImpl implements HomeService {
         //저번 달 학교 랭킹
         int lastMonthUniversityRanking= universityRepository.getLastMonthRankOfSchool(universityName);
 
-//        if (userCachedResponse == null) {
-//            updateWeeklyPopularQna();
-//        }
-
-        updateWeeklyPopularQna();   // 더미데이터 즉시 반영
+        if (userCachedResponse == null) {
+            updateWeeklyPopularQna();
+        }
 
         UserHomeDto userHomeDto=UserHomeDto
                 .builder()
@@ -91,10 +89,9 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     public HomeResponseDto getGuestHomeContent() {
-//        if (guestCachedResponse == null) {
-//            updateWeeklyPopularQna();
-//        }
-        updateWeeklyPopularQna();   //더미데이터 즉시 반영
+        if (guestCachedResponse == null) {
+            updateWeeklyPopularQna();
+        }
         return guestCachedResponse;
     }
 }
