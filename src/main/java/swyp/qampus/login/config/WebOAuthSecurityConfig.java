@@ -101,7 +101,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
 
                         .requestMatchers("/auth/logout").permitAll()  // 로그아웃 엔드포인트 허용
-                        .requestMatchers("**").permitAll() // 해당 URL은 인증 없이 접근 가능
+                        .requestMatchers(WHITE_LIST).permitAll() // 해당 URL은 인증 없이 접근 가능
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
                 )
 
