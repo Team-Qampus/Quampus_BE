@@ -65,7 +65,7 @@ public class QuestionServiceImpl implements QuestionService {
         Question savedQuestion = questionRepository.save(question);
 
         //사진을 올린 경우 -> 사진 업로드
-        if(images!=null){
+        if(images!=null&&!images.isEmpty()){
             List<String> urls=imageService.putFileToBucket(images,"QUESTION");
             for (String url:urls){
                 Image newImage=Image.builder()
