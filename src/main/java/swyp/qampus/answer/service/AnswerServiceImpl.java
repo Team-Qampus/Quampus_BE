@@ -79,7 +79,7 @@ public class AnswerServiceImpl implements AnswerService {
         question.incrementAnswerCount();
 
         //사진을 올린 경우 -> 사진업로드
-        if (images != null) {
+        if (images != null&&!images.isEmpty()) {
             List<String> urls = imageService.putFileToBucket(images, "ANSWER");
             for (String url : urls) {
                 Image newImage = Image.builder()
