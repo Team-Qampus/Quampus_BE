@@ -66,7 +66,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); // 인증 정보 포함 허용
-        config.setAllowedOrigins(List.of("http://localhost:3000","http://127.0.0.1:3000","https://qampus-fe-deploy.vercel.app","https://kapi.kakao.com/*")); // 허용할 프론트엔드 도메인
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000","http://127.0.0.1:3000","https://qampus-fe-deploy.vercel.app","https://kapi.kakao.com/*")); // 허용할 프론트엔드 도메인
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
         config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
         config.setMaxAge(3600L); // 모든 Origin 허용
@@ -103,8 +103,8 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
 
                 // OAuth2 로그인 기능 활성화 (기본 설정 사용)
                 .oauth2Login(Customizer.withDefaults());
-
-
+        
+        
         // JWT 필터를 UsernamePasswordAuthenticationFilter 이전에 추가하여 JWT 인증을 적용
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
