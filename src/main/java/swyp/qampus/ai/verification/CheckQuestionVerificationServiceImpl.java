@@ -21,5 +21,4 @@ public class CheckQuestionVerificationServiceImpl implements CheckQuestionVerifi
         return input.matches(".*[가-힣a-zA-Z0-9]+.*");
     }
 
-
 }
