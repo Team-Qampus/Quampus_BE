@@ -8,8 +8,7 @@ public class CheckQuestionVerificationServiceImpl implements CheckQuestionVerifi
     @Override
     public boolean isValidTotal(String text) {
         return isValidInput(text) &&
-                containsMeaningfulWords(text) &&
-                !isRandomKeyboardInput(text);
+                containsMeaningfulWords(text);
     }
 
     // 입력 길이 검증 (5자 이상)
@@ -22,13 +21,5 @@ public class CheckQuestionVerificationServiceImpl implements CheckQuestionVerifi
         return input.matches(".*[가-힣a-zA-Z0-9]+.*");
     }
 
-    // 의미 없는 랜덤 키보드 입력 감지
-    private boolean isRandomKeyboardInput(String input){
-        // 의미 없는 반복 문자열 (예: ㅁㄴㅇㄹ, asdf, qwert 등) 체크
-        String lowerInput = input.toLowerCase();
-        return lowerInput.matches(".*(.)\\1{2,}.*") || // 같은 문자 반복
-                lowerInput.matches(".*[ㄱ-ㅎㅏ-ㅣ]{3,}.*") || // 자음/모음만 반복
-                lowerInput.matches(".*(asdf|qwer|zxcv|1234).*"); // 흔한 키보드 패턴
-    }
 
 }
