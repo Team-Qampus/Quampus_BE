@@ -123,7 +123,7 @@ public class UniversityController {
     }
 
     @PutMapping("/university/change")
-    public ResponseEntity<?>changeUniversityName(@RequestParam("universityName")String universityName,Long universityId){
+    public ResponseEntity<?>changeUniversityName(@RequestParam("universityName")String universityName,@RequestParam("universityId")Long universityId){
         universityService.changeUniversityName(universityName,universityId);
         return ResponseEntity.ok("변경 성공");
     }
