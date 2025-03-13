@@ -15,4 +15,5 @@ public interface UniversityService {
     //매주 채택 수 초기화 스케쥴링
     void resetWeekly();
 
+    void changeUniversityName(String universityName, Long universityId);
 }

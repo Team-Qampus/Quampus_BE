@@ -61,5 +61,13 @@ public class UniversityServiceImpl implements UniversityService {
         log.info("weeklyChoice 초기화");
     }
 
+    @Override
+    public void changeUniversityName(String universityName, Long universityId) {
+        University university=universityRepository.findById(universityId)
+                .orElseThrow(()->new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
+        university.changeUniversityName(universityName);
+        universityRepository.save(university);
+    }
+
 
 }

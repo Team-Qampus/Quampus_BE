@@ -56,7 +56,6 @@ public class AiServiceImpl implements AiService {
                 .orElseThrow(() -> new RestApiException(QuestionErrorCode.NOT_EXIST_QUESTION));
         Ai ai = question.getAi();
 
-        
         //이전에 생성된 AI 답변이 있는 경우
         if (ai != null) {
             return AiResponseDto.of(ai);
