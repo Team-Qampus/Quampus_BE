@@ -66,7 +66,7 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); // 인증 정보 포함 허용
-        config.setAllowedOrigins(List.of("http://localhost:3000","http://127.0.0.1:3000","https://qampus-fe-deploy.vercel.app","https://kapi.kakao.com/*")); // 허용할 프론트엔드 도메인
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000","http://127.0.0.1:3000","https://qampus-fe-deploy.vercel.app","https://kapi.kakao.com/*")); // 허용할 프론트엔드 도메인
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
         config.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
         config.setMaxAge(3600L); // 모든 Origin 허용
@@ -94,20 +94,17 @@ public class WebOAuthSecurityConfig implements WebMvcConfigurer {
                 .csrf(csrf -> csrf.disable())
                 // 세션을 사용하지 않고, **Stateless(무상태) 인증 방식**으로 설정 (JWT 방식)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .logout(logout -> logout.disable()) // '/logout' 처리 비활성화
                 // 요청별 접근 설정
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
-
-                        .requestMatchers("/auth/logout").permitAll()  // 로그아웃 엔드포인트 허용
-                        .requestMatchers("**").permitAll() // 해당 URL은 인증 없이 접근 가능
+                        .requestMatchers(WHITE_LIST).permitAll() // 해당 URL은 인증 없이 접근 가능
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
                 )
 
                 // OAuth2 로그인 기능 활성화 (기본 설정 사용)
                 .oauth2Login(Customizer.withDefaults());
-
-
+        
+        
         // JWT 필터를 UsernamePasswordAuthenticationFilter 이전에 추가하여 JWT 인증을 적용
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

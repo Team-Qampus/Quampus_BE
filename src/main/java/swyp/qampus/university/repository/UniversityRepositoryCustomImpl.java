@@ -117,7 +117,7 @@ public class UniversityRepositoryCustomImpl implements UniversityRepositoryCusto
         //랭크 연산 처리
         QUniversity subUniversity=new QUniversity("subUniversity");
 
-        Expression<Long> rankExpression = JPAExpressions.select(subUniversity.count())
+        Expression<Long> rankExpression = JPAExpressions.select(subUniversity.count().add(1))
                 .from(subUniversity)
                 .where(subUniversity.weeklyChoiceCnt.gt(university.weeklyChoiceCnt));
 
