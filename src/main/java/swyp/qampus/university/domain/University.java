@@ -86,4 +86,8 @@ public class University extends BaseEntity {
     public void setLastMonthChoiceCnt(Long choiceCnt){
         this.lastMonthChoiceCnt=choiceCnt;
     }
+
+    public void changeUniversityName(String universityName){
+        this.universityName=universityName;
+    }
 }

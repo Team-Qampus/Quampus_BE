@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.exception.ErrorCode;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
@@ -123,5 +120,11 @@ public class UniversityController {
             return ResponseEntity.ok(Collections.EMPTY_MAP);
         }
         return ResponseEntity.ok(universityDetail);
+    }
+
+    @PutMapping("/university/change")
+    public ResponseEntity<?>changeUniversityName(@RequestParam("universityName")String universityName,Long universityId){
+        universityService.changeUniversityName(universityName,universityId);
+        return ResponseEntity.ok("변경 성공");
     }
 }
