@@ -9,6 +9,7 @@ import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.university.domain.University;
+import org.springframework.transaction.annotation.Transactional;
 import swyp.qampus.university.domain.response.UniversityDetailResponseDto;
 import swyp.qampus.university.domain.response.UniversityRankResponseDto;
 import swyp.qampus.university.exception.UniversityErrorCode;
@@ -62,6 +63,7 @@ public class UniversityServiceImpl implements UniversityService {
     }
 
     @Override
+    @Transactional
     public void changeUniversityName(String universityName, Long universityId) {
         University university=universityRepository.findById(universityId)
                 .orElseThrow(()->new RestApiException(UniversityErrorCode.NOT_EXIST_UNIVERSITY));
