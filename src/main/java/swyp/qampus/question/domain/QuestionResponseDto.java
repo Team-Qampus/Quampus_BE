@@ -16,17 +16,19 @@ public class QuestionResponseDto {
     private String content;
     private String universityName;
     private LocalDateTime createdDate;
+    private int answerCnt;
     private int viewCnt;
 
     @Builder
     public QuestionResponseDto(Long questionId, String title, CategoryType category,
-                               String content, String universityName, LocalDateTime createdDate, int viewCnt) {
+                               String content, String universityName, LocalDateTime createdDate, int answerCnt, int viewCnt) {
         this.questionId = questionId;
         this.title = title;
         this.category = category;
         this.content = content;
         this.universityName = universityName;
         this.createdDate = createdDate;
+        this.answerCnt = answerCnt;
         this.viewCnt = viewCnt;
     }
 
@@ -38,6 +40,7 @@ public class QuestionResponseDto {
                 question.getContent(),
                 question.getUser().getUniversity().getUniversityName(),
                 question.getCreateDate(),
+                question.getAnswerCount(),
                 question.getViewCnt()
         );
     }
