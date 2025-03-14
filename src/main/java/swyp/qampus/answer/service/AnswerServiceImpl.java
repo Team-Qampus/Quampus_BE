@@ -106,7 +106,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Transactional
     @Override
-    public void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto,String token) {
+    public void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto, List<MultipartFile> images, String token) {
 
         Answer answer = answerRepository.findById(answer_id)
                 .orElseThrow(() -> new RestApiException(AnswerErrorCode.NOT_EXIST_ANSWER));
@@ -115,6 +115,23 @@ public class AnswerServiceImpl implements AnswerService {
             throw new RestApiException(CommonErrorCode.UNAUTHORIZED);
         }
         answer.update(requestDto.getContent());
+
+        if (images != null && !images.isEmpty()) {
+            // 기존 이미지 삭제
+            List<Image> existingImages = imageRepository.findByAnswer(answer);
+            imageRepository.deleteAll(existingImages);
+
+            // 새로운 이미지 업로드
+            List<String> urls = imageService.putFileToBucket(images, "ANSWER");
+            for (String url : urls) {
+                Image newImage = Image.builder()
+                        .pictureUrl(url)
+                        .answer(answer)
+                        .build();
+                answer.addImage(newImage);
+                imageRepository.save(newImage);
+            }
+        }
     }
 
     @Transactional
