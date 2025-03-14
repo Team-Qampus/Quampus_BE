@@ -37,26 +37,29 @@ public class ImageServiceImpl implements ImageService {
         } else if (type.equals("ANSWER")) {
             FILE_DIRECTORY=BUCKET_NAME+DIRECTORY_OF_ANSWER;
         }
-        for (MultipartFile file:files){
-            ObjectMetadata objectMetadata=new ObjectMetadata();
-            objectMetadata.setContentType(file.getContentType());
-            objectMetadata.setContentLength(file.getSize());
 
-            String fileName= UUID.randomUUID()+"_"+file.getOriginalFilename();
-            try {
-                //사진 업로드 및 url저장
-                PutObjectRequest request=new PutObjectRequest(FILE_DIRECTORY,fileName,file.getInputStream(),objectMetadata)
-                        .withCannedAcl(CannedAccessControlList.PublicRead);
-                objectStorageClient.putObject(request);
-                String string = "https://kr.object.ncloudstorage.com"+"/"
-                        +FILE_DIRECTORY+"/"+fileName;
-                urls.add(string);
+        if (files!=null && !files.isEmpty()){
+            for (MultipartFile file:files){
+                ObjectMetadata objectMetadata=new ObjectMetadata();
+                objectMetadata.setContentType(file.getContentType());
+                objectMetadata.setContentLength(file.getSize());
+
+                String fileName= UUID.randomUUID()+"_"+file.getOriginalFilename();
+                try {
+                    //사진 업로드 및 url저장
+                    PutObjectRequest request=new PutObjectRequest(FILE_DIRECTORY,fileName,file.getInputStream(),objectMetadata)
+                            .withCannedAcl(CannedAccessControlList.PublicRead);
+                    objectStorageClient.putObject(request);
+                    String string = "https://kr.object.ncloudstorage.com"+"/"
+                            +FILE_DIRECTORY+"/"+fileName;
+                    urls.add(string);
 
 
-            }catch (IOException e){
-                throw new RestApiException(ImageErrorCode.FAILED_UPLOAD);
+                }catch (IOException e){
+                    throw new RestApiException(ImageErrorCode.FAILED_UPLOAD);
+                }
+
             }
-
         }
         return urls;
     }
