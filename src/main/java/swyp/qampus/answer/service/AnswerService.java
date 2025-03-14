@@ -17,7 +17,7 @@ import java.util.List;
 
 public interface AnswerService {
     Long createAnswer(AnswerRequestDto requestDto, List<MultipartFile> images,String token);
-    void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto,String token);
+    void updateAnswer(Long answer_id, AnswerUpdateRequestDto requestDto, List<MultipartFile> images, String token);
     void deleteAnswer(Long answer_id,String token);
     void choice(ChoiceRequestDto choiceRequestDto, String token);
     Page<QuestionListResponseDto> getQuestions(Long categoryId, String sort, Pageable pageable, String token);

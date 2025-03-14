@@ -82,12 +82,13 @@ public class AnswerController {
             @Parameter(description = "수정할 답변 ID")
             @PathVariable(name = "answer_id") Long answer_id,
 
-            @RequestBody AnswerUpdateRequestDto requestDto,
+            @RequestPart(value = "requestDto") AnswerUpdateRequestDto requestDto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
 
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization")String token
     ) {
-        answerService.updateAnswer(answer_id, requestDto,token);
+        answerService.updateAnswer(answer_id, requestDto, images, token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "답변 수정 성공"));
     }
 

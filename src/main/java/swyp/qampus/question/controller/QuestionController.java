@@ -76,12 +76,13 @@ public class QuestionController {
             @Parameter(description = "수정할 질문 ID")
             @PathVariable(name = "question_id") Long question_id,
 
-            @RequestBody QuestionUpdateRequestDto requestDto,
+            @RequestPart(value = "requestDto") QuestionUpdateRequestDto requestDto,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
 
             @Parameter(description = "Bearer 토큰을 포함한 Authorization 헤더")
             @RequestHeader("Authorization")String token
     ) {
-        questionService.updateQuestion(question_id, requestDto,token);
+        questionService.updateQuestion(question_id, requestDto, images, token);
         return ResponseEntity.ok(ResponseDto.of(true, 200, "질문 수정 성공"));
     }
 

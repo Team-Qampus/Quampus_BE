@@ -100,7 +100,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Transactional
     @Override
-    public void updateQuestion(Long question_id, QuestionUpdateRequestDto requestDto,String token) {
+    public void updateQuestion(Long question_id, QuestionUpdateRequestDto requestDto, List<MultipartFile> images, String token) {
         Question question = questionRepository.findById(question_id)
                 .orElseThrow(() -> new CustomException(QuestionErrorCode.NOT_EXIST_QUESTION));
 
@@ -112,6 +112,23 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new CustomException(CommonErrorCode.CATEGORY_NOT_FOUND));
 
         question.update(requestDto.getTitle(), requestDto.getContent(), category);
+
+        if (images != null && !images.isEmpty()) {
+            // 기존 이미지 삭제
+            List<Image> existingImages = imageRepository.findByQuestion(question);
+            imageRepository.deleteAll(existingImages);
+
+            // 새로운 이미지 업로드
+            List<String> urls = imageService.putFileToBucket(images, "QUESTION");
+            for (String url : urls) {
+                Image newImage = Image.builder()
+                        .pictureUrl(url)
+                        .question(question)
+                        .build();
+                question.addImage(newImage);
+                imageRepository.save(newImage);
+            }
+        }
     }
 
     @Transactional
