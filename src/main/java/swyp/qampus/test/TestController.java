@@ -31,7 +31,12 @@ public class TestController {
                 .password(testDto.getName())
                 .build();
 
-        University university = universityRepository.findByUniversityName(testDto.getUniversityName())
+        //user가 대학교 까지 입력한 경우
+        String universityName= testDto.getUniversityName();
+        if(universityName.contains("학교")){
+            universityName=universityName.replace("학교","");
+        }
+        University university = universityRepository.findByUniversityName(universityName)
                 .orElseGet(() -> {
                     University newUniversity = University.builder()
                             .universityName(testDto.getUniversityName())

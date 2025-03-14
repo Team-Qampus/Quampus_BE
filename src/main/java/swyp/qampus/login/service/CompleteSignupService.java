@@ -54,12 +54,16 @@ public class CompleteSignupService {
         String universityName = request.getUniversityName();
         LocationDto locationDto = getLocationUtil.findLocationByCompanyName(universityName);
 
+        //user가 대학교 까지 입력한 경우
+        if(universityName.contains("학교")){
+            universityName=universityName.replace("학교","");
+        }
 
         // 1. universityName을 이용하여 University 조회
-        University university = universityRepository.findByUniversityName(request.getUniversityName())
+        University university = universityRepository.findByUniversityName(universityName)
                 .orElseGet(() -> universityRepository.save(University
                         .builder()
-                        .universityName(request.getUniversityName())
+                        .universityName(request.getUniversityName().replace("대학교",""))
                         .latitude(Double.valueOf(locationDto.get위도()))
                         .longitude(Double.valueOf(locationDto.get경도()))
                         .build()));
