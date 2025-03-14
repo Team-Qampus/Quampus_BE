@@ -66,17 +66,35 @@ public class AiServiceImpl implements AiService {
             * 이미지가 존재하는 경우
             * */
             if(!question.getImageList().isEmpty()){
-                ChatGPTResponse chatGPTResponse=
-                        requestImageAndText(question.getImageList().get(0).getPictureUrl()
-                        ,question.getContent());
-                Ai newAi=Ai.builder()
-                        .content(chatGPTResponse.getChoices().get(0).getMessage().getContent())
-                        .build();
-                newAi=aiRepository.save(newAi);
-                question.setAi(newAi);
-                questionRepository.save(question);
+                //이미지 형식 지정
+                String imageUrl=question.getImageList().get(0).getPictureUrl();
+                if(imageUrl.endsWith(".png") || imageUrl.endsWith(".jpeg") ||
+                        imageUrl.endsWith(".gif") || imageUrl.endsWith(".webp")){
+                    ChatGPTResponse chatGPTResponse=
+                            requestImageAndText(question.getImageList().get(0).getPictureUrl()
+                                    ,question.getContent());
+                    Ai newAi=Ai.builder()
+                            .content(chatGPTResponse.getChoices().get(0).getMessage().getContent())
+                            .build();
+                    newAi=aiRepository.save(newAi);
+                    question.setAi(newAi);
+                    questionRepository.save(question);
 
-                return AiResponseDto.of(newAi);
+                    return AiResponseDto.of(newAi);
+                }
+
+                //형식에 맞지 않는 경우 텍스트로 AI답변 생성
+                else {
+                    ChatGPTResponse chatGPTResponse = requestText(question.getContent());
+                    Ai newAi=Ai.builder()
+                            .content(chatGPTResponse.getChoices().get(0).getMessage().getContent())
+                            .build();
+                    newAi=aiRepository.save(newAi);
+                    question.setAi(newAi);
+                    questionRepository.save(question);
+
+                    return AiResponseDto.of(newAi);
+                }
                 /*
                  * 이미지가 없는 경우
                  * */
