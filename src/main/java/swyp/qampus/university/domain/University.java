@@ -21,7 +21,7 @@ public class University extends BaseEntity {
     @Column(name = "university_id",nullable = false)
     private Long universityId;
 
-    @Column(name = "university_name",nullable = false)
+    @Column(name = "university_name",nullable = false,unique = true)
     private String universityName;
 
     @Column(name = "weekly_choice_cnt")
