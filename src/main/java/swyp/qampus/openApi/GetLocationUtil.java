@@ -21,7 +21,6 @@ public class GetLocationUtil {
 
     private final ObjectMapper objectMapper=new ObjectMapper();
     private final RestTemplate restTemplate=new RestTemplate();
-    private final static int PAGE_SIZE=10;
 
     //데이터 가공
     public LocationDto findLocationByCompanyName(String universityName) throws URISyntaxException {

@@ -48,17 +48,29 @@ public class UserServiceImpl implements UserService {
         return MyPageResponseDto.of(user, questionDtos);
     }
 
-    @Override
 
+    @Transactional
+    @Override
     public String testUser(String userName,String universityName,String major) throws URISyntaxException {
 
-        LocationDto locationDto = getLocationUtil.findLocationByCompanyName(universityName);
+        //LocationDto locationDto = getLocationUtil.findLocationByCompanyName(universityName);
         University university = universityRepository.findByUniversityName(universityName)
-                .orElseGet(() -> universityRepository.save(University.builder()
-                        .universityName(universityName)
-                        .latitude(Double.valueOf(locationDto.get위도()))
-                        .longitude(Double.valueOf(locationDto.get경도()))
-                        .build()));
+                .orElseGet(() ->{
+                    List<University> existingUniversities=universityRepository
+                            .findAllByUniversityName(universityName);
+
+                    if(!existingUniversities.isEmpty()){
+                        return existingUniversities.get(0);
+                    }
+
+                    University newUniversity=University.builder()
+                            .universityName(universityName)
+                            .latitude(0.0)
+                            .longitude(0.0)
+                            .build();
+
+                    return universityRepository.save(newUniversity);
+                });
 
         User user=User.builder()
                 .nickname("test")
@@ -71,6 +83,7 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
         return jwtUtil.createAccessToken("email" + userName + "@naver.com", user.getUserId());
     }
+
 
     @Transactional
     @Scheduled(cron = "1 0 0 1 * * ")
