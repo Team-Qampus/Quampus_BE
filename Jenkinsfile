@@ -3,7 +3,7 @@ pipeline {
 
     
     tools {
-        jdk ("jdk21")
+        jdk ("openjdk-17-jdk")
     }
 
     stages {
@@ -108,4 +108,4 @@ pipeline {
         }
     }
   }
-}
+
