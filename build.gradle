@@ -84,7 +84,7 @@ dependencies {
 	implementation 'com.h2database:h2' // (테스트용 DB)
 
 
-	//querydsl
+	//querydsl//
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
