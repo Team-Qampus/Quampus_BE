@@ -48,11 +48,11 @@ public class UserServiceImpl implements UserService {
         return MyPageResponseDto.of(user, questionDtos);
     }
 
+    @Transactional
     @Override
-
     public String testUser(String userName,String universityName,String major) throws URISyntaxException {
 
-        LocationDto locationDto = getLocationUtil.findLocationByCompanyName(universityName);
+        //LocationDto locationDto = getLocationUtil.findLocationByCompanyName(universityName);
         University university = universityRepository.findByUniversityName(universityName)
                 .orElseGet(() -> universityRepository.save(University.builder()
                         .universityName(universityName)
