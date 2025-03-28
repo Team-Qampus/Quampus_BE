@@ -41,7 +41,7 @@ services:
     networks:
       - springboot-mysql
     ports:
-      - "8080:8080"
+      - "9000:8082"
     restart: always
 
   redis:
