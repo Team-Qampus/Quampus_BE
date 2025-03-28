@@ -17,7 +17,7 @@ public class CreateAnswerResponseDto {
 
     private final Long answerId;
 
-    public static CreateQuestionResponseDto of(Boolean success,Integer code,String message,Long answerId){
-        return new CreateQuestionResponseDto(success,code,message,answerId);
+    public static CreateAnswerResponseDto of(Boolean success,Integer code,String message,Long answerId){
+        return new CreateAnswerResponseDto(success,code,message,answerId);
     }
 }
