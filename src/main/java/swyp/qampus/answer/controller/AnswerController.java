@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import swyp.qampus.answer.domain.AnswerRequestDto;
 import swyp.qampus.answer.domain.AnswerUpdateRequestDto;
 import swyp.qampus.answer.domain.ChoiceRequestDto;
+import swyp.qampus.answer.domain.CreateAnswerResponseDto;
 import swyp.qampus.common.ResponseDto;
 import swyp.qampus.answer.service.AnswerService;
 import swyp.qampus.exception.ErrorCode;
@@ -59,7 +60,7 @@ public class AnswerController {
     ) {
         Long answerId=answerService.createAnswer(requestDto, images,token);
 
-        return ResponseEntity.ok().body(ResponseDto.of(true, 200, answerId.toString()));
+        return ResponseEntity.ok(CreateAnswerResponseDto.of(true,200,"답변 생성 성공",answerId));
     }
 
     @Operation(
