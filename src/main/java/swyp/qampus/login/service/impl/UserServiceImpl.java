@@ -56,8 +56,8 @@ public class UserServiceImpl implements UserService {
         University university = universityRepository.findByUniversityName(universityName)
                 .orElseGet(() -> universityRepository.save(University.builder()
                         .universityName(universityName)
-                        .latitude(Double.valueOf(locationDto.get위도()))
-                        .longitude(Double.valueOf(locationDto.get경도()))
+                        .latitude(Double.valueOf("0"))
+                        .longitude(Double.valueOf("0"))
                         .build()));
 
         User user=User.builder()
