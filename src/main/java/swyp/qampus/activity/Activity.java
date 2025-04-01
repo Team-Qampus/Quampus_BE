@@ -11,7 +11,7 @@ import swyp.qampus.university.domain.University;
 @NoArgsConstructor
 @Getter
 public class Activity extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "activity_id",nullable = false)
     private Long activityId;
 
