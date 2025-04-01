@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class University extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "university_id",nullable = false)
     private Long universityId;
 

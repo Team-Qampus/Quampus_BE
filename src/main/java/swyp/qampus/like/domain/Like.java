@@ -15,7 +15,7 @@ import swyp.qampus.login.entity.User;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Likes")
 public class Like extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long likeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
