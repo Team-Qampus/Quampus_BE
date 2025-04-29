@@ -30,13 +30,13 @@ services:
     command:
      - java
      - -Xmx2g
-     - -Dcom.sun.management.jmxremote
+     - -Dcom.sun.management.jmxremote=true
+     - -Dcom.sun.management.jmxremote.local.only=false
      - -Dcom.sun.management.jmxremote.port=8978
      - -Dcom.sun.management.jmxremote.rmi.port=8978
      - -Dcom.sun.management.jmxremote.ssl=false
      - -Dcom.sun.management.jmxremote.authenticate=false
      - -Djava.rmi.server.hostname=42.82.219.16
-     -Dcom.sun.management.jmxremote.rmi.port=8978
      - -jar
      - /app.jar
 
