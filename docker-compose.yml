@@ -36,7 +36,7 @@ services:
      - -Dcom.sun.management.jmxremote.rmi.port=8978
      - -Dcom.sun.management.jmxremote.ssl=false
      - -Dcom.sun.management.jmxremote.authenticate=false
-     - -Djava.rmi.server.hostname=42.82.219.16
+     - -Djava.rmi.server.hostname=tkv00.ddns.net
      - -jar
      - /app.jar
 
