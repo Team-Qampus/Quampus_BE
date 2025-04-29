@@ -56,6 +56,7 @@ services:
       - "9000:9000"
       - "8978:8978"
     restart: always
+    network_mode: "host"
 
   redis:
     container_name: redis
