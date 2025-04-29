@@ -53,6 +53,7 @@ services:
       - springboot-mysql
     ports:
       - "9000:9000"
+      - "8978:8978"
     restart: always
 
   redis:
