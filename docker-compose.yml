@@ -59,6 +59,7 @@ services:
         -Dcom.sun.management.jmxremote.authenticate=false
         -Dcom.sun.management.jmxremote.ssl=false
         -Djava.rmi.server.hostname=42.82.219.16
+        -Djdk.jfr.enabled=true
     networks:
       - springboot-mysql
     logging:
