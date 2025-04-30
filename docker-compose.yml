@@ -51,8 +51,7 @@ services:
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: rlaehdus00
     network_mode: "host"
-    networks:
-      - springboot-mysql
+   
     ports:
       - "9000:9000"
       - "1098:1098"
