@@ -33,7 +33,7 @@ services:
      - -Dcom.sun.management.jmxremote=true
      - -Dcom.sun.management.jmxremote.local.only=false
      - -Dcom.sun.management.jmxremote.port=1098
-     - -Dcom.sun.management.jmxremote.rmi.port=1098
+     - -Dcom.sun.management.jmxremote.rmi.port=1099
      - -Dcom.sun.management.jmxremote.ssl=false
      - -Dcom.sun.management.jmxremote.authenticate=false
      - -Djava.rmi.server.hostname=42.82.219.16
@@ -55,6 +55,7 @@ services:
     ports:
       - "9000:9000"
       - "1098:1098"
+      - "1099:1099"
     restart: always
     
 
