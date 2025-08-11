@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
+import swyp.qampus.login.util.JWTUtil;
 import swyp.qampus.openApi.GetLocationUtil;
 import swyp.qampus.university.domain.University;
 import swyp.qampus.university.repository.UniversityRepository;
@@ -21,6 +22,7 @@ public class TestController {
     private final UserRepository userRepository;
     private final UniversityRepository universityRepository;
     private final GetLocationUtil getLocationUtil;
+    private final JWTUtil jwtUtil;
     @PostMapping("/signup")
     public ResponseEntity<?>signup(@RequestBody TestDto testDto){
         User user=User.builder()
@@ -46,7 +48,7 @@ public class TestController {
         user.setUniversity(university);
         userRepository.save(user);
         university.addUser(user);
-        return ResponseEntity.ok().body("성공");
+        return ResponseEntity.ok().body(jwtUtil.createAccessToken(user.getEmail(),user.getUserId()));
     }
 
     @GetMapping("/location")
