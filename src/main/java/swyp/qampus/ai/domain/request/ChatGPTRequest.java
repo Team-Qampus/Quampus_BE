@@ -9,6 +9,7 @@ import swyp.qampus.ai.domain.Message;
 import swyp.qampus.ai.domain.TextMessage;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,24 +29,29 @@ public class ChatGPTRequest {
     @JsonProperty("max_tokens")
     private int maxTokens;
 
-    public static ChatGPTRequest createImageRequest(String model,int maxTokens,String role,String requestText, String imageUrl){
+    public static ChatGPTRequest createImageRequest(String model,int maxTokens,String role,String requestText, String imageUrl,String systemPrompt){
         TextContent textContent=new TextContent("text",requestText);
         ImageContent imageContent=new ImageContent("image_url",new ImageUrl(imageUrl));
         Message message=new ImageMessage(role,List.of(textContent,imageContent));
-        return createGPTRequest(model,maxTokens, Collections.singletonList(message));
+        return createGPTRequest(model,maxTokens, Collections.singletonList(message),systemPrompt);
     }
-    public static ChatGPTRequest createTextRequest(String model,int maxTokens,String role,String requestText){
+    public static ChatGPTRequest createTextRequest(String model,int maxTokens,String role,String requestText,String systemPrompt){
         Message message=new TextMessage(role,requestText);
-        return createGPTRequest(model,maxTokens,Collections.singletonList(message));
+        return createGPTRequest(model,maxTokens,Collections.singletonList(message),systemPrompt);
     }
 
-    private static ChatGPTRequest createGPTRequest(String model, int maxTokens, List<Message> messages) {
+    private static ChatGPTRequest createGPTRequest(String model, int maxTokens, List<Message> request,String systemPrompt) {
+        Message systemMessage=new TextMessage("system",systemPrompt);
+
+        List<Message> messages=new ArrayList<>();
+        messages.add(systemMessage);
+        messages.addAll(request);
+
         return ChatGPTRequest.builder()
                 .model(model)
                 .maxTokens(maxTokens)
                 .messages(messages)
                 .build();
-
     }
 
 }

@@ -1,5 +1,6 @@
 package swyp.qampus.ai.optimization;
 
+import lombok.RequiredArgsConstructor;
 import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
 import org.springframework.stereotype.Component;
 

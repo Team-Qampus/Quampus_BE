@@ -8,6 +8,7 @@ import swyp.qampus.ai.domain.Ai;
 import swyp.qampus.ai.domain.request.ChatGPTRequest;
 import swyp.qampus.ai.domain.response.AiResponseDto;
 import swyp.qampus.ai.domain.response.ChatGPTResponse;
+import swyp.qampus.ai.optimization.TextOptimizationUtil;
 import swyp.qampus.ai.repository.AiRepository;
 import swyp.qampus.ai.verification.CheckQuestionVerificationService;
 import swyp.qampus.exception.CommonErrorCode;
@@ -27,21 +28,26 @@ public class AiServiceImpl implements AiService {
     @Value("${openai.api.url}")
     private String apiUrl;
 
+    @Value("${openai.api.prompt}")
+    private String prompt;
+
     private final RestTemplate restTemplate;
     private final AiRepository aiRepository;
     private final QuestionRepository questionRepository;
     private final JWTUtil jwtUtil;
+    private final TextOptimizationUtil optimizationUtil;
 
     private final CheckQuestionVerificationService checkQuestionVerificationService;
     public AiServiceImpl(
             @Qualifier("openAiRestTemplate") RestTemplate restTemplate,
             AiRepository aiRepository,
             QuestionRepository questionRepository,
-            JWTUtil jwtUtil, CheckQuestionVerificationService checkQuestionVerificationService) {
+            JWTUtil jwtUtil, TextOptimizationUtil optimizationUtil, CheckQuestionVerificationService checkQuestionVerificationService) {
         this.restTemplate = restTemplate;
         this.aiRepository = aiRepository;
         this.questionRepository = questionRepository;
         this.jwtUtil = jwtUtil;
+        this.optimizationUtil = optimizationUtil;
         this.checkQuestionVerificationService = checkQuestionVerificationService;
     }
 
@@ -57,9 +63,9 @@ public class AiServiceImpl implements AiService {
         Ai ai = question.getAi();
 
         //이전에 생성된 AI 답변이 있는 경우
-        if (ai != null) {
+        /*if (ai != null) {
             return AiResponseDto.of(ai);
-        } else {
+        } else {*/
             //새로운 ai생성 만들기
 
             /*
@@ -85,7 +91,8 @@ public class AiServiceImpl implements AiService {
 
                 //형식에 맞지 않는 경우 텍스트로 AI답변 생성
                 else {
-                    ChatGPTResponse chatGPTResponse = requestText(question.getContent());
+                    String refinedText=optimizationUtil.getQuestionText(question.getContent());
+                    ChatGPTResponse chatGPTResponse = requestText(refinedText);
                     Ai newAi=Ai.builder()
                             .content(chatGPTResponse.getChoices().get(0).getMessage().getContent())
                             .build();
@@ -112,18 +119,18 @@ public class AiServiceImpl implements AiService {
             }
 
 
-        }
+        //}
     }
 
     //텍스트만 전송
     private ChatGPTResponse requestText(String requestText) {
-        ChatGPTRequest request = ChatGPTRequest.createTextRequest(apiModel, 1500, "user", requestText);
+        ChatGPTRequest request = ChatGPTRequest.createTextRequest(apiModel, 1500, "user", requestText,prompt);
         return restTemplate.postForObject(apiUrl, request, ChatGPTResponse.class);
     }
 
     //이미지랑 텍스트 전송
     private ChatGPTResponse requestImageAndText(String imageUrl, String requestText) throws IOException {
-        ChatGPTRequest request = ChatGPTRequest.createImageRequest(apiModel, 1500, "user", requestText, imageUrl);
+        ChatGPTRequest request = ChatGPTRequest.createImageRequest(apiModel, 1500, "user", requestText, imageUrl,prompt);
         return restTemplate.postForObject(apiUrl, request, ChatGPTResponse.class);
     }
 }

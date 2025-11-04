@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import swyp.qampus.exception.CommonErrorCode;
+import swyp.qampus.exception.RestApiException;
 import swyp.qampus.login.entity.User;
 import swyp.qampus.login.repository.UserRepository;
 import swyp.qampus.login.util.JWTUtil;
@@ -54,5 +56,12 @@ public class TestController {
     @GetMapping("/location")
     public ResponseEntity<?>location(@RequestParam("name")String name) throws URISyntaxException {
         return ResponseEntity.ok(getLocationUtil.findLocationByCompanyName(name));
+    }
+
+    @GetMapping("/token")
+    public ResponseEntity<String>getToken(@RequestParam(value = "email")String email){
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new RestApiException(CommonErrorCode.INVALID_REQUEST));
+        return ResponseEntity.ok(jwtUtil.createAccessToken(user.getEmail(),user.getUserId()));
     }
 }
