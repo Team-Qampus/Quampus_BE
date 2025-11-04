@@ -40,7 +40,7 @@ services:
     networks:
       - springboot-mysql
     ports:
-      - "9000:8082"
+      - "9000:9000"
     restart: always
     
   visualvm-test:
